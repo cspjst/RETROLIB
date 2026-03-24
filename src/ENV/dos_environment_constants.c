@@ -1,3 +1,8 @@
+/**
+* @author      Jeremy Simon Thornton
+* @copyright   2026 Jeremy Simon Thornton
+* @version     0.1.0
+*/
 #include "../../doslib/src/DOS/dos_memory_types.h"
 
 const dos_mem_block_t MEM_BLOCK_IVT = {(void*)0x00000000, (void*)0x000003FF};

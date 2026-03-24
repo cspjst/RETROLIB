@@ -1,5 +1,8 @@
 /**
- *
+ * @author      Jeremy Simon Thornton
+ * @copyright   2024 Jeremy Simon Thornton
+ * @version     0.1.0
+ * @url https://www.stanislavs.org/helppc/
  *  @brief     The memory arena paradigm - one lifetime to bind them all.
  *  @details   Untangling lifetimes with absurdly simple linear allocator, lightning fast allocation and
  *  deallocation, eliminating lifetime soup of per-allocation freeing/stack fragility/garbage collection requirements.
@@ -19,22 +22,16 @@
 
 typedef struct private_mem_arena mem_arena_t;
 
-mem_arena_t* mem_arena_new(mem_size_t byte_request);
+mem_arena_t* mem_new_arena(dos_memsize_t paragraphs);
 
-mem_size_t mem_arena_delete(mem_arena_t* arena);
+dos_memsize_t mem_arena_size(mem_arena_t* arena);
 
-char* mem_arena_dos_mcb(mem_arena_t* arena);
+dos_memsize_t mem_arena_capacity(mem_arena_t* arena);
 
-mem_size_t mem_arena_size(mem_arena_t* arena);
+void* mem_arena_alloc(mem_arena_t* arena, dos_memsize_t byte_request);
 
-mem_size_t mem_arena_capacity(mem_arena_t* arena);
+dos_memsize_t mem_free_arena(mem_arena_t* arena);
 
-mem_size_t mem_arena_used(mem_arena_t* arena);
-
-void* mem_arena_alloc(mem_arena_t* arena, mem_size_t byte_request);
-
-void* mem_arena_dealloc(mem_arena_t* arena, mem_size_t byte_request);
-
-void mem_arena_dump(mem_arena_t* arena);
+char* mem_arena_mcb(mem_arena_t* arena);
 
 #endif
