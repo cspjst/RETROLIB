@@ -1,6 +1,6 @@
 #include "dos_dump_tools.h"
-#include "../DOS/dos_memory_constants.h"
-#include "../DOS/dos_memory_types.h"
+#include "../../doslib/src/DOS/dos_memory_constants.h"
+#include "../../doslib/src/DOS/dos_memory_types.h"
 
 static const char DUMP_UPPER_CASE_HEX[] = "0123456789ABCDEF";
 static const char DUMP_LOWER_CASE_HEX[] = "0123456789abcdef";

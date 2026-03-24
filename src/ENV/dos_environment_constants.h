@@ -1,7 +1,7 @@
 #ifndef DOS_ENVIRONMENT_CONSTANTS_H
 #define DOS_ENVIRONMENT_CONSTANTS_H
 
-#include "../DOS/dos_memory_types.h"
+#include "../../doslib/src/DOS/dos_memory_types.h"
 
 #define ROM_SEG_BEGIN   0xFE00
 #define ROM_OFF_BEGIN   0x0000

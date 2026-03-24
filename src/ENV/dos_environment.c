@@ -1,7 +1,7 @@
 #include "dos_environment.h"
 #include "dos_environment_constants.h"
 
-#include "../STD/dos_string.h"
+#include "../TOOLS/dos_memmem.h"
 
 dos_emulator_t dos_environment_is_DOSBox() {
     void* p = memmem(MEM_BLOCK_ROM_BIOS.begin.ptr, SEARCH_SIZE_DOSBOX, SEARCH_DOSBOX, sizeof(SEARCH_DOSBOX));

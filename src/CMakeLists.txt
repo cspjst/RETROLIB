@@ -41,13 +41,13 @@ add_compile_options(
     # -od               # Disable optimizations (debugging)
 
     # === DEBUG/INFO ===
-    -d0                # No debug info (smaller .obj + binary)
+    #-d0                # No debug info (smaller .obj + binary)
     #-d1                # Line numbers only
-    #-d2               # Full debug symbols
+    -d2               # Full debug symbols
 
     # === STACK SAFETY ===
-    -e0                 # No stack checking (saves ~20 bytes)
-    #-e1               # Minimal stack overflow check
+    #-e0                 # No stack checking (saves ~20 bytes)
+    -e1               # Minimal stack overflow check
 
     # === LANGUAGE COMPAT ===
     -za99               # Partial C99 (va_arg, etc.)
@@ -59,15 +59,12 @@ add_compile_options(
      -w2               # More warnings
 
     # === BUILD OUTPUT ===
-    -zq                 # Quiet mode (cleaner output)
+    #-zq                 # Quiet mode (cleaner output)
     # (omit for verbose build log)
 )
 add_definitions(
     -D__DOS__
     -D__8086__  # Explicit 8086 target
-    -DUSE_DOSLIBC
-    #-DUSE_DOSLIBC_FLOAT_PRINTF
-    #-DUSE_DOSLIBC_FILE_IO
 )
 
 endif()
@@ -80,6 +77,7 @@ file(GLOB SOURCES
     ../doslib/src/DOS/*.c
     ENV/*.c
     DUMP/*.c
+    TOOLS/*.c
     TEST/*.c
 )
 

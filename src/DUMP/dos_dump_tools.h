@@ -16,10 +16,10 @@
 #ifndef DOS_MEMORY_TOOLS_H
 #define DOS_MEMORY_TOOLS_H
 
-#include "../DOS/dos_memory_types.h"
+#include "../../doslib/src/DOS/dos_memory_types.h"
 
-#include "../STD/dos_stddef.h"
-#include "../STD/dos_stdio.h"
+#include <stddef.h>
+#include <stdio.h>
 
 #define DUMP_BYTE_DELIM     ' '
 #define DUMP_BYTES_LHS      ' '
