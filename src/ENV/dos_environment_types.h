@@ -1,0 +1,6 @@
+#ifndef DOS_ENVIRONMENT_TYPES_H
+#define DOS_ENVIRONMENT_TYPES_H
+
+
+
+#endif
