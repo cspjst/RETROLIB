@@ -1,4 +1,4 @@
-#include "dos_environment_constants.h"
+#include "../../doslib/src/DOS/dos_memory_types.h"
 
 const dos_mem_block_t MEM_BLOCK_IVT = {(void*)0x00000000, (void*)0x000003FF};
 const dos_mem_block_t MEM_BLOCK_BDA = {(void*)0x00400000, (void*)0x004000FF};

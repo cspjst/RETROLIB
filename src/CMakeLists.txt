@@ -76,9 +76,8 @@ endif()
 file(GLOB SOURCES
     CONFIGURE_DEPENDS
     *.c
-    BIOS/*.c
-    DOS/*.c
-    STD/*.c
+    ../doslib/bioslib/src/BIOS/*.c
+    ../doslib/src/DOS/*.c
     ENV/*.c
     DUMP/*.c
     TEST/*.c
