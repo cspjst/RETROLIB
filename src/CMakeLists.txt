@@ -76,7 +76,8 @@ file(GLOB SOURCES
     ../doslib/bioslib/src/BIOS/*.c
     ../doslib/src/DOS/*.c
     ENV/*.c
-    DUMP/*.c
+    LOG/*.c
+    MEM/*.c
     TOOLS/*.c
     TEST/*.c
 )

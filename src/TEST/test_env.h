@@ -7,7 +7,7 @@
 #include "../ENV/dos_environment_types.h"
 #include "../ENV/dos_environment_constants.h"
 #include "../ENV/dos_environment.h"
-#include "../DUMP/dos_dump_tools.h"
+#include "../LOG/log_tools.h"
 #include "../../doslib/src/DOS/dos_memory_constants.h"
 
 void test_types() {
@@ -18,9 +18,9 @@ void test_types() {
     assert(MEM_BLOCK_ROM_BIOS.end.segoff.segment == ROM_SEG_END);
     assert(MEM_BLOCK_ROM_BIOS.end.segoff.offset == ROM_OFF_END);
 
-    dos_set_dump_stream(stderr);
-    assert(dos_dump_memory(MEM_BLOCK_ROM_BIOS, 16));
-    assert(dos_dump_memory(MEM_BLOCK_IVT, 1));
+    set_log_stream(stderr);
+    assert(log_memory(MEM_BLOCK_ROM_BIOS, 16));
+    assert(log_memory(MEM_BLOCK_IVT, 1));
 
     switch((int)dos_environment_is_DOSBox()) {
         case DOS_EMULATOR_NONE: printf("No DOSBox emulator detected.\n"); break;
