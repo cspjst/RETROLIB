@@ -14,22 +14,12 @@
 #ifndef MEM_ARENA_H
 #define MEM_ARENA_H
 
-#include "mem_constants.h"
-#include "mem_types.h"
-
-typedef enum {
-  MEM_ARENA_POLICY_DOS,
-  MEM_ARENA_POLICY_C
-} mem_arena_policy_t;
-
-static const char mem_policy_info[2][64] = {
-	 "MEM_POLICY_DOS",
-	 "MEM_POLICY_C"
-};
+#include "../../doslib/src/DOS/dos_memory_constants.h"
+#include "../../doslib/src/DOS/dos_memory_types.h"
 
 typedef struct private_mem_arena mem_arena_t;
 
-mem_arena_t* mem_arena_new(mem_arena_policy_t policy, mem_size_t byte_request);
+mem_arena_t* mem_arena_new(mem_size_t byte_request);
 
 mem_size_t mem_arena_delete(mem_arena_t* arena);
 
