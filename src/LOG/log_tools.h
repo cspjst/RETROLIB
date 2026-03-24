@@ -1,6 +1,7 @@
 /**
- * @brief pretty printing to stderr
- * @note needs only fputc to be defined
+ * @author      Jeremy Simon Thornton
+ * @copyright   2026 Jeremy Simon Thornton
+ * @version     0.1.0
  * formatting characters:
  * + 'x'  lower case hexadecimal
  * + 'X'  upper case hexadecimal
@@ -13,8 +14,8 @@
  * + any printable char
  * + '\0' no bookend
  */
-#ifndef DOS_MEMORY_TOOLS_H
-#define DOS_MEMORY_TOOLS_H
+#ifndef LOG_TOOLS_H
+#define LOG_TOOLS_H
 
 #include "../../doslib/src/DOS/dos_memory_types.h"
 

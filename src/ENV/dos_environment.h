@@ -1,3 +1,8 @@
+/**
+* @author      Jeremy Simon Thornton
+* @copyright   2026 Jeremy Simon Thornton
+* @version     0.1.0
+*/
 #ifndef DOS_ENVIRONMENT_H
 #define DOS_ENVIRONMENT_H
 
