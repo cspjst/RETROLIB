@@ -33,10 +33,10 @@ typedef struct private_mem_arena {
 // Allocate a DOS memory block and embed the arena struct at its start
 mem_arena_t* mem_new_arena(dos_memsize_t paragraphs) {
 	dos_address_t base = {0};
-	printf("error = %i\n",dos_allocate_memory_blocks(
+	if(dos_allocate_memory_blocks(
 	    paragraphs + ((sizeof(mem_arena_t) + DOS_PARAGRAPH_SIZE - 1) / DOS_PARAGRAPH_SIZE),
 		&base.segoff.segment
-	));// != 0) return NULL;
+	) != 0) return NULL;
 	// success DOS could fulfill the memory request
 	mem_arena_t* arena = (mem_arena_t*)base.ptr;
 	arena->base = base;
