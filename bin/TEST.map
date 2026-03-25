@@ -1,7 +1,7 @@
 Open Watcom Linker Version 2.0 beta May  3 2025 18:23:37
 Copyright (c) 2002-2025 The Open Watcom Contributors. All Rights Reserved.
 Portions Copyright (c) 1985-2002 Sybase, Inc. All Rights Reserved.
-Created on:       26/03/25 22:43:06
+Created on:       26/03/25 23:10:24
 Executable Image: TEST.exe
 creating a DOS executable
 
@@ -387,4 +387,4 @@ Module: /opt/watcom/lib286/dos/clibl.lib(getcpdos)
 Stack size:  0800 (2048.)
 Memory size:  67a0 (26528.)
 Entry point address: 0000:285e
-Link time: 00:00.97
+Link time: 00:00.65
