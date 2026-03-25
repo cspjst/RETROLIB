@@ -1,7 +1,7 @@
 /**
  * @author      Jeremy Simon Thornton
  * @copyright   2024 Jeremy Simon Thornton
- * @version     0.1.0
+ * @version     0.1.5
  * @url https://www.stanislavs.org/helppc/
  *
  * The DOS INT 21,48 - Allocate Memory function takes a 16 bit word size request in paragraphs (16 bytes)
@@ -46,7 +46,7 @@ mem_arena_t* mem_new_arena(dos_memsize_t paragraphs) {
 }
 
 dos_memsize_t mem_arena_size(mem_arena_t* arena) {
-	return arena->free - arena->begin;
+	return arena->end - arena->free;
 }
 
 dos_memsize_t mem_arena_capacity(mem_arena_t* arena) {
@@ -68,7 +68,7 @@ dos_memsize_t mem_free_arena(mem_arena_t* arena) {
 	return freed;
 }
 
-char* mem_arena_mcb(mem_arena_t* arena) {
+const char* mem_arena_mcb(mem_arena_t* arena) {
 	dos_address_t m = arena->base;
 	m.segoff.segment--;
 	return m.ptr;

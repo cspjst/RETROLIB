@@ -1,7 +1,7 @@
 /**
  * @author      Jeremy Simon Thornton
  * @copyright   2026 Jeremy Simon Thornton
- * @version     0.1.0
+ * @version     0.1.2
  * formatting characters:
  * + 'x'  lower case hexadecimal
  * + 'X'  upper case hexadecimal
@@ -50,8 +50,10 @@ const void* log_chars(const char* b, size_t n, char delim, char lhs, char rhs);
 
 const void* log_bytes(const char* b, size_t n, char delim, char lhs, char rhs);
 
-const void* log_paragraph(const char* para);
+const void* log_para(const char* para);
 
-const void* log_memory(dos_mem_block_t mem_block, size_t paragraphs);
+const void* log_mem(const char* p, size_t paragraphs);
+
+const void* log_block(dos_mem_block_t mem_block);
 
 #endif

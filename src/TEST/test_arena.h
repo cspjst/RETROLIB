@@ -4,17 +4,21 @@
 #include <stdio.h>
 #include <assert.h>
 
+#include "../LOG/log_tools.h"
 #include "../MEM/dos_mem_arena.h"
 #include "../../doslib/src/DOS/dos_memory_services.h"
 
 void test_new() {
-    printf("Testing  mem_new_arena(64)... ");
-    mem_arena_t* arena = mem_new_arena(64);
+    printf("Testing arena new & free... ");
+    dos_memsize_t pcap =64;
+    dos_memsize_t bcap = pcap * DOS_PARAGRAPH_SIZE;
+
+    mem_arena_t* arena = mem_new_arena(pcap);
     assert(arena != NULL);
-    assert(mem_arena_capacity(arena) == 64 * DOS_PARAGRAPH_SIZE);
-    assert(mem_arena_size(arena) == 0);
-    dos_memsize_t n = mem_free_arena(arena);
-    assert( n == 64 * DOS_PARAGRAPH_SIZE);
+    assert(mem_arena_capacity(arena) == bcap);
+    assert(mem_arena_size(arena) == bcap);
+
+    assert( mem_free_arena(arena) == bcap);
     assert(mem_free_arena(arena) == 0);
     assert(mem_free_arena(arena) == 0);
     assert(mem_free_arena(arena) == 0);
@@ -33,12 +37,15 @@ void test_new() {
 }
 
 void test_alloc() {
-    printf("Testing mem_arena_alloc... ");
-    mem_arena_t* arena = mem_new_arena(128);
+    printf("Testing arena alloc... ");
+    dos_memsize_t pcap =128;
+    dos_memsize_t bcap = pcap * DOS_PARAGRAPH_SIZE;
+
+    mem_arena_t* arena = mem_new_arena(pcap);
     assert(arena != NULL);
     dos_memsize_t cap = mem_arena_capacity(arena);
-    assert(cap == (128 * DOS_PARAGRAPH_SIZE));
-    assert(mem_arena_size(arena) == cap);
+    assert(cap == (bcap));
+    assert(mem_arena_size(arena) == mem_arena_capacity(arena));
 
     void* ptr1 = mem_arena_alloc(arena, 100);
     void* ptr2 = mem_arena_alloc(arena, 256);
@@ -55,9 +62,9 @@ void test_alloc() {
     void* ptr = mem_arena_alloc(arena, 0);
     assert(ptr != NULL);    // Zero-byte alloc should succeed
 
-    assert(mem_free_arena(arena) == 128 * DOS_PARAGRAPH_SIZE);
+    assert(mem_free_arena(arena) == bcap);
 
-    arena = mem_new_arena(64);
+    arena = mem_new_arena(pcap);
     assert(arena != NULL);
     cap = mem_arena_capacity(arena); // exact capacity allocation
     void* p = mem_arena_alloc(arena, cap);
@@ -65,15 +72,17 @@ void test_alloc() {
     assert(mem_arena_size(arena) == 0);
     assert(mem_arena_alloc(arena, 1) == NULL); // Next allocation should fail
 
-    assert(mem_free_arena(arena) == 64 * DOS_PARAGRAPH_SIZE);
+    assert(mem_free_arena(arena) == bcap);
 
     printf("PASS\n");
 }
 
 void test_exhaustion() {
-    printf("Testing arena exhaustion... ");
+    printf("Testing arena alloc exhaustion... ");
+    dos_memsize_t pcap =64;
+    dos_memsize_t bcap = pcap * DOS_PARAGRAPH_SIZE;
 
-    mem_arena_t* arena = mem_new_arena(64);
+    mem_arena_t* arena = mem_new_arena(pcap);
     assert(arena != NULL);
 
     dos_memsize_t cap = mem_arena_capacity(arena);
@@ -82,26 +91,31 @@ void test_exhaustion() {
     while(1) { // Allocate in small chunks until exhausted
         void* ptr = mem_arena_alloc(arena, 1);
         if(ptr == NULL) break;
-        allocated ++;
+        allocated++;
     }
 
     assert(allocated == cap);
     assert(mem_arena_size(arena) == 0);
 
-    assert(mem_free_arena(arena) == 64 * DOS_PARAGRAPH_SIZE);
+    assert(mem_free_arena(arena) == bcap);
 
     printf("PASS\n");
 }
 
 void test_mcb(void) {
-    printf("Testing mem_arena_mcb... ");
+    printf("Testing arena mcb... ");
+    dos_memsize_t pcap =64;
+    dos_memsize_t bcap = pcap * DOS_PARAGRAPH_SIZE;
+    set_log_stream(stderr);
 
-    mem_arena_t* arena = mem_new_arena(64);
+    mem_arena_t* arena = mem_new_arena(pcap);
     assert(arena != NULL);
 
-    char* mcb = mem_arena_mcb(arena);
+    const char* mcb = mem_arena_mcb(arena);
+    assert(*mcb == 'M');
+    log_para(mcb);
 
-    mem_free_arena(arena);
+    assert(mem_free_arena(arena) == bcap);
 
     printf("PASS\n");
 }
@@ -131,6 +145,10 @@ void test_order(void) {
 
 void test_arena() {
     test_new();
+    test_alloc();
+    test_exhaustion();
+    test_mcb();
+    test_order();
 }
 
 #endif

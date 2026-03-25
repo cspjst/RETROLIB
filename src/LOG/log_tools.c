@@ -1,3 +1,8 @@
+/**
+ * @author      Jeremy Simon Thornton
+ * @copyright   2026 Jeremy Simon Thornton
+ * @version     0.1.2
+ */
 #include "log_tools.h"
 #include "../../doslib/src/DOS/dos_memory_constants.h"
 #include "../../doslib/src/DOS/dos_memory_types.h"
@@ -66,7 +71,7 @@ const void* log_bytes(const char* b, size_t n, char delim, char lhs, char rhs) {
     return (void*)b;
 }
 
-const void* log_paragraph(const char* para) {
+const void* log_para(const char* para) {
     log_ptr(para, LOG_PTR_DELIM, LOG_BYTES_RHS, 'X');
     log_bytes(para, DOS_PARAGRAPH_SIZE, LOG_BYTE_DELIM, LOG_BYTES_LHS, LOG_BYTES_RHS);
     log_chars(para , DOS_PARAGRAPH_SIZE, 0, LOG_CHARS_LHS, LOG_CHARS_RHS);
@@ -74,10 +79,17 @@ const void* log_paragraph(const char* para) {
     return (void*)(para + DOS_PARAGRAPH_SIZE);
 }
 
-const void* log_memory(dos_mem_block_t mem_block, size_t paragraphs) {
-    const char* p = (char*)mem_block.begin.ptr;
-    if(mem_block.begin.ptr > mem_block.end.ptr) return NULL;
+const void* log_mem(const char* p, size_t paragraphs) {
     while(paragraphs--)
-       p = log_paragraph((const void*)p);
+       p = log_para((const void*)p);
+    return (void*)p;
+}
+
+const void* log_mem_block(dos_mem_block_t mem_block) {
+    if(mem_block.begin.ptr >= mem_block.end.ptr) return NULL;
+    const char* p = (char*)mem_block.begin.ptr;
+    const char* end = (char*)mem_block.end.ptr;
+    while(p < end)
+       p = log_para((const void*)p);
     return (void*)p;
 }
