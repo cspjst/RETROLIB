@@ -21,6 +21,7 @@ void test_types() {
     set_log_stream(stderr);
     assert(log_mem((char*)MEM_BLOCK_ROM_BIOS.begin.ptr, 16));
     assert(log_mem((char*)MEM_BLOCK_IVT.begin.ptr, 1));
+    log_timestamp();
 
     switch((int)dos_environment_is_DOSBox()) {
         case DOS_EMULATOR_NONE: printf("No DOSBox emulator detected.\n"); break;

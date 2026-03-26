@@ -97,14 +97,14 @@ const void* log_mem_block(dos_mem_block_t mem_block) {
     return (void*)p;
 }
 
-const void* log_timestamp() {
+void log_timestamp() {
     dos_date_t d;
     dos_time_t t;
-    char date[10];
-    char time[8];
+    char stamp[19]; // YYYY-MM-DD HH:MM:SS
     dos_get_date(&d);
     dos_get_time(&t);
-    const char* p = log_chars(dos_date_to_str(&d, date, '/'), 10, 0,  0, ' ');
-
-    return p;
+    char* p = dos_date_to_str(&d, stamp, '-');
+    *p++ = ' ';
+    dos_time_to_str(&t, p, ':');
+    log_chars(stamp, 19, 0,  0, ' ');
 }
