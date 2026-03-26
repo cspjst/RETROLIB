@@ -6,6 +6,9 @@
 #include "log_tools.h"
 #include "../../doslib/src/DOS/dos_memory_constants.h"
 #include "../../doslib/src/DOS/dos_memory_types.h"
+#include "../../doslib/src/DOS/dos_services_types.h"
+#include "../../doslib/src/DOS/dos_services.h"
+#include "../../doslib/src/DOS/dos_services_tools.h"
 
 static const char LOG_UPPER_CASE_HEX[] = "0123456789ABCDEF";
 static const char LOG_LOWER_CASE_HEX[] = "0123456789abcdef";
@@ -92,4 +95,16 @@ const void* log_mem_block(dos_mem_block_t mem_block) {
     while(p < end)
        p = log_para((const void*)p);
     return (void*)p;
+}
+
+const void* log_timestamp() {
+    dos_date_t d;
+    dos_time_t t;
+    char date[10];
+    char time[8];
+    dos_get_date(&d);
+    dos_get_time(&t);
+    const char* p = log_chars(dos_date_to_str(&d, date, '/'), 10, 0,  0, ' ');
+
+    return p;
 }

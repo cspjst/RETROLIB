@@ -1,7 +1,7 @@
 /**
  * @author      Jeremy Simon Thornton
  * @copyright   2026 Jeremy Simon Thornton
- * @version     0.1.2
+ * @version     0.1.3
  * formatting characters:
  * + 'x'  lower case hexadecimal
  * + 'X'  upper case hexadecimal
@@ -55,5 +55,8 @@ const void* log_para(const char* para);
 const void* log_mem(const char* p, size_t paragraphs);
 
 const void* log_block(dos_mem_block_t mem_block);
+
+// ISO 8601 subset RFC 3339 format YYYY-MM-DD hh:mm:ss
+const void* log_timestamp();
 
 #endif
