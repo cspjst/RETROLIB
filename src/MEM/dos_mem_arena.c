@@ -15,9 +15,6 @@
  */
 #include "dos_mem_arena.h"
 
-#include <stddef.h>
-#include <stdio.h>
-
 #include "../../doslib/src/DOS/dos_memory_services.h"
 #include "../../doslib/src/DOS/dos_memory_types.h"
 
@@ -36,7 +33,7 @@ mem_arena_t* mem_new_arena(dos_memsize_t paragraphs) {
 	if(dos_allocate_memory_blocks(
 	    paragraphs + ((sizeof(mem_arena_t) + DOS_PARAGRAPH_SIZE - 1) / DOS_PARAGRAPH_SIZE),
 		&base.segoff.segment
-	) != 0) return NULL;
+	) != 0) return (void*)0;
 	// success DOS could fulfill the memory request
 	mem_arena_t* arena = (mem_arena_t*)base.ptr;
 	arena->base = base;
@@ -55,7 +52,7 @@ dos_memsize_t mem_arena_capacity(mem_arena_t* arena) {
 
 void* mem_arena_alloc(mem_arena_t* arena, dos_memsize_t byte_request) {
 	char* p;
-	if (byte_request > mem_arena_size(arena)) return NULL;  // unable fulfill request
+	if (byte_request > mem_arena_size(arena)) return (void*)0;  // unable fulfill request
 	p = arena->free;					// initialize return value points to requested block
 	arena->free += byte_request;		// shrink pool size
 	return p;
@@ -64,7 +61,7 @@ void* mem_arena_alloc(mem_arena_t* arena, dos_memsize_t byte_request) {
 dos_memsize_t mem_free_arena(mem_arena_t* arena) {
 	dos_memsize_t freed = mem_arena_capacity(arena);
 	if(dos_free_allocated_memory_blocks(arena->base.segoff.segment) != 0) return 0;
-	arena->base.ptr = arena->begin = arena->free = arena->end = NULL;
+	arena->base.ptr = arena->begin = arena->free = arena->end = (void*)0;
 	return freed;
 }
 

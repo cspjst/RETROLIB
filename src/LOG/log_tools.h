@@ -34,6 +34,8 @@ void set_log_stream(FILE* os);
 
 FILE* get_log_stream();
 
+dos_error_code_t logc(char c);
+
 void log_char(char b, char rhs);
 
 void log_hex(char b, char rhs, const char* hex_chars);
