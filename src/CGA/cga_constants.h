@@ -1,4 +1,7 @@
 /**
+ * @author      Jeremy Simon Thornton
+ * @copyright   2024 Jeremy Simon Thornton
+ * @version     0.1.3
  *  @brief     CGA macro definitions for assembly
  *  @details   Everything is hard coded to shave a few clock cycles off the execution time
  *  Using #define enables immediate addressing mode - in which the data operand is a part of the instruction itself
@@ -13,7 +16,7 @@
 /**
  *  @def   CGA_VIDEO_RAM_SEGMENT
  *  @brief CGA VRAM starts at B8000 (736K bytes into the 8086 addressable 1MB)
- *  @details Both Low-res 320x200, 4-color (video modes 04H and 05H) and Hi-res 640x200, 2-color (video mode 06H) 
+ *  @details Both Low-res 320x200, 4-color (video modes 04H and 05H) and Hi-res 640x200, 2-color (video mode 06H)
  *  Layout : Interleaved scan lines, packed - pixel.
  *  Even - numbered scan lines begin at segment B800
  *  Odd - numbered scan lines begin at segment BA00
@@ -23,9 +26,9 @@
 #define CGA_ODD_VRAM_SEGMENT	0BA00h
 #define CGA_BYTES_PER_LINE		80
 
-// CGA Mode Control Register at I/O address 
+// CGA Mode Control Register at I/O address
 #define CGA_CONTROL_REG			3D8h
-// CGA Status Register at I/O address 
+// CGA Status Register at I/O address
 #define CGA_STATUS_REG			3DAh
 
 // When bit 0 of the CGA Mode Control Register is set the CPU can touch the CGA buffer without causing snow

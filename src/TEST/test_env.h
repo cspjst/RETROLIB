@@ -4,9 +4,11 @@
 #include <stdio.h>
 #include <assert.h>
 
-#include "../ENV/dos_environment_types.h"
-#include "../ENV/dos_environment_constants.h"
-#include "../ENV/dos_environment.h"
+#include "../ENV/env_types.h"
+#include "../ENV/env_constants.h"
+#include "../ENV/env_emulation.h"
+#include "../ENV/env_detect_crtc.h"
+#include "../ENV/env_graphics_constants.h"
 #include "../LOG/log_tools.h"
 #include "../../doslib/src/DOS/dos_memory_constants.h"
 
@@ -23,11 +25,12 @@ void test_types() {
     assert(log_mem((char*)MEM_BLOCK_IVT.begin.ptr, 1));
     log_timestamp();
 
-    switch((int)dos_environment_is_DOSBox()) {
+    switch((int)env_detect_DOSBox()) {
         case DOS_EMULATOR_NONE: printf("No DOSBox emulator detected.\n"); break;
         case DOS_EMULATOR_DOSBOX: printf("DOSBox/DOSBox Staging emulation!\n"); break;
         case DOS_EMULATOR_DOSBOX_X: printf("DOSBox-X emulation!\n"); break;
     }
+    printf("%s\n",env_detect_crtc(crtc_port_CGA) ?"CGA CRTC detected\n" :"NO CGA CRTC detected!\n");
 }
 
 void test_env() {

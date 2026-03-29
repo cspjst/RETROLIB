@@ -3,10 +3,10 @@
 * @copyright   2026 Jeremy Simon Thornton
 * @version     0.1.0
 */
-#ifndef DOS_ENVIRONMENT_H
-#define DOS_ENVIRONMENT_H
+#ifndef ENV_EMULATION_H
+#define ENV_EMULATION_H
 
-#include "dos_environment_constants.h"
+#include "env_constants.h"
 
 /**
  * @brief Scan the ROM BIOS for "DOSBox" starting at FE00:0000 the first 32
@@ -17,6 +17,6 @@
  * can detect if a DOSBox based emulator and identify DOSBox-X but not
  * differentiate between DOSBox and DOSBox Staging - at least with this method.
  */
-dos_emulator_t dos_environment_is_DOSBox();
+env_emulator_t env_detect_DOSBox();
 
 #endif
