@@ -1,10 +1,13 @@
+/**
+ * @author      Jeremy Simon Thornton
+ * @copyright   2024 Jeremy Simon Thornton
+ * @version     0.1.0
+ */
 #ifndef HGA_DETECT_ADAPTER_H
 #define HGA_DETECT_ADAPTER_H
 
-#include <stdint.h>
-
-#include "../HW/hw_constants_graphics.h"
-#include "../HW/hw_detect_crtc.h"
+#include "../ENV/env_graphics_constants.h"
+#include "../ENV/env_detect_crtc.h"
 
 #include "hga_constants.h"
 
@@ -34,6 +37,6 @@
 * 4 Hercules InColor
 * 5 Hercules Clone
 */
-uint8_t hga_detect_adapter();
+unsigned char hga_detect_adapter();
 
 #endif

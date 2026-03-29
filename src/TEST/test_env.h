@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <assert.h>
 
-#include "../ENV/env_types.h"
 #include "../ENV/env_constants.h"
 #include "../ENV/env_emulation.h"
 #include "../ENV/env_detect_crtc.h"
