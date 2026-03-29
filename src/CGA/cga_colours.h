@@ -33,7 +33,7 @@
 *	2		4	red			#AA0000		13		light red	#FF5555
 *	3		7	light gray	#AAAAAA		15		white		#FFFFFF
 *
-*  @note In 320?00 graphics mode, the background & border colour can be changed from black (default) to any of the other 15 colors of the CGA palette.
+*  @note In 320x200 graphics mode, the background & border colour can be changed from black (default) to any of the other 15 colors of the CGA palette.
 *  This allows for some variation, as well as flashing effects, as the background color can be changed without having to redraw the screen (i.e. without changing the contents of the video RAM.)
 */
 
@@ -47,5 +47,7 @@ typedef enum {          // palette 0    1    2
 	cga_yellow = 0xC0,  //         x
 	cga_white = 0xC0    //              x    x
 } cga_colour_palette_t;
+
+
 
 #endif

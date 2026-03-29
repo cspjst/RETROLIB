@@ -21,6 +21,8 @@
 
 // CGA Mode Control Register at I/O address
 #define CGA_CONTROL_REG			3D8h
+// CGA Color select palette register
+#define CGA_PALETTE_REG         3D9h
 // CGA Status Register at I/O address
 #define CGA_STATUS_REG			3DAh
 
