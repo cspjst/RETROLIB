@@ -1,17 +1,10 @@
 /**
  * @author      Jeremy Simon Thornton
  * @copyright   2024 Jeremy Simon Thornton
- * @version     0.1.3
- *  @brief     CGA macro definitions for assembly
- *  @details   Everything is hard coded to shave a few clock cycles off the execution time
- *  Using #define enables immediate addressing mode - in which the data operand is a part of the instruction itself
- *  This matters on an 8088 where reg,imm is only 4 clock cycles as opposed to 12+EA for reg,mem
- *  This advantage dwindles on the 286 (2:5) and 386 (2:4), vanishing on the 486(1:1) and beyond
+ * @version     0.1.0
  */
 #ifndef CGA_CONSTANTS_H
 #define CGA_CONSTANTS_H
-
-#include <stdint.h>
 
 /**
  *  @def   CGA_VIDEO_RAM_SEGMENT

@@ -78,6 +78,7 @@ file(GLOB SOURCES
     ENV/*.c
     LOG/*.c
     MEM/*.c
+    CGA/*.c
     TEST/*.c
 )
 
