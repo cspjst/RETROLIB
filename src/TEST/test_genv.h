@@ -8,6 +8,7 @@
 #include "../VGA/vga_detect_adapter.h"
 #include "../ENV/env_detect_graphics_adapter.h"
 #include "../ENV/env_emulation.h"
+#include "../ENV/env_video_mode.h"
 
 
 void test_genv() {
@@ -18,8 +19,16 @@ void test_genv() {
             printf("%s\n", ENV_VIDEO_ADAPTER_NAMES[env_detect_colour_adapter()]);
             printf("%s\n", ENV_VIDEO_ADAPTER_NAMES[env_detect_monochrome_adapter()]);
     }
-
-
+    bios_video_mode_t m = env_get_video_mode();
+    printf("video mode = %s\n", bios_video_mode_names[m]);
+    for(int i = 0; i < 0x14; ++i) {
+        getchar();
+        printf("attempt video mode = %s\n", bios_video_mode_names[(bios_video_mode_t)i]);
+        printf("video old mode = %s\n", bios_video_mode_names[env_set_video_mode((bios_video_mode_t)i)]);
+        printf("video new mode = %s\n", bios_video_mode_names[env_get_video_mode()]);
+    }
+    env_set_video_mode(m);
+    printf("restored video mode = %s\n", bios_video_mode_names[env_get_video_mode()]);
 }
 
 #endif
