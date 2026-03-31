@@ -5,9 +5,9 @@ unsigned char env_read_model_byte() {
     unsigned char id;
     __asm {
         push    es
-        mov     ax, 0xF000
+        mov     ax, ROM_BIOS_SEG_END
         mov     es, ax
-        mov     al, [es:0xFFFC]
+        mov     al, [es:ROM_BIOS_MODEL_BYTE]
         pop     es
         mov     id, al
     }
@@ -16,7 +16,11 @@ unsigned char env_read_model_byte() {
 
 unsigned char env_detect_IBM() {
     unsigned char id = env_read_model_byte();
-    if(id >= IBM_MODEL_PS2_70 && id <=IBM_MODEL_XT)
-        return id - IBM_MODEL_PS2_70 + 1;
-    return 0;
+    if(id >= IBM_MODEL_PS2 && id <=IBM_MODEL_PC)
+        return id - IBM_MODEL_PS2 + 3;
+    switch(id) {
+        case 0x80: return IBM_LATE_PC_JR;
+        case 0x86: return IBM_LATE_XT_AT;
+        default: return 0;
+    }
 }
