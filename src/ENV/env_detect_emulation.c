@@ -3,7 +3,7 @@
 * @copyright   2026 Jeremy Simon Thornton
 * @version     0.1.0
 */
-#include "env_emulation.h"
+#include "env_detect_emulation.h"
 #include "env_constants.h"
 
 #include "../MEM/dos_mem_string.h"

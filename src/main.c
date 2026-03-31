@@ -5,6 +5,6 @@
 
 int main() {
     //test_arena();
-    //test_env();
-    test_genv();
+    test_env();
+    //test_genv();
 }
