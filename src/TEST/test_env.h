@@ -30,6 +30,7 @@ void test_types() {
     printf("%s\n", env_names_dosbox[env_detect_DOSBox()]);
 
     printf("model byte = %X\n", env_read_model_byte());
+    printf("IBM machine = %s\n", env_names_ibm_model[env_detect_IBM()]);
 
 }
 

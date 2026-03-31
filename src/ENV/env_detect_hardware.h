@@ -5,7 +5,7 @@
 
 unsigned char env_read_model_byte();
 
-env_ibm_model_id_t env_detect_IBM();
+unsigned char env_detect_IBM();
 
 /**
 * env_detect_Compaq()
