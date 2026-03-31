@@ -1,0 +1,2 @@
+../../doslib/bioslib/src/BIOS/bios_video_services_types.h(9): Error! E1034: Symbol 'bios_video_mode_t' already defined
+../../doslib/bioslib/src/BIOS/bios_video_services_types.h(9): Note! I2002: 'bios_video_mode_t' defined in: ../../doslib/bioslib/src/BIOS/bios_video_services_constants.h(93)
