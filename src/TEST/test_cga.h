@@ -8,6 +8,8 @@
 
 #include "../CGA/cga_hi_res_constants.h"
 #include "../CGA/cga_hi_res_plot.h"
+#include "../CGA/cga_hi_res_cls.h"
+
 #include "../ENV/env_video_mode.h"
 #include "../ENV/env_time.h"
 
@@ -143,7 +145,8 @@ void test_cga() {
     bios_video_mode_t m = env_get_video_mode();
     env_set_video_mode(CGA_GRAPHICS_MONOCHROME_640X200);
     bios_read_system_clock(&t1);
-    draw_test_pattern();
+    cga_hi_res_cls(0xAA);
+    //draw_test_pattern();
     bios_read_system_clock(&t2);
     getchar();
     env_set_video_mode(m);
