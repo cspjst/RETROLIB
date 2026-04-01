@@ -4,6 +4,7 @@
 * @version     0.1.0
 */
 #include "cga_hi_res_plot.h"
+#include "cga_constants.h"
 
 /**
  * Use fast bit manipulation calculate row byte y/2 * 80 bytes per row

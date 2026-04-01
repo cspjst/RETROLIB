@@ -1,4 +1,153 @@
 #ifndef TEST_CGA_H
 #define TEST_CGA_H
 
+#include <stdio.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include <math.h>
+
+#include "../CGA/cga_hi_res_constants.h"
+#include "../CGA/cga_hi_res_plot.h"
+#include "../ENV/env_video_mode.h"
+#include "../ENV/env_time.h"
+
+#include "../../doslib/bioslib/src/BIOS/bios_clock_services.h"
+
+/* 4x4 Bayer Dithering Matrix for simulating grayscale */
+static const uint8_t dither_matrix[4][4] = {
+    {  0,  8,  2, 10 },
+    { 12,  4, 14,  6 },
+    {  3, 11,  1,  9 },
+    { 15,  7, 13,  5 }
+};
+
+/* Helper: Draw a line using Bresenham's algorithm */
+static void draw_line(cga_coord_t x0, cga_coord_t y0,
+                      cga_coord_t x1, cga_coord_t y1,
+                      cga_colour_t col) {
+    int16_t dx = x1 - x0;
+    int16_t dy = y1 - y0;
+    int16_t sx = (dx < 0) ? -1 : 1;
+    int16_t sy = (dy < 0) ? -1 : 1;
+    int16_t err = ((dx > dy) ? dx : -dy) / 2;
+    int16_t e2;
+
+    dx = (dx < 0) ? -dx : dx;
+    dy = (dy < 0) ? -dy : dy;
+
+    for (;;) {
+        cga_plot(x0, y0, col);
+        if (x0 == x1 && y0 == y1) break;
+        e2 = err;
+        if (e2 > -dx) { err -= dy; x0 += sx; }
+        if (e2 < dy) { err += dx; y0 += sy; }
+    }
+}
+
+/* Helper: Draw a filled rectangle */
+static void draw_rect(cga_coord_t x1, cga_coord_t y1,
+                      cga_coord_t x2, cga_coord_t y2,
+                      cga_colour_t col) {
+    for (cga_coord_t y = y1; y <= y2; y++) {
+        for (cga_coord_t x = x1; x <= x2; x++) {
+            cga_plot(x, y, col);
+        }
+    }
+}
+
+/* Helper: Draw a circle using Midpoint Algorithm */
+static void draw_circle(cga_coord_t cx, cga_coord_t cy,
+                        cga_coord_t radius, cga_colour_t col) {
+    int16_t x = radius;
+    int16_t y = 0;
+    int16_t err = 0;
+
+    while (x >= y) {
+        cga_plot(cx + x, cy + y, col); cga_plot(cx + y, cy + x, col);
+        cga_plot(cx - y, cy + x, col); cga_plot(cx - x, cy + y, col);
+        cga_plot(cx - x, cy - y, col); cga_plot(cx - y, cy - x, col);
+        cga_plot(cx + y, cy - x, col); cga_plot(cx + x, cy - y, col);
+
+        if (err <= 0) {
+            y += 1;
+            err += 2 * y + 1;
+        }
+        if (err > 0) {
+            x -= 1;
+            err -= 2 * x + 1;
+        }
+    }
+}
+
+/* Helper: Simulate Gray using Dithering */
+static void draw_dithered_pixel(cga_coord_t x, cga_coord_t y, uint8_t intensity) {
+    /* Intensity 0-15 maps to the threshold in the matrix */
+    uint8_t threshold = dither_matrix[y % 4][x % 4];
+    cga_plot(x, y, (intensity > threshold) ? CGA_WHITE : CGA_BLACK);
+}
+
+/* Main Test Pattern Routine */
+void draw_test_pattern(void) {
+    const cga_coord_t WIDTH = 640;
+    const cga_coord_t HEIGHT = 200;
+    const cga_coord_t CX = WIDTH / 2;
+    const cga_coord_t CY = HEIGHT / 2;
+
+    /* 1. Paint White Background */
+    draw_rect(0, 0, WIDTH - 1, HEIGHT - 1, CGA_WHITE);
+
+    /* Horizontal center line */
+    draw_line(0, CY, WIDTH - 1, CY, CGA_BLACK);
+
+    /* Vertical center line */
+    draw_line(CX, 0, CX, HEIGHT - 1, CGA_BLACK);
+
+    /* Diagonal top-left to bottom-right */
+    draw_line(0, 0, WIDTH - 1, HEIGHT - 1, CGA_BLACK);
+
+    /* 2. Central Resolution Wedges (Simulated with concentric circles) */
+    for (uint8_t r = 10; r < 90; r += 5) {
+        draw_circle(CX, CY, r, CGA_BLACK);
+    }
+
+    /* 3. Top Grayscale Bar (Dithered) */
+    for (cga_coord_t x = 50; x < 590; x++) {
+        /* Map X position to intensity 0-15 */
+        uint8_t intensity = (uint8_t)((x - 50) * 15 / 540);
+        for (cga_coord_t y = 10; y < 30; y++) {
+            draw_dithered_pixel(x, y, intensity);
+        }
+    }
+
+    /* 4. Geometric Calibration Shapes (Bottom) */
+    draw_rect(100, 160, 140, 190, CGA_BLACK); /* Square */
+
+    /* Triangle (Simple line approximation) */
+    for (cga_coord_t i = 0; i < 30; i++) {
+        for (cga_coord_t x = 200 - i; x <= 200 + i; x++) {
+            cga_plot(x, 175 + i, CGA_BLACK);
+        }
+    }
+
+    /* 5. Crosshair */
+    for (cga_coord_t i = 0; i < 20; i++) {
+        cga_plot(CX + i, CY, CGA_BLACK);
+        cga_plot(CX - i, CY, CGA_BLACK);
+        cga_plot(CX, CY + i, CGA_BLACK);
+        cga_plot(CX, CY - i, CGA_BLACK);
+    }
+}
+
+void test_cga() {
+    bios_ticks_since_midnight_t t1, t2;
+    bios_video_mode_t m = env_get_video_mode();
+    env_set_video_mode(CGA_GRAPHICS_MONOCHROME_640X200);
+    bios_read_system_clock(&t1);
+    draw_test_pattern();
+    bios_read_system_clock(&t2);
+    getchar();
+    env_set_video_mode(m);
+    printf("%f\n", env_ticks_to_seconds(t2-t1));
+}
+
 #endif
