@@ -3,6 +3,6 @@
 
 #include "cga_types.h"
 
-void __fastcall cga_hi_res_cls(cga_colour_t colour);
+void __fastcall cga_hi_res_cls(cga_colour_t pattern);
 
 #endif
