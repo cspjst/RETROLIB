@@ -7,7 +7,6 @@
 #include "cga_constants.h"
 #include "cga_lookup_table_y.h"
 
-
 /**
  * Use fast bit manipulation calculate row byte y/2 * 80 bytes per row
  * Use CL to rotate mask and shift pixel bit
