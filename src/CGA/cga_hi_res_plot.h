@@ -12,6 +12,9 @@
 
 void cga_hi_res_plot_calculate(cga_coord_t x, cga_coord_t y, cga_colour_t colour);
 
-void __fastcall cga_hi_res_plot_lookup(cga_coord_t x, cga_coord_t y, cga_colour_t colour);
+// sacrifice some compiler independence
+// void __fastcall cga_hi_res_plot_lookup(cga_coord_t x, cga_coord_t y, cga_colour_t colour);
+// Watcom calling convention is the default but making it explicit expresses intent
+void __watcall cga_hi_res_plot_lookup(cga_coord_t x, cga_coord_t y, cga_colour_t colour);
 
 #endif
