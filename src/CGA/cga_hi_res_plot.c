@@ -1,7 +1,8 @@
 /**
 * @author      Jeremy Simon Thornton
 * @copyright   2022,2026 Jeremy Simon Thornton
-* @version     0.1.0
+* @version     0.1.1
+* 2026 04 02 use __watcall for performance at the expense compiler agnostic
 */
 #include "cga_hi_res_plot.h"
 #include "cga_constants.h"
