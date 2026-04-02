@@ -49,18 +49,18 @@ EVEN:   mov     es, ax                      ; transer segment into es
 /**
  * 23.80% faster than cga_hi_res_plot_calculate
  * Use a lookup table for y is 16.7% faster
- * Use fastcall for 6.12% faster AX = x, DX = y, BX = colour
+ * Use __watcall for 6.12% faster AX = x, BX = y, CX = colour
  */
-void __fastcall cga_hi_res_plot_lookup(cga_coord_t x, cga_coord_t y, cga_colour_t colour) {
+void __watcall cga_hi_res_plot_lookup(cga_coord_t x, cga_coord_t y, cga_colour_t colour) {
     __asm {
         .8086
         // 1. prepare registers
-        mov     cx, CGA_VIDEO_RAM_SEGMENT   ; load the VRAM segment address
-        mov     es, cx                      ; transer segment into es
-        xchg    dx, bx                      ; BX = y, DL = colour
-        shl     bx, 1                       ; turn dx into a word table index
+        mov     dx, CGA_VIDEO_RAM_SEGMENT   ; load the VRAM segment address
+        mov     es, dx                      ; transer segment into es
+        shl     bx, 1                       ; turn y into a word table index
         mov     bx, CGA_ROW_OFFSETS[bx]     ; load the VRAM row offset address
-        mov     cx, ax                      ; copy of x in cx
+        mov     dl, cl                      ; colour in DL
+        mov     cx, ax                      ; copy of x in CX
         // 2. calculate colour and mask
         and     cx, 7h                      ; mask off 0111 lower bits i.e.mod 8 (thanks powers of 2)
         mov     dh, 01111111b               ; load DH with pixel mask
