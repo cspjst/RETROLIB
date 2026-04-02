@@ -56,6 +56,8 @@ FAST:   // 2.1 test if odd width skip MOVSB if even
         jz      END 
 EVEN:   // 3.2 MOVSW width loop height
         shr     cx, 1                       ; w/2 convert to word count
+        jcxz    END                         ; width was zero
+        
         dx loop height
             cx rep width
 END:    pop     bp
