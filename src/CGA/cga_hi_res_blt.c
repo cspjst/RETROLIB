@@ -44,15 +44,18 @@ void __watcall cga_hi_res_blt(cga_coord_t x, cga_coord_t y, cga_coord_t w, cga_c
         
         // 1.0 test if byte aligned x if so fast path REP MOVS
         test    ax, 7                       ; x modulo 8 is 0? 
-        jz      FAST
+        jz      FAST                        ; no shifting needed
         
         jmp     END
 FAST:   // 2.1 test if odd width skip MOVSB if even
-        test    ax, 1 
+        test    cx, 1 
         jz      EVEN
-        
-        ?jmp     END
+        // 2.2 wallpaper the first byte
+
+        dec     cx
+        jz      END 
 EVEN:   // 3.2 MOVSW width loop height
+        shr     cx, 1                       ; w/2 convert to word count
         dx loop height
             cx rep width
 END:    pop     bp
