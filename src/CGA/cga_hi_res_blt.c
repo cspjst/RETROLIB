@@ -35,6 +35,13 @@ void __watcall cga_hi_res_blt(cga_coord_t x, cga_coord_t y, cga_coord_t w, cga_c
 
         lds     si, data                    ; DS:SI source RAM
         les     di, CGA_VRAM_PTR            ; ES:DI destination VRAM
+        push    bp                          ; preserve BP
+
+        look up bx 
+        add in ax 
+        mask of pixel position bx  
+        mask ax only pixel position 
+        
         // 1.0 test if byte aligned x if so fast path REP MOVS
         test    ax, 7                       ; x modulo 8 is 0? 
         jz      FAST
@@ -44,10 +51,12 @@ FAST:   // 2.1 test if odd width skip MOVSB if even
         test    ax, 1 
         jz      EVEN
         
-        jmp     END
+        ?jmp     END
 EVEN:   // 3.2 MOVSW width loop height
-        
-END:    popf
+        dx loop height
+            cx rep width
+END:    pop     bp
+        popf
         pop     es
         pop     ds
     }
