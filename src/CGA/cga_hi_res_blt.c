@@ -25,6 +25,8 @@ void cga_hi_res_fill_vram(const char* data) {
     }
 }
 
+//  AX = x, DX = y, BX = w 
+// 8.25.3.3 Predefined "__watcall" Alias parm routine [ax bx cx dx] stack
 void __fastcall cga_hi_res_blt(cga_coord_t x, cga_coord_t y, cga_coord_t w, cga_coord_t h, const char* data) {
     __asm {
         .8086
