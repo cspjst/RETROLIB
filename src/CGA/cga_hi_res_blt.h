@@ -3,7 +3,7 @@
 
 #include "cga_types.h"
 
-void cga_hi_res_full_screen_blt(const char* data);
+void cga_hi_res_fill_vram_blt(const char* data);
 
 void cga_hi_res_blt(cga_coord_t x, cga_coord_t y, cga_coord_t w, cga_coord_t h, const char* data);
 
