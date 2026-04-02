@@ -25,9 +25,8 @@ void cga_hi_res_fill_vram(const char* data) {
     }
 }
 
-//  AX = x, DX = y, BX = w 
-// 8.25.3.3 Predefined "__watcall" Alias parm routine [ax bx cx dx] stack
-void __fastcall cga_hi_res_blt(cga_coord_t x, cga_coord_t y, cga_coord_t w, cga_coord_t h, const char* data) {
+// 8.25.3.3 Predefined "__watcall" calling convention [ax bx cx dx] stack
+void __watcall cga_hi_res_blt(cga_coord_t x, cga_coord_t y, cga_coord_t w, cga_coord_t h, const char* data) {
     __asm {
         .8086
         push    ds
@@ -37,14 +36,18 @@ void __fastcall cga_hi_res_blt(cga_coord_t x, cga_coord_t y, cga_coord_t w, cga_
         lds     si, data                    ; DS:SI source RAM
         les     di, CGA_VRAM_PTR            ; ES:DI destination VRAM
         // 1.0 test if byte aligned x if so fast path REP MOVS
-
+        test    ax, 7                       ; x modulo 8 is 0? 
+        jz      FAST
         
-
+        jmp     END
 FAST:   // 2.1 test if odd width skip MOVSB if even
-
-        // 2.2 MOVSW width loop height
-
-        popf
+        test    ax, 1 
+        jz      EVEN
+        
+        jmp     END
+EVEN:   // 3.2 MOVSW width loop height
+        
+END:    popf
         pop     es
         pop     ds
     }
