@@ -1,5 +1,4 @@
 #include "cga_hi_res_blt.h"
-
 #include "cga_constants.h"
 
 void cga_hi_res_fill_vram(const char* data) {
