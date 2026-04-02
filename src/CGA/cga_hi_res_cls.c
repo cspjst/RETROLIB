@@ -12,7 +12,7 @@ void __fastcall cga_hi_res_cls(cga_colour_t pattern) {
         les     di, CGA_VRAM_PTR            ; ES:DI points to start VRAM
         mov     cx, CGA_SCREEN_WORDS        ; 2000h words
         cld                                 ; increment DI
-        rep     stosw                       ; store AX all VRAM
+        rep     stosw                       ; store AX full screen VRAM
 
         popf
         pop     es
