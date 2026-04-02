@@ -146,7 +146,7 @@ void test_cga() {
     env_set_video_mode(CGA_GRAPHICS_MONOCHROME_640X200);
     bios_read_system_clock(&t1);
     cga_hi_res_cls(0xAA);
-    //draw_test_pattern();
+    draw_test_pattern();
     bios_read_system_clock(&t2);
     getchar();
     env_set_video_mode(m);
