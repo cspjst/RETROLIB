@@ -1,3 +1,8 @@
+/**
+ * @author      Jeremy Simon Thornton
+ * @copyright   2026 Jeremy Simon Thornton
+ * @version     0.1.0
+ */
 #ifndef CGA_HI_RES_PLOT_H
 #define CGA_HI_RES_PLOT_H
 
