@@ -98,22 +98,24 @@ const void* log_mem_block(dos_mem_block_t mem_block) {
 }
 
 void log_timestamp() {
-    dos_date_t d;
-    dos_time_t t;
-    char stamp[19]; // YYYY-MM-DD HH:MM:SS
+    dos_time_t t = {0};
+    dos_date_t d = {0};
+    char date[11];      // YYYY-MM-DD
+    char time[9];       // HH:MM:SS
     dos_get_date(&d);
     dos_get_time(&t);
-    char* p = dos_date_to_str(&d, stamp, '-');
-    *p++ = ' ';
-    dos_time_to_str(&t, p, ':');
-    log_chars(stamp, 19, 0,  0, ' ');
+    dos_date_to_str(&d, date, '-');
+    dos_time_to_str(&t, time, ':');
+    fprintf(ostream, "%s %s ", date, time);
 }
 
 void log_mcb(const dos_mcb_t* mcb) {
     dos_address_t addr;
     addr.ptr = (void*)mcb;
     fprintf(ostream, "MCB @0x%04X ", addr.segoff.segment);
-    fprintf(ostream,"ID 0x%02X %c ", mcb->chain_id, mcb->chain_id);
+    fprintf(ostream,"ID 0x%02X ", mcb->chain_id);
     fprintf(ostream,"PID 0x%04X ", mcb->pid);
-    fprintf(ostream,"Size %5uparas %lubytes\n", mcb->block_size, mcb->block_size * 16UL);
+    fprintf(ostream,"Size %lu ", mcb->block_size * 16UL);
+    log_chars(mcb->reserved, DOS_PARAGRAPH_SIZE, 0, 0, 0);
+    fprintf(ostream,"\n");
 }

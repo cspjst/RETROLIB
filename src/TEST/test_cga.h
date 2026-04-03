@@ -159,7 +159,7 @@ void test_bmp() {
     if(!arena) printf("Failed to create arena!\n");
     dos_mcb_t* mcb = mem_arena_mcb(arena);
     set_log_stream(stderr);
-    log_mcb(mcb);
+    log_timestamp(); log_mcb(mcb);
     printf("arena capacity %lu bytes\n", mem_arena_capacity(arena));
     printf("arena size %lu bytes\n", mem_arena_size(arena));
     cga_bitmap_t bmp;

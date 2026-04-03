@@ -65,6 +65,7 @@ void* mem_arena_alloc(mem_arena_t* arena, dos_memsize_t byte_request) {
 }
 
 dos_memsize_t mem_free_arena(mem_arena_t* arena) {
+    if(!arena) return 0;
 	dos_memsize_t freed = mem_arena_capacity(arena);
 	if(dos_free_allocated_memory_blocks(arena->base.segoff.segment) != 0) return 0;
 	arena->base.ptr = arena->begin.ptr = arena->free.ptr = arena->end.ptr = 0;
