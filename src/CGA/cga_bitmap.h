@@ -19,6 +19,7 @@ typedef struct {
     cga_bmp_resolution_t res;
     cga_coord_t width;
     cga_coord_t height;
+    dos_memsize_t size;
     char* data;         // limited to 64K max
 } cga_bitmap_t;
 

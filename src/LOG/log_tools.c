@@ -108,3 +108,12 @@ void log_timestamp() {
     dos_time_to_str(&t, p, ':');
     log_chars(stamp, 19, 0,  0, ' ');
 }
+
+void log_mcb(const dos_mcb_t* mcb) {
+    dos_address_t addr;
+    addr.ptr = (void*)mcb;
+    fprintf(ostream, "MCB @0x%04X ", addr.segoff.segment);
+    fprintf(ostream,"ID 0x%02X %c ", mcb->chain_id, mcb->chain_id);
+    fprintf(ostream,"PID 0x%04X ", mcb->pid);
+    fprintf(ostream,"Size %5uparas %lubytes\n", mcb->block_size, mcb->block_size * 16UL);
+}

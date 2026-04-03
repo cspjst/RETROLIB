@@ -26,9 +26,17 @@ FILE* cga_read_meta_raw_pbm(const char* file_path, cga_bitmap_t* bmp) {
         if (line[0] == '#') continue;           // skip comments
         if (sscanf(line, "%hu %hu", &bmp->width, &bmp->height) == 2) {
             bmp->res = CGA_HI_RES;              // mode 6 data
+            bmp->size = ((bmp->width + 7) >> 3) * bmp->height;  // round up width to bytes
             return f;                           // a valid PBM file to work with
         }
     }
     errno = EINVAL;                             // POSIX error Invalid argument
     return NULL;                                // the PBM header was malformed
+}
+
+dos_memsize_t cga_load_bmp_raw_pbm(FILE* f, cga_bitmap_t* bmp) {
+    dos_memsize_t n = 0;
+    if(!f) return n;
+
+    return n;
 }

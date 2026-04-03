@@ -32,6 +32,6 @@ void* mem_arena_alloc(mem_arena_t* arena, dos_memsize_t byte_request);
 
 dos_memsize_t mem_free_arena(mem_arena_t* arena);
 
-const char* mem_arena_mcb(mem_arena_t* arena);
+dos_mcb_t* mem_arena_mcb(mem_arena_t* arena);
 
 #endif

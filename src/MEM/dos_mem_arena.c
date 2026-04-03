@@ -18,12 +18,14 @@
 #include "../../doslib/src/DOS/dos_memory_services.h"
 #include "../../doslib/src/DOS/dos_memory_types.h"
 
+//#include <stdio.h>
+
 #pragma pack(1)
 typedef struct private_mem_arena {
     dos_address_t base; // base address of the arena (includes this struct)
-    char*   begin;      // pointer to the start of arena after this struct
-    char*   free;       // pointer to start of free memory, initially after this struct
-    char*   end;        // end address limit of useable arena memory
+    dos_address_t begin;      // pointer to the start of arena after this struct
+    dos_address_t free;       // pointer to start of free memory, initially after this struct
+    dos_address_t end;        // end address limit of useable arena memory
 } mem_arena_t;
 #pragma pack()
 
@@ -37,36 +39,40 @@ mem_arena_t* mem_new_arena(dos_memsize_t paragraphs) {
 	// success DOS could fulfill the memory request
 	mem_arena_t* arena = (mem_arena_t*)base.ptr;
 	arena->base = base;
-	arena->begin = arena->free = (char*)arena->base.ptr + sizeof(mem_arena_t);
-	arena->end = arena->begin + (paragraphs * DOS_PARAGRAPH_SIZE);
+	arena->begin.memloc = arena->free.memloc = arena->base.memloc + sizeof(mem_arena_t);
+	arena->end.memloc = arena->begin.memloc + (paragraphs * DOS_PARAGRAPH_SIZE);
+	//printf("arena->base  = %p\n",	arena->base.ptr);
+	//printf("arena->begin = %p\n",	arena->begin.ptr);
+	//printf("arena->free  = %p\n",	arena->free.ptr);
+	//printf("arena->end   = %p\n",	arena->end.ptr);
 	return arena;
 }
 
 dos_memsize_t mem_arena_size(mem_arena_t* arena) {
-	return arena->end - arena->free;
+	return arena->end.memloc - arena->free.memloc;
 }
 
 dos_memsize_t mem_arena_capacity(mem_arena_t* arena) {
-	return arena->end - arena->begin;
+	return arena->end.memloc - arena->begin.memloc;
 }
 
 void* mem_arena_alloc(mem_arena_t* arena, dos_memsize_t byte_request) {
 	char* p;
 	if (byte_request > mem_arena_size(arena)) return (void*)0;  // unable fulfill request
-	p = arena->free;					// initialize return value points to requested block
-	arena->free += byte_request;		// shrink pool size
+	p = arena->free.ptr;					// initialize return value points to requested block
+	arena->free.memloc += byte_request;		// shrink pool size
 	return p;
 }
 
 dos_memsize_t mem_free_arena(mem_arena_t* arena) {
 	dos_memsize_t freed = mem_arena_capacity(arena);
 	if(dos_free_allocated_memory_blocks(arena->base.segoff.segment) != 0) return 0;
-	arena->base.ptr = arena->begin = arena->free = arena->end = (void*)0;
+	arena->base.ptr = arena->begin.ptr = arena->free.ptr = arena->end.ptr = 0;
 	return freed;
 }
 
-const char* mem_arena_mcb(mem_arena_t* arena) {
+dos_mcb_t* mem_arena_mcb(mem_arena_t* arena) {
 	dos_address_t m = arena->base;
 	m.segoff.segment--;
-	return m.ptr;
+    return (dos_mcb_t*)m.ptr;
 }

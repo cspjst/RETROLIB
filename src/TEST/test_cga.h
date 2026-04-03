@@ -16,6 +16,10 @@
 #include "../ENV/env_video_mode.h"
 #include "../ENV/env_time.h"
 
+#include "../MEM/dos_mem_arena.h"
+
+#include "../LOG/log_tools.h"
+
 #include "../../doslib/bioslib/src/BIOS/bios_clock_services.h"
 
 /* 4x4 Bayer Dithering Matrix for simulating grayscale */
@@ -151,10 +155,23 @@ void test_pattern(void) {
 }
 
 void test_bmp() {
+    mem_arena_t* arena = mem_new_arena(4096);   // 64K
+    if(!arena) printf("Failed to create arena!\n");
+    dos_mcb_t* mcb = mem_arena_mcb(arena);
+    set_log_stream(stderr);
+    log_mcb(mcb);
+    printf("arena capacity %lu bytes\n", mem_arena_capacity(arena));
+    printf("arena size %lu bytes\n", mem_arena_size(arena));
     cga_bitmap_t bmp;
     char fname[] = "../res/joker.pbm";
-    if(!cga_read_meta_raw_pbm(fname, &bmp)) printf("%s \"%s\"\n", strerror(errno), fname);
+    FILE* f = cga_read_meta_raw_pbm(fname, &bmp);
+    if(!f) printf("%s \"%s\"\n", strerror(errno), fname);
     printf("%hu x %hu\n", bmp.width, bmp.height);
+    bmp.data = (char*)mem_arena_alloc(arena, bmp.size);
+    if(!bmp.data) printf("Failed to allocate %lu bytes!\n", bmp.size);
+    printf("%lu bytes loaded\n", cga_load_bmp_raw_pbm(f, &bmp));
+    fclose(f);
+    printf("%lu bytes freed\n", mem_free_arena(arena));
 }
 
 void test_cga() {
