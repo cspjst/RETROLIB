@@ -1,6 +1,8 @@
 #ifndef TEST_CGA_H
 #define TEST_CGA_H
 
+#include <errno.h>
+#include <string.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
@@ -9,6 +11,7 @@
 #include "../CGA/cga_hi_res_constants.h"
 #include "../CGA/cga_hi_res_plot.h"
 #include "../CGA/cga_hi_res_cls.h"
+#include "../CGA/cga_bitmap.h"
 
 #include "../ENV/env_video_mode.h"
 #include "../ENV/env_time.h"
@@ -89,11 +92,15 @@ static void draw_dithered_pixel(cga_coord_t x, cga_coord_t y, uint8_t intensity)
 }
 
 /* Main Test Pattern Routine */
-void draw_test_pattern(void) {
+void test_pattern(void) {
     const cga_coord_t WIDTH = 640;
     const cga_coord_t HEIGHT = 200;
     const cga_coord_t CX = WIDTH / 2;
     const cga_coord_t CY = HEIGHT / 2;
+    bios_ticks_since_midnight_t t1, t2;
+
+    bios_read_system_clock(&t1);
+    cga_hi_res_cls(0xAA);
 
     /* 1. Paint White Background */
     draw_rect(0, 0, WIDTH - 1, HEIGHT - 1, CGA_WHITE);
@@ -138,19 +145,27 @@ void draw_test_pattern(void) {
         cga_plot(CX, CY + i, CGA_BLACK);
         cga_plot(CX, CY - i, CGA_BLACK);
     }
+
+    bios_read_system_clock(&t2);
+    printf("Time = %fsec\n", env_ticks_to_seconds(t2-t1));
+}
+
+void test_bmp() {
+    cga_bitmap_t bmp;
+    char fname[] = "../res/joker.pbm";
+    if(!cga_read_meta_raw_pbm(fname, &bmp)) printf("%s \"%s\"\n", strerror(errno), fname);
+    printf("%hu x %hu\n", bmp.width, bmp.height);
 }
 
 void test_cga() {
-    bios_ticks_since_midnight_t t1, t2;
     bios_video_mode_t m = env_get_video_mode();
     env_set_video_mode(CGA_GRAPHICS_MONOCHROME_640X200);
-    bios_read_system_clock(&t1);
-    cga_hi_res_cls(0xAA);
-    draw_test_pattern();
-    bios_read_system_clock(&t2);
+
+    //test_pattern();
+    test_bmp();
+
     getchar();
     env_set_video_mode(m);
-    printf("%f\n", env_ticks_to_seconds(t2-t1));
 }
 
 #endif

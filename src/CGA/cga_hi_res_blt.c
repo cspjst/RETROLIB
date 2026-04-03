@@ -48,7 +48,7 @@ void __watcall cga_hi_res_blt(cga_coord_t x, cga_coord_t y, cga_coord_t w, cga_c
         add     di, dx                      ; add in column byte
         // 1.2 test if byte aligned x if so fast path REP MOVS
         test    ax, 7                       ; x modulo 8 is 0?
-        jz      FAST                        ; no shifting needed
+        //jz      FAST                        ; no shifting needed
 /*
 
         jmp     END
