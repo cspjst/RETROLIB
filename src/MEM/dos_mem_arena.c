@@ -36,15 +36,10 @@ mem_arena_t* mem_new_arena(dos_memsize_t paragraphs) {
 	    paragraphs + ((sizeof(mem_arena_t) + DOS_PARAGRAPH_SIZE - 1) / DOS_PARAGRAPH_SIZE),
 		&base.segoff.segment
 	) != 0) return (void*)0;
-	// success DOS could fulfill the memory request
 	mem_arena_t* arena = (mem_arena_t*)base.ptr;
 	arena->base = base;
 	arena->begin.memloc = arena->free.memloc = arena->base.memloc + sizeof(mem_arena_t);
 	arena->end.memloc = arena->begin.memloc + (paragraphs * DOS_PARAGRAPH_SIZE);
-	//printf("arena->base  = %p\n",	arena->base.ptr);
-	//printf("arena->begin = %p\n",	arena->begin.ptr);
-	//printf("arena->free  = %p\n",	arena->free.ptr);
-	//printf("arena->end   = %p\n",	arena->end.ptr);
 	return arena;
 }
 

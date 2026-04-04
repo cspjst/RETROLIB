@@ -13,6 +13,7 @@
 #include "../CGA/cga_hi_res_plot.h"
 #include "../CGA/cga_hi_res_cls.h"
 #include "../CGA/cga_bitmap.h"
+#include "../CGA/cga_hi_res_blt.h"
 
 #include "../ENV/env_video_mode.h"
 #include "../ENV/env_time.h"
@@ -22,6 +23,19 @@
 #include "../LOG/log_tools.h"
 
 #include "../../doslib/bioslib/src/BIOS/bios_clock_services.h"
+
+#include <string.h>  // for memset
+
+void cga_bitmap_fill_test(cga_bitmap_t* bmp) {
+    if(!bmp || !bmp->data) return;
+
+    dos_memsize_t bank_size = bmp->size / 2;  // your constraint: even size
+    unsigned char* even = (unsigned char*)bmp->data;
+    unsigned char* odd  = even + bank_size;
+
+    memset(even, 0xAF, bank_size);
+    memset(odd,  0xFF, bank_size);
+}
 
 /* 4x4 Bayer Dithering Matrix for simulating grayscale */
 static const uint8_t dither_matrix[4][4] = {
@@ -158,19 +172,27 @@ void test_pattern(void) {
 void test_bmp() {
     mem_arena_t* arena = mem_new_arena(4096);   // 64K
     if(!arena) printf("Failed to create arena!\n");
-    dos_mcb_t* mcb = mem_arena_mcb(arena);
-    set_log_stream(stderr);
-    log_timestamp(); log_mcb(mcb);
     printf("arena capacity %lu bytes\n", mem_arena_capacity(arena));
     printf("arena size %lu bytes\n", mem_arena_size(arena));
-    cga_bitmap_t bmp;
+
     char fname[] = "../res/joker.pbm";
-    FILE* f = cga_read_meta_raw_pbm(fname, &bmp);
+    cga_bitmap_t bmp = {0};
+    FILE* f = fopen(fname, "rb");
+    if(!f) printf("fopen: %s \"%s\"\n", strerror(errno), fname);
+
+    assert(cga_read_meta_raw_pbm(f, &bmp));
     if(!f) printf("%s \"%s\"\n", strerror(errno), fname);
     printf("%hu x %hu\n", bmp.width, bmp.height);
     bmp.data = (char*)mem_arena_alloc(arena, bmp.size);
     if(!bmp.data) printf("Failed to allocate %lu bytes!\n", bmp.size);
-    printf("%lu bytes loaded\n", cga_load_bmp_raw_pbm(f, &bmp));
+    //printf("%lu bytes loaded\n", cga_load_bmp_raw_pbm(f, &bmp));
+
+    //cga_hi_res_cls(0xFF);
+    cga_bitmap_fill_test(&bmp);
+    cga_hi_res_screen_blt(bmp.data);
+
+    printf("arena size %lu bytes\n", mem_arena_size(arena));
+
     fclose(f);
     printf("%lu bytes freed\n", mem_free_arena(arena));
 }
@@ -181,8 +203,6 @@ void test_cga() {
 
     //test_pattern();
     test_bmp();
-
-    assert(log_mcb_walk());
 
     getchar();
     env_set_video_mode(m);

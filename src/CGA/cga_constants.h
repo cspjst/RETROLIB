@@ -17,12 +17,13 @@
 #define CGA_VIDEO_RAM_SEGMENT	0B800h
 #define CGA_EVEN_VRAM_SEGMENT	0B800h
 #define CGA_ODD_VRAM_SEGMENT	0BA00h
+#define CGA_EVEN_BANK           0
+#define CGA_ODD_BANK            2000h
 #define CGA_BYTES_PER_LINE		80
 #define CGA_WORDS_PER_LINE      40
+#define CGA_WORDS_PER_BANK      4000
 #define CGA_SCREEN_BYTES        16384
 #define CGA_SCREEN_WORDS        8192
-
-static char* CGA_VRAM_PTR = (char*)0xB8000000;
 
 // CGA Mode Control Register at I/O address
 #define CGA_CONTROL_REG			3D8h

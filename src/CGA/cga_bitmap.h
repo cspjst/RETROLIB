@@ -26,9 +26,9 @@ typedef struct {
 /**
  * The portable bitmap format (PBM) as the raw byte format is ideal for mode 6
  */
- FILE* cga_read_meta_raw_pbm(const char* file_path, cga_bitmap_t* bmp);
+ FILE* cga_read_meta_raw_pbm(FILE* f, cga_bitmap_t* bmp);
 
- FILE* cga_write_meta_raw_pbm(const char* file_path, cga_bitmap_t* bmp);
+ FILE* cga_write_meta_raw_pbm(FILE* f, cga_bitmap_t* bmp);
 
 /**
  * With a reserved, sized memory block in hand, load data into 2 memory blocks

@@ -7,7 +7,7 @@
 #include "cga_constants.h"
 #include "cga_lookup_table_y.h"
 
-void cga_hi_res_fill_vram(const char* data) {
+void cga_hi_res_screen_blt(const char* data) {
     __asm {
         .8086
         push    ds
@@ -15,10 +15,15 @@ void cga_hi_res_fill_vram(const char* data) {
         pushf
 
         lds     si, data                    ; DS:SI source RAM
-        les     di, CGA_VRAM_PTR            ; ES:DI destination VRAM
-        mov     cx, CGA_SCREEN_WORDS        ; 2000h words
+        mov     ax, CGA_VIDEO_RAM_SEGMENT
+        mov     es, ax
+        mov     di, CGA_EVEN_BANK           ; ES:DI points to even VRAM
         cld                                 ; increment DI
-        rep     movsw                       ; copy 16K to VRAM
+        mov     cx, CGA_WORDS_PER_BANK      ; 200 even line buffer words
+        rep     movsw                       ; copy to VRAM
+        mov     di, CGA_ODD_BANK            ; ES:DI points to odd VRAM
+        mov     cx, CGA_WORDS_PER_BANK      ; 200 odd line buffer words
+        rep     movsw                       ; copy to VRAM
 
         popf
         pop     es
@@ -35,7 +40,9 @@ void __watcall cga_hi_res_blt(cga_coord_t x, cga_coord_t y, cga_coord_t w, cga_c
         pushf
         // 1.0 prepare registers
         lds     si, data                    ; DS:SI source RAM
-        les     di, CGA_VRAM_PTR            ; ES:DI destination VRAM
+        mov     di, CGA_VIDEO_RAM_SEGMENT
+        mov     es, di
+        sub     di, di                      ; ES:DI points to even VRAM
         xchg    bx, cx                      ; CX = width, BX = height
         mov     di, dx                      ; DI = y
         shl     di, 1                       ; turn y into a word table index

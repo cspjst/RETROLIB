@@ -12,10 +12,12 @@ void __fastcall cga_hi_res_cls(cga_colour_t pattern) {
         push    es
         pushf
 
-        mov     ah, al                      ; duplicate pattern byte
-        les     di, CGA_VRAM_PTR            ; ES:DI points to start VRAM
+        mov     dx, CGA_VIDEO_RAM_SEGMENT
+        mov     es, dx
+        xor     di, di
         mov     cx, CGA_SCREEN_WORDS        ; 2000h words
         cld                                 ; increment DI
+        mov     ah, al                      ; duplicate pattern byte
         rep     stosw                       ; store AX full screen VRAM
 
         popf
