@@ -59,6 +59,8 @@ const void* log_block(dos_mem_block_t mem_block);
 // ISO 8601 subset RFC 3339 format YYYY-MM-DD hh:mm:ss
 void log_timestamp();
 
-void log_mcb(const dos_mcb_t* mcb);
+const dos_mcb_t*  log_mcb(const dos_mcb_t* mcb);
+
+const dos_mcb_t*  log_mcb_walk();
 
 #endif

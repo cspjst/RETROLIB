@@ -109,13 +109,28 @@ void log_timestamp() {
     fprintf(ostream, "%s %s ", date, time);
 }
 
-void log_mcb(const dos_mcb_t* mcb) {
+const dos_mcb_t* log_mcb(const dos_mcb_t* mcb) {
+    if(!mcb) return mcb;
     dos_address_t addr;
     addr.ptr = (void*)mcb;
     fprintf(ostream, "MCB @0x%04X ", addr.segoff.segment);
     fprintf(ostream,"ID 0x%02X ", mcb->chain_id);
     fprintf(ostream,"PID 0x%04X ", mcb->pid);
     fprintf(ostream,"Size %lu ", mcb->block_size * 16UL);
-    log_chars(mcb->reserved, DOS_PARAGRAPH_SIZE, 0, 0, 0);
+    log_chars((char*)mcb, DOS_PARAGRAPH_SIZE, 0, 0, 0);
     fprintf(ostream,"\n");
+    if(mcb->chain_id != 'M' && mcb->chain_id != 'Z') return NULL;
+    return mcb;
+}
+
+const dos_mcb_t* log_mcb_walk() {
+    dos_address_t mcb = {0};
+    mcb.ptr = dos_get_first_mcb();
+    if (!mcb.ptr) return NULL;
+    if(!log_mcb((dos_mcb_t*)mcb.ptr)) return NULL;
+    do {
+        mcb.segoff.segment += ((dos_mcb_t*)mcb.ptr)->block_size + 1;
+        if(!log_mcb((dos_mcb_t*)mcb.ptr)) return NULL;
+    } while(((dos_mcb_t*)mcb.ptr)->chain_id == 'M');
+    return (dos_mcb_t*)mcb.ptr;
 }

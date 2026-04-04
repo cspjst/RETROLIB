@@ -7,6 +7,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <math.h>
+#include <assert.h>
 
 #include "../CGA/cga_hi_res_constants.h"
 #include "../CGA/cga_hi_res_plot.h"
@@ -180,6 +181,8 @@ void test_cga() {
 
     //test_pattern();
     test_bmp();
+
+    assert(log_mcb_walk());
 
     getchar();
     env_set_video_mode(m);
