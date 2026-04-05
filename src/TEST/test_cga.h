@@ -24,9 +24,9 @@
 
 #include "../../doslib/bioslib/src/BIOS/bios_clock_services.h"
 
-#include <string.h>  // for memset
+#include <string.h>
 
-void cga_bitmap_fill_test(cga_bitmap_t* bmp) {
+void cga_make_bitmap(cga_bitmap_t* bmp) {
     if(!bmp || !bmp->data) return;
 
     dos_memsize_t bank_size = bmp->size / 2;  // your constraint: even size
@@ -185,10 +185,10 @@ void test_bmp() {
     printf("%hu x %hu\n", bmp.width, bmp.height);
     bmp.data = (char*)mem_arena_alloc(arena, bmp.size);
     if(!bmp.data) printf("Failed to allocate %lu bytes!\n", bmp.size);
-    //printf("%lu bytes loaded\n", cga_load_bmp_raw_pbm(f, &bmp));
+    printf("%lu bytes loaded\n", cga_load_bmp_raw_pbm(f, &bmp));
 
     //cga_hi_res_cls(0xFF);
-    cga_bitmap_fill_test(&bmp);
+    //cga_bitmap_fill_test(&bmp);
     cga_hi_res_screen_blt(bmp.data);
 
     printf("arena size %lu bytes\n", mem_arena_size(arena));
