@@ -12,4 +12,6 @@ void cga_hi_res_screen_blt(const char* data);
 
 void __watcall cga_hi_res_blt(cga_coord_t x, cga_coord_t y, cga_coord_t w, cga_coord_t h, const char* data);
 
+void __watcall cga_hi_res_mask_blt(cga_coord_t x, cga_coord_t y, cga_coord_t w, cga_coord_t h, const char* data, const char* mask);
+
 #endif

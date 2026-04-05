@@ -47,44 +47,47 @@ void __watcall cga_hi_res_blt(cga_coord_t x, cga_coord_t y, cga_coord_t w, cga_c
         mov     di, CGA_ROW_OFFSETS[di]     ; ES:DI points to even VRAM
         lds     si, data                    ; DS:SI source RAM
         mov     dx, ax                      ; copy x
+        cld                                 ; increase SI & DI
         // 1.1 calculate offset
         shr     dx, 1                       ; calculate column byte x / 8
         shr     dx, 1                       ; 8086 limited to single step shifts
         shr     dx, 1                       ;
         add     di, dx                      ; add in column byte
         // 1.2  convert pixel width to byte width
-        xchg    bx, cx                      ; CX = width enable rep
+        xchg    bx, cx                      ; CX = width enable rep, BX = height
         shr     cx, 1                       ; calculate byte  width w / 8
         shr     cx, 1                       ; 8086 limited to single step shifts
         shr     cx, 1                       ;
         // 1.3 test if byte aligned x if so fast path REP MOVS
         test    ax, 7                       ; x modulo 8 is 0?
         jz      FAST                        ; no shifting needed
-
-
+        // 2.0 TODO lodsb, shr, and mask or es[di], inc di
         jmp     END
-FAST:   // 2.1 test if odd width skip MOVSB if even
+FAST:   // 3.1 test if odd width skip MOVSB if even
         test    cx, 1
         jz      EVEN
-        movsb
-        dec     cx
-        shr     cx, 1                       ; w/2 convert to word count
-        rep     stosw
-        jmp     END
-EVEN:   // 3.2 MOVSW width loop height
+        // 3.2 prepare next line step
+        //mov     ax,
+        mov     dx, cx                      ; copy byte width
+
+        movsb                               ; AL = DS:SI
+        dec     cx                          ; reduce count
+
         shr     cx, 1                       ; w/2 convert to word count
         rep     movsw
+
+        mov     cx, dx                      ; restore CX
+
+
         jmp     END
-/*
-L1:     mov     ax, cx                      ; copy CX
-        mov     bx, di                      ; copy DI
-        rep     movsw                       ; move row of words
-        mov     di, bx                      ; restore DI
-        add     di, CGA_BYTES_PER_LINE      ; next row
-        mov     cx, ax
-        dec     dx
-        jnz     L1
-*/
+EVEN:   // 4.2
+        mov     dx, cx                      ; copy byte width
+
+        shr     cx, 1                       ; w/2 convert to word count
+        rep     movsw
+
+
+
 END:    popf
         pop     es
         pop     ds

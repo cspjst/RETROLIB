@@ -208,7 +208,7 @@ void test_screen_blt() {
 }
 
 void test_blt() {
-    int w = 8;
+    int w = 40;
     int h = 8;
     mem_arena_t* arena = mem_new_arena(4096);   // 64K
     if(!arena) printf("Failed to create arena!\n");
@@ -217,7 +217,7 @@ void test_blt() {
     bmp.data = (char*)mem_arena_alloc(arena, bmp.size);
     make_data_1bit(&bmp);
 
-    cga_hi_res_blt(0, 99, bmp.width, bmp.height, bmp.data);
+    cga_hi_res_blt(320, 99, bmp.width, bmp.height, bmp.data);
 
     mem_free_arena(arena);
 }
