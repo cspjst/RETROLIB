@@ -200,7 +200,7 @@ void test_screen_blt() {
     assert(cga_load_bmp_raw_pbm(f, &bmp) == bmp.size);
 
     //cga_hi_res_cls(0xFF);
-    //make_data_1bit(&bmp);
+    make_data_1bit(&bmp);
     cga_hi_res_screen_blt(bmp.data);
 
     fclose(f);
@@ -208,7 +208,7 @@ void test_screen_blt() {
 }
 
 void test_blt() {
-    int w = 40;
+    int w = 8;
     int h = 8;
     mem_arena_t* arena = mem_new_arena(4096);   // 64K
     if(!arena) printf("Failed to create arena!\n");
