@@ -26,15 +26,29 @@
 
 #include <string.h>
 
-void cga_make_bitmap(cga_bitmap_t* bmp) {
+void make_data_1bit(cga_bitmap_t* bmp) {
     if(!bmp || !bmp->data) return;
 
-    dos_memsize_t bank_size = bmp->size / 2;  // your constraint: even size
+    dos_memsize_t bank_size = bmp->size / 2;
     unsigned char* even = (unsigned char*)bmp->data;
     unsigned char* odd  = even + bank_size;
 
-    memset(even, 0xAF, bank_size);
-    memset(odd,  0xFF, bank_size);
+    memset(even, 0xE7, bank_size);
+    memset(odd,  0x3C, bank_size);
+}
+
+void make_data_2bit(cga_bitmap_t* bmp) {
+    if(!bmp || !bmp->data || bmp->height < 4) return;
+
+    uint16_t bpl = (bmp->width + 3) >> 2;  // bytes per line
+    dos_memsize_t bank_sz = (dos_memsize_t)bpl * (bmp->height / 2);
+    unsigned char* even = (unsigned char*)bmp->data;
+    unsigned char* odd  = even + bank_sz;
+
+    memset(even,        0x00, bpl);  // Line 0 (even): Black   (00 00 00 00)
+    memset(odd,         0x55, bpl);  // Line 1 (odd):  Color 1 (01 01 01 01)
+    memset(even + bpl,  0xAA, bpl);  // Line 2 (even): Color 2 (10 10 10 10)
+    memset(odd + bpl,   0xFF, bpl);  // Line 3 (odd):  Color 3 (11 11 11 11)
 }
 
 /* 4x4 Bayer Dithering Matrix for simulating grayscale */
@@ -169,11 +183,9 @@ void test_pattern(void) {
     printf("Time = %fsec\n", env_ticks_to_seconds(t2-t1));
 }
 
-void test_bmp() {
+void test_screen_blt() {
     mem_arena_t* arena = mem_new_arena(4096);   // 64K
     if(!arena) printf("Failed to create arena!\n");
-    printf("arena capacity %lu bytes\n", mem_arena_capacity(arena));
-    printf("arena size %lu bytes\n", mem_arena_size(arena));
 
     char fname[] = "../res/joker.pbm";
     cga_bitmap_t bmp = {0};
@@ -182,19 +194,32 @@ void test_bmp() {
 
     assert(cga_read_meta_raw_pbm(f, &bmp));
     if(!f) printf("%s \"%s\"\n", strerror(errno), fname);
-    printf("%hu x %hu\n", bmp.width, bmp.height);
+    //printf("%hu x %hu\n", bmp.width, bmp.height);
     bmp.data = (char*)mem_arena_alloc(arena, bmp.size);
     if(!bmp.data) printf("Failed to allocate %lu bytes!\n", bmp.size);
-    printf("%lu bytes loaded\n", cga_load_bmp_raw_pbm(f, &bmp));
+    assert(cga_load_bmp_raw_pbm(f, &bmp) == bmp.size);
 
     //cga_hi_res_cls(0xFF);
-    //cga_bitmap_fill_test(&bmp);
+    //make_data_1bit(&bmp);
     cga_hi_res_screen_blt(bmp.data);
 
-    printf("arena size %lu bytes\n", mem_arena_size(arena));
-
     fclose(f);
-    printf("%lu bytes freed\n", mem_free_arena(arena));
+    mem_free_arena(arena);
+}
+
+void test_blt() {
+    int w = 8;
+    int h = 8;
+    mem_arena_t* arena = mem_new_arena(4096);   // 64K
+    if(!arena) printf("Failed to create arena!\n");
+    cga_bitmap_t bmp;
+    cga_make_bmp(&bmp, 1, w, h);
+    bmp.data = (char*)mem_arena_alloc(arena, bmp.size);
+    make_data_1bit(&bmp);
+
+    cga_hi_res_blt(0, 99, bmp.width, bmp.height, bmp.data);
+
+    mem_free_arena(arena);
 }
 
 void test_cga() {
@@ -202,7 +227,8 @@ void test_cga() {
     env_set_video_mode(CGA_GRAPHICS_MONOCHROME_640X200);
 
     //test_pattern();
-    test_bmp();
+    //test_screen_blt();
+    test_blt();
 
     getchar();
     env_set_video_mode(m);

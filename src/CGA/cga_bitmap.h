@@ -16,7 +16,7 @@
 #include <stdio.h>
 
 typedef struct {
-    cga_bmp_resolution_t res;
+    unsigned short depth;
     cga_coord_t width;
     cga_coord_t height;
     dos_memsize_t size;
@@ -29,6 +29,8 @@ typedef struct {
  FILE* cga_read_meta_raw_pbm(FILE* f, cga_bitmap_t* bmp);
 
  FILE* cga_write_meta_raw_pbm(FILE* f, cga_bitmap_t* bmp);
+
+ cga_bitmap_t* cga_make_bmp(cga_bitmap_t* bmp, unsigned short depth, cga_coord_t width, cga_coord_t height);
 
 /**
  * With a reserved, sized memory block in hand, load data into 2 memory blocks

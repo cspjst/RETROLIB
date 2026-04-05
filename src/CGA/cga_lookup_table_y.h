@@ -9,7 +9,7 @@
 /**
  * CGA Mode 6 Row Offset Table (600x200)
  * 200 entries, 2 bytes each = 400 bytes total
- * Stride = 80 bytes 
+ * Stride = 80 bytes
  */
 static const unsigned short CGA_ROW_OFFSETS[200] = {
    0x0000, 0x2000, 0x0050, 0x2050, 0x00A0, 0x20A0, 0x00F0, 0x20F0, 0x0140, 0x2140,

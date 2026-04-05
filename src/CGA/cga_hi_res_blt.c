@@ -33,43 +33,49 @@ void cga_hi_res_screen_blt(const char* data) {
 
 void __watcall cga_hi_res_blt(cga_coord_t x, cga_coord_t y, cga_coord_t w, cga_coord_t h, const char* data) {
     // AX = x, DX = y, BX = width, CX = height
+    //printf("%u, %u, %u, %u",x,y,w,h);
     __asm {
         .8086
         push    ds
         push    es
         pushf
         // 1.0 prepare registers
-        lds     si, data                    ; DS:SI source RAM
         mov     di, CGA_VIDEO_RAM_SEGMENT
         mov     es, di
-        sub     di, di                      ; ES:DI points to even VRAM
-        xchg    bx, cx                      ; CX = width, BX = height
-        mov     di, dx                      ; DI = y
+        mov     di, dx
         shl     di, 1                       ; turn y into a word table index
-        mov     di, CGA_ROW_OFFSETS[di]     ; load the VRAM row offset address
+        mov     di, CGA_ROW_OFFSETS[di]     ; ES:DI points to even VRAM
+        lds     si, data                    ; DS:SI source RAM
         mov     dx, ax                      ; copy x
         // 1.1 calculate offset
         shr     dx, 1                       ; calculate column byte x / 8
         shr     dx, 1                       ; 8086 limited to single step shifts
         shr     dx, 1                       ;
         add     di, dx                      ; add in column byte
-        // 1.2 test if byte aligned x if so fast path REP MOVS
+        // 1.2  convert pixel width to byte width
+        xchg    bx, cx                      ; CX = width enable rep
+        shr     cx, 1                       ; calculate byte  width w / 8
+        shr     cx, 1                       ; 8086 limited to single step shifts
+        shr     cx, 1                       ;
+        // 1.3 test if byte aligned x if so fast path REP MOVS
         test    ax, 7                       ; x modulo 8 is 0?
-        //jz      FAST                        ; no shifting needed
-/*
+        jz      FAST                        ; no shifting needed
+
 
         jmp     END
 FAST:   // 2.1 test if odd width skip MOVSB if even
         test    cx, 1
         jz      EVEN
-        // 2.2 wallpaper the first byte
-
+        movsb
         dec     cx
-        jz      END
+        shr     cx, 1                       ; w/2 convert to word count
+        rep     stosw
+        jmp     END
 EVEN:   // 3.2 MOVSW width loop height
         shr     cx, 1                       ; w/2 convert to word count
-        jcxz    END                         ; width was zero
-
+        rep     movsw
+        jmp     END
+/*
 L1:     mov     ax, cx                      ; copy CX
         mov     bx, di                      ; copy DI
         rep     movsw                       ; move row of words
@@ -78,9 +84,8 @@ L1:     mov     ax, cx                      ; copy CX
         mov     cx, ax
         dec     dx
         jnz     L1
-
-END:    pop     bp
-        popf
+*/
+END:    popf
         pop     es
         pop     ds
    */ }

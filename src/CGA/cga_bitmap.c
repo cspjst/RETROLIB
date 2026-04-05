@@ -12,8 +12,7 @@ FILE* cga_read_meta_raw_pbm(FILE* f, cga_bitmap_t* bmp) {
     while (fgets(line, sizeof(line), f)) {      // read until dimensions
         if (line[0] == '#') continue;           // skip comments
         if (sscanf(line, "%hu %hu", &bmp->width, &bmp->height) == 2) {
-            bmp->res = CGA_HI_RES;              // mode 6 data
-            bmp->size = ((bmp->width + 7) >> 3) * bmp->height;  // round up width to bytes
+            cga_make_bmp(bmp, 1, bmp->width, bmp->height);
             errno = 0;                          // reset the POSIX error number
             return f;                           // a valid PBM file to work with
         }
@@ -37,4 +36,19 @@ dos_memsize_t cga_load_bmp_raw_pbm(FILE* f, cga_bitmap_t* bmp) {
     }
     errno = 0;                                  // reset the POSIX error number
     return odd.memloc - data.memloc;
+}
+
+cga_bitmap_t* cga_make_bmp(cga_bitmap_t* bmp, unsigned short depth, cga_coord_t width, cga_coord_t height) {
+    if(!bmp || width == 0 || height == 0) return NULL;
+
+    bmp->depth  = depth;
+    bmp->width  = width;
+    bmp->height = height;
+
+    // bytes per line = ceil(width * depth / 8)
+    int bpl = ((dos_memsize_t)width * depth + 7) >> 3;
+    bmp->size = bpl * bmp->height;
+
+    bmp->data = NULL;  // caller allocates via arena or other means
+    return bmp;
 }
