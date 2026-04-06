@@ -12,20 +12,30 @@ void cga_hi_res_screen_blt(const char* data) {
         .8086
         push    ds
         push    es
+        push    bp
         pushf
 
-        lds     si, data                    ; DS:SI source RAM
-        mov     ax, CGA_VIDEO_RAM_SEGMENT
-        mov     es, ax
-        mov     di, CGA_EVEN_BANK           ; ES:DI points to even VRAM
-        cld                                 ; increment DI
-        mov     cx, CGA_WORDS_PER_BANK      ; 200 even line buffer words
-        rep     movsw                       ; copy to VRAM
-        mov     di, CGA_ODD_BANK            ; ES:DI points to odd VRAM
-        mov     cx, CGA_WORDS_PER_BANK      ; 200 odd line buffer words
-        rep     movsw                       ; copy to VRAM
+        cld                                 ; incremental MOVSW
+        mov     di, CGA_VIDEO_RAM_SEGMENT
+        mov     es, di
+        xor     di, di                      ; 0 is an even number so bank 0
+        mov     ax, 1FB0h                   ; 2000h - 80 byte row increment & because add reg, reg is 1 cycle faster than xor reg,imm on 8086
+        mov     bx, CGA_WORDS_PER_ROW       ; 40 words per row
+        mov     dx, CGA_ROWS_PER_BANK       ; 100 rows/bank
+        lds     si, data                    ; DS:SI -> linear source
+        mov     bp, CGA_BYTES_PER_BANK      ; 2000h row decrement
+ROW_LOOP:
+        mov     cx, bx                      ; load REP count
+        rep     movsw                       ; copy 40 word row to bank 0
+        add     di, ax                      ; start of bank 1
+        mov     cx, bx                      ; load REP count
+        rep     movsw                       ; copy 40 word row to bank 1
+        sub     di, bp                      ; start of bank 0
+        dec     dx
+        jnz     ROW_LOOP
 
         popf
+        pop     bp
         pop     es
         pop     ds
     }
@@ -39,7 +49,6 @@ void cga_hi_res_blt(cga_coord_t x, cga_coord_t y, cga_coord_t w, cga_coord_t h, 
         push    bp
         pushf
 
-        // prepare registers
         cld
         mov     ax, x                       ; AX = x
         shr     ax, 1                       ; calculate column byte x / 8
@@ -57,8 +66,7 @@ void cga_hi_res_blt(cga_coord_t x, cga_coord_t y, cga_coord_t w, cga_coord_t h, 
         shl     di, 1                       ; DI is a word offset
         mov     di, CGA_ROW_OFFSETS[di]     ; ES:DI -> VRAM
         add     di, ax                      ; ES:DI -> VRAM (x,y)
-        // at this point BX is free to reuse
-        mov     ax, CGA_BYTES_PER_LINE      ; 80 bytes per line CGA
+        mov     ax, CGA_BYTES_PER_ROW       ; 80 bytes per VRAM row
         sub     ax, cx                      ; 80 - *byte* width
         lds     si, data                    ; DS:SI -> data (safe now)
         // test  x, 1 ; ?byte aligned x position
@@ -73,6 +81,7 @@ FAST:   mov     bx, cx                      ; copy CX byte width
         jz      EVEN                        ; word transfers
         test    di, 2000h
         jnz     OBANK1
+
 OBANK0: mov     cx, bx                      ; set CX byte counter
         rep     movsb                       ; CX(DS:SI -> ES:DI)bytes
         mov     cx, bx                      ; restore CX
@@ -92,6 +101,7 @@ OBANK1: mov     cx, bx                      ; set CX byte counter
 EVEN:   shr     bx, 1
         test    di, 2000h
         jnz     EBANK1
+
 EBANK0: mov     cx, bx                      ; set CX byte counter
         rep     movsw                       ; CX(DS:SI -> ES:DI)bytes
         dec     dx                          ; reduce row count

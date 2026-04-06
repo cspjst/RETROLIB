@@ -229,8 +229,8 @@ void test_cga() {
     env_set_video_mode(CGA_GRAPHICS_MONOCHROME_640X200);
 
     //test_pattern();
-    //test_screen_blt();
-    test_blt();
+    test_screen_blt();
+    //test_blt();
 
     getchar();
     env_set_video_mode(m);
