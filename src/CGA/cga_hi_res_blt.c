@@ -1,7 +1,7 @@
 /**
  * @author      Jeremy Simon Thornton
  * @copyright   2026 Jeremy Simon Thornton
- * @version     0.1.0
+ * @version     0.2.0
  */
 #include "cga_hi_res_blt.h"
 #include "cga_constants.h"
@@ -15,6 +15,15 @@ void cga_hi_res_screen_blt(const char* data) {
         push    bp
         pushf
 
+        mov     dx, CGA_STATUS_REG          ; CGA status port
+WAIT0:  in      al, dx                      ; read status port
+        test    al, 8                       ; in vertical retrace?
+        jnz     WAIT0                       ; wait for it to end
+
+WAIT1:  in      al, dx                      ; read status port
+        test    al, 8                       ; vertical retrace started?
+        jz      WAIT1                       ; wait for it to start
+
         cld                                 ; incremental MOVSW
         mov     di, CGA_VIDEO_RAM_SEGMENT
         mov     es, di
@@ -24,15 +33,15 @@ void cga_hi_res_screen_blt(const char* data) {
         mov     dx, CGA_ROWS_PER_BANK       ; 100 rows/bank
         lds     si, data                    ; DS:SI -> linear source
         mov     bp, CGA_BYTES_PER_BANK      ; 2000h row decrement
-ROW_LOOP:
-        mov     cx, bx                      ; load REP count
+
+ROWS:   mov     cx, bx                      ; load REP count
         rep     movsw                       ; copy 40 word row to bank 0
         add     di, ax                      ; start of bank 1
         mov     cx, bx                      ; load REP count
         rep     movsw                       ; copy 40 word row to bank 1
         sub     di, bp                      ; start of bank 0
-        dec     dx
-        jnz     ROW_LOOP
+        dec     dx                          ; next 2 rows
+        jnz     ROWS                        ; until done
 
         popf
         pop     bp
@@ -49,7 +58,16 @@ void cga_hi_res_blt(cga_coord_t x, cga_coord_t y, cga_coord_t w, cga_coord_t h, 
         push    bp
         pushf
 
-        cld
+        mov     dx, CGA_STATUS_REG          ; CGA status port
+        in      al, dx                      ; read status port
+        test    al, 8                       ; in vertical retrace?
+        jnz     START                       ; already in retrace - risk it (for performance)
+
+WAIT1:  in      al, dx                      ; read status port
+        test    al, 8                       ; vertical retrace started?
+        jz      WAIT1                       ; wait for it to start
+
+START:  cld
         mov     ax, x                       ; AX = x
         shr     ax, 1                       ; calculate column byte x / 8
         shr     ax, 1                       ; 8086 limited to single step shifts

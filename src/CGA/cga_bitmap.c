@@ -21,21 +21,12 @@ FILE* cga_read_meta_raw_pbm(FILE* f, cga_bitmap_t* bmp) {
 }
 
 dos_memsize_t cga_load_bmp_raw_pbm(FILE* f, cga_bitmap_t* bmp) {
-    errno = EINVAL;                             // POSIX error Invalid Arguement
-    if(!f) return 0;
-    errno = EIO;                                // POSIX error Input Ouput
-    dos_address_t even, odd, data;
-    data.ptr = even.ptr = odd.ptr = (void*)bmp->data;
-    odd.memloc += (bmp->size / 2);
-    unsigned short size  = (bmp->width + 7) >> 3;
-    for(int i = 0; i < bmp->height / 2; ++i) {
-        if (fread(even.ptr, 1, size, f) != size) return 0;
-        even.memloc += size;
-        if (fread(odd.ptr, 1, size, f) != size) return 0;
-        odd.memloc += size;
-    }
-    errno = 0;                                  // reset the POSIX error number
-    return odd.memloc - data.memloc;
+    errno = EINVAL;
+    if(!f || !bmp || !bmp->data) return 0;
+    errno = EIO;
+    if (fread(bmp->data, 1, bmp->size, f) != bmp->size) return 0;
+    errno = 0;
+    return bmp->size;
 }
 
 cga_bitmap_t* cga_make_bmp(cga_bitmap_t* bmp, unsigned short depth, cga_coord_t width, cga_coord_t height) {

@@ -201,7 +201,7 @@ void test_screen_blt() {
     assert(cga_load_bmp_raw_pbm(f, &bmp) == bmp.size);
 
     //cga_hi_res_cls(0xFF);
-    make_data_1bit(&bmp);
+    //make_data_1bit(&bmp);
     cga_hi_res_screen_blt(bmp.data);
 
     fclose(f);
@@ -229,8 +229,8 @@ void test_cga() {
     env_set_video_mode(CGA_GRAPHICS_MONOCHROME_640X200);
 
     //test_pattern();
-    test_screen_blt();
-    //test_blt();
+    //test_screen_blt();
+    test_blt();
 
     getchar();
     env_set_video_mode(m);
