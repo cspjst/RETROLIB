@@ -28,27 +28,28 @@
 
 void make_data_1bit(cga_bitmap_t* bmp) {
     if(!bmp || !bmp->data) return;
-
-    dos_memsize_t bank_size = bmp->size / 2;
-    unsigned char* even = (unsigned char*)bmp->data;
-    unsigned char* odd  = even + bank_size;
-
-    memset(even, 0xE7, bank_size);
-    memset(odd,  0x3C, bank_size);
+    uint16_t bpl = bmp->width / 8;           // bytes per line
+    unsigned char* data = (unsigned char*)bmp->data;
+    for (uint16_t y = 0; y < bmp->height; y++) {
+        unsigned char* row = data + (y * bpl);
+        if (y & 1) memset(row, 0x55, bpl);
+        else memset(row, 0xFF, bpl);
+    }
 }
 
 void make_data_2bit(cga_bitmap_t* bmp) {
-    if(!bmp || !bmp->data || bmp->height < 4) return;
-
-    uint16_t bpl = (bmp->width + 3) >> 2;  // bytes per line
-    dos_memsize_t bank_sz = (dos_memsize_t)bpl * (bmp->height / 2);
-    unsigned char* even = (unsigned char*)bmp->data;
-    unsigned char* odd  = even + bank_sz;
-
-    memset(even,        0x00, bpl);  // Line 0 (even): Black   (00 00 00 00)
-    memset(odd,         0x55, bpl);  // Line 1 (odd):  Color 1 (01 01 01 01)
-    memset(even + bpl,  0xAA, bpl);  // Line 2 (even): Color 2 (10 10 10 10)
-    memset(odd + bpl,   0xFF, bpl);  // Line 3 (odd):  Color 3 (11 11 11 11)
+    if(!bmp || !bmp->data) return;
+    uint16_t bpl = bmp->width / 4;           // bytes per line (2 bits/pixel)
+    unsigned char* data = (unsigned char*)bmp->data;
+    for (uint16_t y = 0; y < bmp->height; y++) {
+        unsigned char* row = data + (y * bpl);
+        switch (y % 4) {
+            case 0: memset(row, 0x00, bpl); break;  // Black
+            case 1: memset(row, 0x55, bpl); break;  // Color 1
+            case 2: memset(row, 0xAA, bpl); break;  // Color 2
+            case 3: memset(row, 0xFF, bpl); break;  // Color 3
+        }
+    }
 }
 
 /* 4x4 Bayer Dithering Matrix for simulating grayscale */
@@ -208,8 +209,8 @@ void test_screen_blt() {
 }
 
 void test_blt() {
-    int w = 8;
-    int h = 8;
+    int w = 32;
+    int h = 32;
     mem_arena_t* arena = mem_new_arena(4096);   // 64K
     if(!arena) printf("Failed to create arena!\n");
     cga_bitmap_t bmp;
@@ -217,7 +218,8 @@ void test_blt() {
     bmp.data = (char*)mem_arena_alloc(arena, bmp.size);
     make_data_1bit(&bmp);
 
-    cga_hi_res_blt(320, 99, bmp.width, bmp.height, bmp.data);
+    cga_plot(318, 0, CGA_WHITE);
+    cga_hi_res_blt(320, 1, bmp.width, bmp.height, bmp.data);
 
     mem_free_arena(arena);
 }
