@@ -58,16 +58,7 @@ void cga_hi_res_blt(cga_coord_t x, cga_coord_t y, cga_coord_t w, cga_coord_t h, 
         push    bp
         pushf
 
-        mov     dx, CGA_STATUS_REG          ; CGA status port
-        in      al, dx                      ; read status port
-        test    al, 8                       ; in vertical retrace?
-        jnz     START                       ; already in retrace - risk it (for performance)
-
-WAIT1:  in      al, dx                      ; read status port
-        test    al, 8                       ; vertical retrace started?
-        jz      WAIT1                       ; wait for it to start
-
-START:  cld
+        cld
         mov     ax, x                       ; AX = x
         shr     ax, 1                       ; calculate column byte x / 8
         shr     ax, 1                       ; 8086 limited to single step shifts
@@ -77,13 +68,23 @@ START:  cld
         shr     cx, 1                       ; calculate byte  width w / 8
         shr     cx, 1                       ; 8086 limited to single step shifts
         shr     cx, 1                       ; CX is now *byte* width
-        mov     dx, h                       ; DX = height
         mov     di, CGA_VIDEO_RAM_SEGMENT   ; more 8086 quirks
         mov     es, di                      ; ES = VRAM segment
         mov     di, bx                      ; DI = y
         shl     di, 1                       ; DI is a word offset
         mov     di, CGA_ROW_OFFSETS[di]     ; ES:DI -> VRAM
         add     di, ax                      ; ES:DI -> VRAM (x,y)
+
+        mov     dx, CGA_STATUS_REG          ; CGA status port
+        in      al, dx                      ; read status port
+        test    al, 8                       ; in vertical retrace?
+        jnz     BLT                         ; already in retrace - risk it (for performance)
+
+WAIT1:  in      al, dx                      ; read status port
+        test    al, 8                       ; vertical retrace started?
+        jz      WAIT1                       ; wait for it to start
+    
+BLT:    mov     dx, h                       ; DX = height
         mov     ax, CGA_BYTES_PER_ROW       ; 80 bytes per VRAM row
         sub     ax, cx                      ; 80 - *byte* width
         lds     si, data                    ; DS:SI -> data (safe now)
