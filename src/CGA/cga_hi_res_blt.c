@@ -95,11 +95,12 @@ WAIT1:  in      al, dx                      ; read status port
         jz      WAIT1                       ; wait for it to start
 #ifndef CGA_NO_SYNC
     
-        mov     dx, h                       ; DX = height
+BLT:    mov     dx, h                       ; DX = height
         mov     ax, CGA_BYTES_PER_ROW       ; 80 bytes per VRAM row
         sub     ax, cx                      ; 80 - *byte* width
         lds     si, data                    ; DS:SI -> data (safe now)
-
+    
+// TODO: use bx instead ax for stride then can push sync code closer to VRAM code 
         mov     bx, cx                      ; copy CX byte width
         mov     ax, 2000h                   ; bank 1 add_stride
         sub     ax, cx                      ; add_stride - byte width
