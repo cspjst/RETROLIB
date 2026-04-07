@@ -73,9 +73,9 @@ void cga_hi_res_blt(cga_coord_t x, cga_coord_t y, cga_coord_t w, cga_coord_t h, 
         shl     di, 1                       ; DI is a word offset
         mov     di, CGA_ROW_OFFSETS[di]     ; ES:DI -> VRAM
         mov     ax, x                       ; AX = x
-    // test for fast path
-
-
+        test    al, 7                       ; test lower 3 bits (x mod 8)
+        jz      FAST                        ; byte aligned x coord
+        
 
 
     
