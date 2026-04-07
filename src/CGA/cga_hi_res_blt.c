@@ -75,9 +75,28 @@ void cga_hi_res_blt(cga_coord_t x, cga_coord_t y, cga_coord_t w, cga_coord_t h, 
         mov     ax, x                       ; AX = x
         test    al, 7                       ; test lower 3 bits (x mod 8)
         jz      FAST                        ; byte aligned x coord
-        
+/*
+        shr     ax, 1                       ; calculate column byte x / 8
+        shr     ax, 1                       ; 8086 limited to single step shifts
+        shr     ax, 1                       ; AX is now *column* byte
+        add     di, ax                      ; ES:DI -> VRAM (x,y)
+    
+#ifndef CGA_NO_SYNC
+        mov     dx, CGA_STATUS_REG          ; CGA status port
+        in      al, dx                      ; read status port
+        test    al, 8                       ; in vertical retrace?
+        jnz     SLOW                        ; already in retrace - risk it (for performance)
 
+WAIT1:  in      al, dx                      ; read status port
+        test    al, 8                       ; vertical retrace started?
+        jz      WAIT1                       ; wait for it to start
+#ifndef CGA_NO_SYNC
 
+SLOW:   mov     dx, h                       ; DX = height
+        mov     bx, CGA_BYTES_PER_ROW       ; 80 bytes per VRAM row
+        sub     bx, cx                      ; 80 - *byte* width
+        lds     si, data                    ; DS:SI -> data (safe now) 
+*/
     
 FAST:   shr     ax, 1                       ; calculate column byte x / 8
         shr     ax, 1                       ; 8086 limited to single step shifts
@@ -96,16 +115,15 @@ WAIT1:  in      al, dx                      ; read status port
 #ifndef CGA_NO_SYNC
     
 BLT:    mov     dx, h                       ; DX = height
-        mov     ax, CGA_BYTES_PER_ROW       ; 80 bytes per VRAM row
-        sub     ax, cx                      ; 80 - *byte* width
         lds     si, data                    ; DS:SI -> data (safe now)
+        mov     bp, 1FB0h                   ; bank 0 sub_stride - 80 next line
+        add     bp, cx                      ; sub_stride + byte_width
     
 // TODO: use bx instead ax for stride then can push sync code closer to VRAM code 
         mov     bx, cx                      ; copy CX byte width
         mov     ax, 2000h                   ; bank 1 add_stride
         sub     ax, cx                      ; add_stride - byte width
-        mov     bp, 1FB0h                   ; bank 0 sub_stride - 80 next line
-        add     bp, cx                      ; sub_stride + byte_width
+        
         test    cx, 1                       ; even or odd byte width
         jz      EVEN                        ; word transfers
         test    di, 2000h
