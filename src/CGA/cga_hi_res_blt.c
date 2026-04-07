@@ -62,6 +62,7 @@ void cga_hi_res_blt(cga_coord_t x, cga_coord_t y, cga_coord_t w, cga_coord_t h, 
 
         cld                                 ; incremental MOVS
         mov     bx, y                       ; BX = y
+// TODO: this should be a byte width precalc value of bitmap
         mov     cx, w                       ; CX = width
         shr     cx, 1                       ; calculate byte  width w / 8
         shr     cx, 1                       ; 8086 limited to single step shifts
