@@ -92,10 +92,8 @@ BLT:    mov     dx, h                       ; DX = height
         mov     ax, CGA_BYTES_PER_ROW       ; 80 bytes per VRAM row
         sub     ax, cx                      ; 80 - *byte* width
         lds     si, data                    ; DS:SI -> data (safe now)
-        // test  x, 1 ; ?byte aligned x position
-        // jz FAST
 
-FAST:   mov     bx, cx                      ; copy CX byte width
+ODD:    mov     bx, cx                      ; copy CX byte width
         mov     ax, 2000h                   ; bank 1 add_stride
         sub     ax, cx                      ; add_stride - byte width
         mov     bp, 1FB0h                   ; bank 0 sub_stride - 80 next line
