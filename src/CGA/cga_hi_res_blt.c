@@ -15,6 +15,7 @@ void cga_hi_res_screen_blt(const char* data) {
         push    bp
         pushf
 
+#ifndef CGA_NO_SYNC
         mov     dx, CGA_STATUS_REG          ; CGA status port
 WAIT0:  in      al, dx                      ; read status port
         test    al, 8                       ; in vertical retrace?
@@ -23,6 +24,7 @@ WAIT0:  in      al, dx                      ; read status port
 WAIT1:  in      al, dx                      ; read status port
         test    al, 8                       ; vertical retrace started?
         jz      WAIT1                       ; wait for it to start
+#endif
 
         cld                                 ; incremental MOVSW
         mov     di, CGA_VIDEO_RAM_SEGMENT
@@ -74,7 +76,8 @@ void cga_hi_res_blt(cga_coord_t x, cga_coord_t y, cga_coord_t w, cga_coord_t h, 
         shl     di, 1                       ; DI is a word offset
         mov     di, CGA_ROW_OFFSETS[di]     ; ES:DI -> VRAM
         add     di, ax                      ; ES:DI -> VRAM (x,y)
-
+    
+#ifndef CGA_NO_SYNC
         mov     dx, CGA_STATUS_REG          ; CGA status port
         in      al, dx                      ; read status port
         test    al, 8                       ; in vertical retrace?
@@ -83,7 +86,8 @@ void cga_hi_res_blt(cga_coord_t x, cga_coord_t y, cga_coord_t w, cga_coord_t h, 
 WAIT1:  in      al, dx                      ; read status port
         test    al, 8                       ; vertical retrace started?
         jz      WAIT1                       ; wait for it to start
-    
+#ifndef CGA_NO_SYNC
+
 BLT:    mov     dx, h                       ; DX = height
         mov     ax, CGA_BYTES_PER_ROW       ; 80 bytes per VRAM row
         sub     ax, cx                      ; 80 - *byte* width
