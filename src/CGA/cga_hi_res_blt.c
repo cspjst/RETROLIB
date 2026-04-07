@@ -60,11 +60,7 @@ void cga_hi_res_blt(cga_coord_t x, cga_coord_t y, cga_coord_t w, cga_coord_t h, 
         push    bp
         pushf
 
-        cld
-        mov     ax, x                       ; AX = x
-        shr     ax, 1                       ; calculate column byte x / 8
-        shr     ax, 1                       ; 8086 limited to single step shifts
-        shr     ax, 1                       ; AX is now *column* byte
+        cld                                 ; incremental MOVS
         mov     bx, y                       ; BX = y
         mov     cx, w                       ; CX = width
         shr     cx, 1                       ; calculate byte  width w / 8
@@ -75,6 +71,16 @@ void cga_hi_res_blt(cga_coord_t x, cga_coord_t y, cga_coord_t w, cga_coord_t h, 
         mov     di, bx                      ; DI = y
         shl     di, 1                       ; DI is a word offset
         mov     di, CGA_ROW_OFFSETS[di]     ; ES:DI -> VRAM
+        mov     ax, x                       ; AX = x
+    // test for fast path
+
+
+
+
+    
+FAST:   shr     ax, 1                       ; calculate column byte x / 8
+        shr     ax, 1                       ; 8086 limited to single step shifts
+        shr     ax, 1                       ; AX is now *column* byte
         add     di, ax                      ; ES:DI -> VRAM (x,y)
     
 #ifndef CGA_NO_SYNC
@@ -87,13 +93,13 @@ WAIT1:  in      al, dx                      ; read status port
         test    al, 8                       ; vertical retrace started?
         jz      WAIT1                       ; wait for it to start
 #ifndef CGA_NO_SYNC
-
-BLT:    mov     dx, h                       ; DX = height
+    
+        mov     dx, h                       ; DX = height
         mov     ax, CGA_BYTES_PER_ROW       ; 80 bytes per VRAM row
         sub     ax, cx                      ; 80 - *byte* width
         lds     si, data                    ; DS:SI -> data (safe now)
 
-ODD:    mov     bx, cx                      ; copy CX byte width
+        mov     bx, cx                      ; copy CX byte width
         mov     ax, 2000h                   ; bank 1 add_stride
         sub     ax, cx                      ; add_stride - byte width
         mov     bp, 1FB0h                   ; bank 0 sub_stride - 80 next line
