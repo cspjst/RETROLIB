@@ -211,8 +211,8 @@ void test_screen_blt() {
 void test_blt() {
     bios_ticks_since_midnight_t t1, t2;
 
-    int w = 32;
-    int h = 32;
+    int w = 8;
+    int h = 8;
     mem_arena_t* arena = mem_new_arena(4096);   // 64K
     if(!arena) printf("Failed to create arena!\n");
     cga_bitmap_t bmp;
@@ -220,17 +220,21 @@ void test_blt() {
     bmp.data = (char*)mem_arena_alloc(arena, bmp.size);
     make_data_1bit(&bmp);
 
+    //cga_hi_res_blt8x8(320, 84, bmp.data);
+
     cga_plot(318, 0, CGA_WHITE);
 
     bios_read_system_clock(&t1);
 
-    for(int i = 0; i < 100; ++i) {
-        cga_hi_res_blt(320, 1, bmp.width, bmp.height, bmp.data);
+    for(int i = 0; i < 1000; ++i) {
+        //cga_hi_res_blt(320, 0, bmp.width, bmp.height, bmp.data);
+        cga_hi_res_blt8x8(320, 82, bmp.data);
     }
 
     bios_read_system_clock(&t2);
 
     printf("Time = %fsec\n", env_ticks_to_seconds(t2-t1));
+
     mem_free_arena(arena);
 }
 
