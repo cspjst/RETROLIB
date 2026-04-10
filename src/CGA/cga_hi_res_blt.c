@@ -7,6 +7,8 @@
 #include "cga_constants.h"
 #include "cga_lookup_table_y.h"
 
+//#define CGA_NO_SYNC
+
 void cga_hi_res_screen_blt(const char* data) {
     __asm {
         .8086
@@ -75,12 +77,13 @@ void cga_hi_res_blt(cga_coord_t x, cga_coord_t y, cga_coord_t w, cga_coord_t h, 
         mov     ax, x                       ; AX = x
         test    al, 7                       ; test lower 3 bits (x mod 8)
         jz      FAST                        ; byte aligned x coord
+        //jmp END
 /*
         shr     ax, 1                       ; calculate column byte x / 8
         shr     ax, 1                       ; 8086 limited to single step shifts
         shr     ax, 1                       ; AX is now *column* byte
         add     di, ax                      ; ES:DI -> VRAM (x,y)
-    
+
 #ifndef CGA_NO_SYNC
         mov     dx, CGA_STATUS_REG          ; CGA status port
         in      al, dx                      ; read status port
@@ -95,14 +98,14 @@ WAIT1:  in      al, dx                      ; read status port
 SLOW:   mov     dx, h                       ; DX = height
         mov     bx, CGA_BYTES_PER_ROW       ; 80 bytes per VRAM row
         sub     bx, cx                      ; 80 - *byte* width
-        lds     si, data                    ; DS:SI -> data (safe now) 
+        lds     si, data                    ; DS:SI -> data (safe now)
 */
-    
+
 FAST:   shr     ax, 1                       ; calculate column byte x / 8
         shr     ax, 1                       ; 8086 limited to single step shifts
         shr     ax, 1                       ; AX is now *column* byte
         add     di, ax                      ; ES:DI -> VRAM (x,y)
-    
+
 #ifndef CGA_NO_SYNC
         mov     dx, CGA_STATUS_REG          ; CGA status port
         in      al, dx                      ; read status port
@@ -112,18 +115,17 @@ FAST:   shr     ax, 1                       ; calculate column byte x / 8
 WAIT1:  in      al, dx                      ; read status port
         test    al, 8                       ; vertical retrace started?
         jz      WAIT1                       ; wait for it to start
-#ifndef CGA_NO_SYNC
-    
+#endif
+
 BLT:    mov     dx, h                       ; DX = height
         lds     si, data                    ; DS:SI -> data (safe now)
         mov     bp, 1FB0h                   ; bank 0 sub_stride - 80 next line
         add     bp, cx                      ; sub_stride + byte_width
-    
-// TODO: use bx instead ax for stride then can push sync code closer to VRAM code 
+
         mov     bx, cx                      ; copy CX byte width
         mov     ax, 2000h                   ; bank 1 add_stride
         sub     ax, cx                      ; add_stride - byte width
-        
+
         test    cx, 1                       ; even or odd byte width
         jz      EVEN                        ; word transfers
         test    di, 2000h

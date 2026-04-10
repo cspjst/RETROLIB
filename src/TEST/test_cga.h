@@ -209,6 +209,8 @@ void test_screen_blt() {
 }
 
 void test_blt() {
+    bios_ticks_since_midnight_t t1, t2;
+
     int w = 32;
     int h = 32;
     mem_arena_t* arena = mem_new_arena(4096);   // 64K
@@ -219,8 +221,16 @@ void test_blt() {
     make_data_1bit(&bmp);
 
     cga_plot(318, 0, CGA_WHITE);
-    cga_hi_res_blt(320, 1, bmp.width, bmp.height, bmp.data);
 
+    bios_read_system_clock(&t1);
+
+    for(int i = 0; i < 100; ++i) {
+        cga_hi_res_blt(320, 1, bmp.width, bmp.height, bmp.data);
+    }
+
+    bios_read_system_clock(&t2);
+
+    printf("Time = %fsec\n", env_ticks_to_seconds(t2-t1));
     mem_free_arena(arena);
 }
 
