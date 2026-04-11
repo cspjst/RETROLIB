@@ -18,6 +18,7 @@
 #define CGA_EVEN_VRAM_SEGMENT	0B800h
 #define CGA_ODD_VRAM_SEGMENT	0BA00h
 #define CGA_BYTES_PER_BANK      2000h
+#define CGA_BANK_BIT            2000h
 #define CGA_BYTES_PER_ROW		80
 #define CGA_WORDS_PER_ROW       40
 #define CGA_ROWS_PER_SCREEN     200

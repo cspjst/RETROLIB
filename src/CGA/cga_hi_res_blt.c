@@ -54,7 +54,99 @@ ROWS:   mov     cx, bx                      ; load REP count
     }
 }
 
-// 8x8 bitmap optimised
+void cga_hi_res_blt4x4(cga_coord_t x, cga_coord_t y, const char* data) {
+    __asm {
+        .8086
+// ifndef CGA_NO_SYNC test in vsync if not jmp END
+        push    ds
+        push    es
+        pushf
+
+        cld                                 ; incremental MOVS
+        mov     di, CGA_VIDEO_RAM_SEGMENT   ; more 8086 quirks
+        mov     es, di                      ; ES = VRAM segment
+        mov     di, y                       ; DI = y
+        shl     di, 1                       ; DI is a word offset
+        mov     di, CGA_ROW_OFFSETS[di]     ; ES:DI -> VRAM
+        mov     ax, x                       ; AX = x
+        mov     bx, ax                      ; BX will be table ptr
+        mov     cx, ax                      ; CX will be shift ctr
+        test    bl, 7                       ; test lower 3 bits (x mod 8)
+        jnz     NOT_ALIGNED                 ; not byte aligned x coord
+        jmp     BYTE_ALIGNED                ; byte aligned x coord
+
+NOT_ALIGNED:
+        shr     ax, 1                       ; calculate column byte x / 8
+        shr     ax, 1                       ; 8086 limited to single step shifts
+        shr     ax, 1                       ; BX is now *column* byte
+        add     di, ax                      ; ES:DI -> VRAM (x,y)
+        and     bx, 7                       ; get the mask number
+        shl     bx, 1                       ; convert to word ptr
+        and     cx, 7                       ; get the shift count
+        mov     dx, CGA_HI_RES_MASKS[bx]    ; load the byte mask
+        lds     si, data                    ; DS:SI -> data (safe now)
+        test    di, CGA_BANK_BIT            ; starting bank?
+        jnz     SBANK1
+SBANK0: and     es:[di], dx                 ; mask off the byte space
+        lodsb                               ; load bitmap row
+        xor     ah, ah                      ; clr high byte
+        ror     ax, cl                      ; rotate word
+        or      es:[di], ax                 ; or in the rotated botmap row
+        add     di, 2000h                   ; ES:DI->bank 1
+SBANK1: and     es:[di], dx
+        lodsb
+        xor     ah, ah
+        ror     ax, cl
+        or      es:[di], ax
+        sub     di, 1FB0h                   ; ES:DI->bank 0
+        and     es:[di], dx                 ; unrolled 8 loop
+        lodsb
+        xor     ah, ah
+        ror     ax, cl
+        or      es:[di], ax
+        add     di, 2000h
+        and     es:[di], dx
+        lodsb
+        xor     ah, ah
+        ror     ax, cl
+        or      es:[di], ax
+        test    di, CGA_BANK_BIT            ; finishing bank?
+        jz     END
+        sub     di, 1FB0h
+        and     es:[di], dx
+        lodsb
+        xor     ah, ah
+        ror     ax, cl
+        or      es:[di], ax
+
+        jmp     END
+
+BYTE_ALIGNED:
+        shr     ax, 1                       ; calculate column byte x / 8
+        shr     ax, 1                       ; 8086 limited to single step shifts
+        shr     ax, 1                       ; BX is now *column* byte
+        add     di, ax                      ; ES:DI -> VRAM (x,y)
+        lds     si, data                    ; DS:SI -> data (safe now)
+        test    di, CGA_BANK_BIT            ; starting bank?
+        jnz     FBANK1
+FBANK0: movsb                               ; DS:SI -> ES:DI
+        add     di, 1FFFh                   ; bank1 - stride
+FBANK1: movsb                               ; DS:SI -> ES:DI
+        sub     di, 1FB1h                   ; bank 0 stride
+        movsb                               ; unrolled 8 loop...
+        add     di, 1FFFh
+        movsb
+        test    di, CGA_BANK_BIT            ; finishing bank?
+        jz     END
+        sub     di, 1FB1h
+        movsb
+END:
+        popf
+        pop     es
+        pop     ds
+    }
+}
+
 void cga_hi_res_blt8x8(cga_coord_t x, cga_coord_t y, const char* data) {
     __asm {
         .8086
@@ -86,7 +178,7 @@ NOT_ALIGNED:
         and     cx, 7                       ; get the shift count
         mov     dx, CGA_HI_RES_MASKS[bx]    ; load the byte mask
         lds     si, data                    ; DS:SI -> data (safe now)
-        test    di, 2000h                   ; starting bank?
+        test    di, CGA_BANK_BIT            ; starting bank?
         jnz     SBANK1
 SBANK0: and     es:[di], dx                 ; mask off the byte space
         lodsb                               ; load bitmap row
@@ -100,7 +192,6 @@ SBANK1: and     es:[di], dx
         ror     ax, cl
         or      es:[di], ax
         sub     di, 1FB0h                   ; ES:DI->bank 0
-
         and     es:[di], dx                 ; unrolled 8 loop
         lodsb
         xor     ah, ah
@@ -136,7 +227,14 @@ SBANK1: and     es:[di], dx
         xor     ah, ah
         ror     ax, cl
         or      es:[di], ax
+        test    di, CGA_BANK_BIT            ; finishing bank?
+        jz     END
         sub     di, 1FB0h
+        and     es:[di], dx
+        lodsb
+        xor     ah, ah
+        ror     ax, cl
+        or      es:[di], ax
         jmp     END
 
 BYTE_ALIGNED:
@@ -145,7 +243,7 @@ BYTE_ALIGNED:
         shr     ax, 1                       ; BX is now *column* byte
         add     di, ax                      ; ES:DI -> VRAM (x,y)
         lds     si, data                    ; DS:SI -> data (safe now)
-        test    di, 2000h                   ; starting bank?
+        test    di, CGA_BANK_BIT            ; starting bank?
         jnz     FBANK1
 FBANK0: movsb                               ; DS:SI -> ES:DI
         add     di, 1FFFh                   ; bank1 - stride
@@ -162,7 +260,10 @@ FBANK1: movsb                               ; DS:SI -> ES:DI
         movsb
         add     di, 1FFFh
         movsb
+        test    di, CGA_BANK_BIT            ; finishing bank?
+        jz      END
         sub     di, 1FB1h
+        movsb
 END:
         popf
         pop     es
@@ -203,7 +304,8 @@ NOT_ALIGNED:
         mov     bx, CGA_BYTES_PER_ROW       ; 80 bytes per VRAM row
         sub     bx, cx                      ; 80 - *byte* width
         lds     si, data                    ; DS:SI -> data (safe now)
-
+        //
+        //
         jmp     END
 
 BYTE_ALIGNED:
