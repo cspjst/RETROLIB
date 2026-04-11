@@ -58,6 +58,7 @@ ROWS:   mov     cx, bx                      ; load REP count
 void cga_hi_res_blt8x8(cga_coord_t x, cga_coord_t y, const char* data) {
     __asm {
         .8086
+// ifndef CGA_NO_SYNC test in vsync if not jmp END
         push    ds
         push    es
         pushf
@@ -69,80 +70,99 @@ void cga_hi_res_blt8x8(cga_coord_t x, cga_coord_t y, const char* data) {
         shl     di, 1                       ; DI is a word offset
         mov     di, CGA_ROW_OFFSETS[di]     ; ES:DI -> VRAM
         mov     ax, x                       ; AX = x
-        mov     bx, ax                      ; copy x
+        mov     bx, ax                      ; BX will be table ptr
+        mov     cx, ax                      ; CX will be shift ctr
         test    bl, 7                       ; test lower 3 bits (x mod 8)
-        jz      FAST                        ; byte aligned x coord
+        jnz     NOT_ALIGNED                 ; not byte aligned x coord
+        jmp     BYTE_ALIGNED                ; byte aligned x coord
 
+NOT_ALIGNED:
         shr     ax, 1                       ; calculate column byte x / 8
         shr     ax, 1                       ; 8086 limited to single step shifts
         shr     ax, 1                       ; BX is now *column* byte
         add     di, ax                      ; ES:DI -> VRAM (x,y)
-        and     bx, 7                       ; get the shift count
+        and     bx, 7                       ; get the mask number
         shl     bx, 1                       ; convert to word ptr
-
-#ifndef CGA_NO_SYNC
-        mov     dx, CGA_STATUS_REG          ; CGA status port
-        in      al, dx                      ; read status port
-        test    al, 8                       ; in vertical retrace?
-        jnz     SHFT                        ; already in retrace - risk it (for performance)
-
-SWAIT1: in      al, dx                      ; read status port
-        test    al, 8                       ; vertical retrace started?
-        jz      SWAIT1                      ; wait for it to start
-#endif
-
-SHFT:   mov     ax, CGA_HI_RES_MASKS[bx]    ; load the byte mask
-        mov     cx, 1FB0h + 1               ; bank 0 stride
-        mov     dx, 2000h - 1               ; bank 1 stride
+        and     cx, 7                       ; get the shift count
+        mov     dx, CGA_HI_RES_MASKS[bx]    ; load the byte mask
         lds     si, data                    ; DS:SI -> data (safe now)
         test    di, 2000h                   ; starting bank?
         jnz     SBANK1
+SBANK0: and     es:[di], dx                 ; mask off the byte space
+        lodsb                               ; load bitmap row
+        xor     ah, ah                      ; clr high byte
+        ror     ax, cl                      ; rotate word
+        or      es:[di], ax                 ; or in the rotated botmap row
+        add     di, 2000h                   ; ES:DI->bank 1
+SBANK1: and     es:[di], dx
+        lodsb
+        xor     ah, ah
+        ror     ax, cl
+        or      es:[di], ax
+        sub     di, 1FB0h                   ; ES:DI->bank 0
 
-SBANK0:
-
-SBANK1:
-        mov     es:[di], ax
-        //movsb
+        and     es:[di], dx                 ; unrolled 8 loop
+        lodsb
+        xor     ah, ah
+        ror     ax, cl
+        or      es:[di], ax
+        add     di, 2000h
+        and     es:[di], dx
+        lodsb
+        xor     ah, ah
+        ror     ax, cl
+        or      es:[di], ax
+        sub     di, 1FB0h
+        and     es:[di], dx
+        lodsb
+        xor     ah, ah
+        ror     ax, cl
+        or      es:[di], ax
+        add     di, 2000h
+        and     es:[di], dx
+        lodsb
+        xor     ah, ah
+        ror     ax, cl
+        or      es:[di], ax
+        sub     di, 1FB0h
+        and     es:[di], dx
+        lodsb
+        xor     ah, ah
+        ror     ax, cl
+        or      es:[di], ax
+        add     di, 2000h
+        and     es:[di], dx
+        lodsb
+        xor     ah, ah
+        ror     ax, cl
+        or      es:[di], ax
+        sub     di, 1FB0h
         jmp     END
 
-FAST:   shr     ax, 1                       ; calculate column byte x / 8
+BYTE_ALIGNED:
+        shr     ax, 1                       ; calculate column byte x / 8
         shr     ax, 1                       ; 8086 limited to single step shifts
         shr     ax, 1                       ; BX is now *column* byte
         add     di, ax                      ; ES:DI -> VRAM (x,y)
         lds     si, data                    ; DS:SI -> data (safe now)
-        mov     cx, 1FB0h + 1               ; bank 0 stride
-
-#ifndef CGA_NO_SYNC
-        mov     dx, CGA_STATUS_REG          ; CGA status port
-        in      al, dx                      ; read status port
-        test    al, 8                       ; in vertical retrace?
-        jnz     BLT                         ; already in retrace - risk it (for performance)
-
-FWAIT1: in      al, dx                      ; read status port
-        test    al, 8                       ; vertical retrace started?
-        jz      FWAIT1                      ; wait for it to start
-#endif
-
-BLT:    mov     dx, 2000h - 1               ; bank 1 stride
         test    di, 2000h                   ; starting bank?
         jnz     FBANK1
-
 FBANK0: movsb                               ; DS:SI -> ES:DI
-        add     di, dx                      ; bank1 - stride
+        add     di, 1FFFh                   ; bank1 - stride
 FBANK1: movsb                               ; DS:SI -> ES:DI
-        sub     di, cx                      ; bank 0 stride
+        sub     di, 1FB1h                   ; bank 0 stride
         movsb                               ; unrolled 8 loop...
-        add     di, dx
+        add     di, 1FFFh
         movsb
-        sub     di, cx
+        sub     di, 1FB1h
         movsb
-        add     di, dx
+        add     di, 1FFFh
         movsb
-        sub     di, cx
+        sub     di, 1FB1h
         movsb
-        add     di, dx
+        add     di, 1FFFh
         movsb
-        sub     di, cx
+        sub     di, 1FB1h
 END:
         popf
         pop     es
@@ -172,49 +192,26 @@ void cga_hi_res_blt(cga_coord_t x, cga_coord_t y, cga_coord_t w, cga_coord_t h, 
         mov     di, CGA_ROW_OFFSETS[di]     ; ES:DI -> VRAM
         mov     ax, x                       ; AX = x
         test    al, 7                       ; test lower 3 bits (x mod 8)
-        jz      FAST                        ; byte aligned x coord
+        jz      BYTE_ALIGNED                ; byte aligned x coord
 
+NOT_ALIGNED:
         shr     ax, 1                       ; calculate column byte x / 8
         shr     ax, 1                       ; 8086 limited to single step shifts
         shr     ax, 1                       ; AX is now *column* byte
         add     di, ax                      ; ES:DI -> VRAM (x,y)
-
-#ifndef CGA_NO_SYNC
-        mov     dx, CGA_STATUS_REG          ; CGA status port
-        in      al, dx                      ; read status port
-        test    al, 8                       ; in vertical retrace?
-        jnz     SHFT                        ; already in retrace - risk it (for performance)
-
-AWAIT1: in      al, dx                      ; read status port
-        test    al, 8                       ; vertical retrace started?
-        jz      AWAIT1                       ; wait for it to start
-#endif
-
-SHFT:   mov     dx, h                       ; DX = height
+        mov     dx, h                       ; DX = height
         mov     bx, CGA_BYTES_PER_ROW       ; 80 bytes per VRAM row
         sub     bx, cx                      ; 80 - *byte* width
         lds     si, data                    ; DS:SI -> data (safe now)
 
-
         jmp     END
 
-FAST:   shr     ax, 1                       ; calculate column byte x / 8
+BYTE_ALIGNED:
+        shr     ax, 1                       ; calculate column byte x / 8
         shr     ax, 1                       ; 8086 limited to single step shifts
         shr     ax, 1                       ; AX is now *column* byte
         add     di, ax                      ; ES:DI -> VRAM (x,y)
-
-#ifndef CGA_NO_SYNC
-        mov     dx, CGA_STATUS_REG          ; CGA status port
-        in      al, dx                      ; read status port
-        test    al, 8                       ; in vertical retrace?
-        jnz     BLT                         ; already in retrace - risk it (for performance)
-
-BWAIT1: in      al, dx                      ; read status port
-        test    al, 8                       ; vertical retrace started?
-        jz      BWAIT1                       ; wait for it to start
-#endif
-
-BLT:    mov     dx, h                       ; DX = height
+        mov     dx, h                       ; DX = height
         lds     si, data                    ; DS:SI -> data (safe now)
         mov     bp, 1FB0h                   ; bank 0 sub_stride - 80 next line
         add     bp, cx                      ; sub_stride + byte_width
