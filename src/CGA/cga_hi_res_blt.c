@@ -7,7 +7,19 @@
 #include "cga_constants.h"
 #include "cga_lookup_table_y.h"
 
-#define CGA_NO_SYNC
+//#define CGA_NO_SYNC
+
+// on 8088 memory 8 bit bus is this slower than shl?
+static const unsigned short CGA_HI_RES_MASKS[8] = {
+    0xFF00,     // 0
+    0x7F80,     // 1	01111111 10000000
+    0x3FC0,     // 2	00111111 11000000
+    0x1FE0,     // 3	00011111 11100000
+    0x0FF0,     // 4	00001111 11110000
+    0x07F8,     // 5	00000111 11111000
+    0x03FC,     // 6	00000011 11111100
+    0x01FE,     // 7	00000001 11111110
+};
 
 void cga_hi_res_screen_blt(const char* data) {
     __asm {
@@ -63,14 +75,13 @@ void cga_hi_res_blt8x8(cga_coord_t x, cga_coord_t y, const char* data) {
         pushf
 
         cld                                 ; incremental MOVS
-        mov     bx, y                       ; BX = y
         mov     di, CGA_VIDEO_RAM_SEGMENT   ; more 8086 quirks
         mov     es, di                      ; ES = VRAM segment
-        mov     di, bx                      ; DI = y
+        mov     di, y                       ; DI = y
         shl     di, 1                       ; DI is a word offset
         mov     di, CGA_ROW_OFFSETS[di]     ; ES:DI -> VRAM
-        mov     ax, x                       ; AX = x
-        test    al, 7                       ; test lower 3 bits (x mod 8)
+        mov     bx, x                       ; BX = x
+        test    bl, 7                       ; test lower 3 bits (x mod 8)
         jz      FAST                        ; byte aligned x coord
 
 SLOW:   shr     ax, 1                       ; calculate column byte x / 8
@@ -82,7 +93,7 @@ SLOW:   shr     ax, 1                       ; calculate column byte x / 8
         mov     bx, 1FB0h + 2               ; bank 0 stride
         mov     cx, 2000h - 2               ; bank 1 stride
         test    di, 2000h                   ; starting bank?
-        jnz     SBANK1
+        //jnz     SBANK1
 
 #ifndef CGA_NO_SYNC
         mov     dx, CGA_STATUS_REG          ; CGA status port
@@ -92,7 +103,7 @@ SLOW:   shr     ax, 1                       ; calculate column byte x / 8
 
 AWAIT1: in      al, dx                      ; read status port
         test    al, 8                       ; vertical retrace started?
-        jz      AWAIT1                        wait for it to start
+        jz      AWAIT1                      ;wait for it to start
 #endif
 
 SBANK0:
@@ -100,12 +111,10 @@ SBANK0:
 SBANK1:
 
 
-
-
-FAST:   shr     ax, 1                       ; calculate column byte x / 8
-        shr     ax, 1                       ; 8086 limited to single step shifts
-        shr     ax, 1                       ; AX is now *column* byte
-        add     di, ax                      ; ES:DI -> VRAM (x,y)
+FAST:   shr     bx, 1                       ; calculate column byte x / 8
+        shr     bx, 1                       ; 8086 limited to single step shifts
+        shr     bx, 1                       ; BX is now *column* byte
+        add     di, bx                      ; ES:DI -> VRAM (x,y)
         lds     si, data                    ; DS:SI -> data (safe now)
         mov     bx, 1FB0h + 1               ; bank 0 stride
         mov     cx, 2000h - 1               ; bank 1 stride
@@ -120,7 +129,7 @@ FAST:   shr     ax, 1                       ; calculate column byte x / 8
 
 BWAIT1: in      al, dx                      ; read status port
         test    al, 8                       ; vertical retrace started?
-        jz      BWAIT1                        wait for it to start
+        jz      BWAIT1                      ; wait for it to start
 #endif
 
 FBANK0: movsb                               ; DS:SI -> ES:DI
@@ -179,14 +188,14 @@ void cga_hi_res_blt(cga_coord_t x, cga_coord_t y, cga_coord_t w, cga_coord_t h, 
         mov     dx, CGA_STATUS_REG          ; CGA status port
         in      al, dx                      ; read status port
         test    al, 8                       ; in vertical retrace?
-        jnz     SSLOW                        ; already in retrace - risk it (for performance)
+        jnz     SHFT                        ; already in retrace - risk it (for performance)
 
 AWAIT1: in      al, dx                      ; read status port
         test    al, 8                       ; vertical retrace started?
         jz      AWAIT1                       ; wait for it to start
 #endif
 
-SLOW:   mov     dx, h                       ; DX = height
+SHFT:   mov     dx, h                       ; DX = height
         mov     bx, CGA_BYTES_PER_ROW       ; 80 bytes per VRAM row
         sub     bx, cx                      ; 80 - *byte* width
         lds     si, data                    ; DS:SI -> data (safe now)
