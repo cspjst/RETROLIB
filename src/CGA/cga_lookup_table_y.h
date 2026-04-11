@@ -6,6 +6,18 @@
 #ifndef CGA_LOOKUP_TABLE_Y_H
 #define CGA_LOOKUP_TABLE_Y_H
 
+// on 8088 memory 8 bit bus is this slower than shl?
+static const unsigned short CGA_HI_RES_MASKS[8] = {
+    0xFFFF,     // 0
+    0xFFFF,     // 1	01111111 10000000
+    0xFFFF,     // 2	00111111 11000000
+    0xFFFF,     // 3	00011111 11100000
+    0xFFFF,     // 4	00001111 11110000
+    0xFFFF,     // 5	00000111 11111000
+    0xFFFF,     // 6	00000011 11111100
+    0xFFFF,     // 7	00000001 11111110
+};
+
 /**
  * CGA Mode 6 Row Offset Table (600x200)
  * 200 entries, 2 bytes each = 400 bytes total

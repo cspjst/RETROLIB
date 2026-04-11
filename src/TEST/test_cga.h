@@ -228,7 +228,7 @@ void test_blt() {
 
     for(int i = 0; i < 1000; ++i) {
         //cga_hi_res_blt(320, 0, bmp.width, bmp.height, bmp.data);
-        cga_hi_res_blt8x8(320, 82, bmp.data);
+        cga_hi_res_blt8x8(321, 1, bmp.data);
     }
 
     bios_read_system_clock(&t2);

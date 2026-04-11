@@ -7,19 +7,7 @@
 #include "cga_constants.h"
 #include "cga_lookup_table_y.h"
 
-//#define CGA_NO_SYNC
-
-// on 8088 memory 8 bit bus is this slower than shl?
-static const unsigned short CGA_HI_RES_MASKS[8] = {
-    0xFF00,     // 0
-    0x7F80,     // 1	01111111 10000000
-    0x3FC0,     // 2	00111111 11000000
-    0x1FE0,     // 3	00011111 11100000
-    0x0FF0,     // 4	00001111 11110000
-    0x07F8,     // 5	00000111 11111000
-    0x03FC,     // 6	00000011 11111100
-    0x01FE,     // 7	00000001 11111110
-};
+#define CGA_NO_SYNC
 
 void cga_hi_res_screen_blt(const char* data) {
     __asm {
@@ -80,74 +68,81 @@ void cga_hi_res_blt8x8(cga_coord_t x, cga_coord_t y, const char* data) {
         mov     di, y                       ; DI = y
         shl     di, 1                       ; DI is a word offset
         mov     di, CGA_ROW_OFFSETS[di]     ; ES:DI -> VRAM
-        mov     bx, x                       ; BX = x
+        mov     ax, x                       ; AX = x
+        mov     bx, ax                      ; copy x
         test    bl, 7                       ; test lower 3 bits (x mod 8)
         jz      FAST                        ; byte aligned x coord
 
-SLOW:   shr     ax, 1                       ; calculate column byte x / 8
+        shr     ax, 1                       ; calculate column byte x / 8
         shr     ax, 1                       ; 8086 limited to single step shifts
-        shr     ax, 1                       ; AX is now *column* byte
+        shr     ax, 1                       ; BX is now *column* byte
         add     di, ax                      ; ES:DI -> VRAM (x,y)
-        mov     dx, 8                       ; DX = height
-        lds     si, data                    ; DS:SI -> data (safe now)
-        mov     bx, 1FB0h + 2               ; bank 0 stride
-        mov     cx, 2000h - 2               ; bank 1 stride
-        test    di, 2000h                   ; starting bank?
-        //jnz     SBANK1
+        and     bx, 7                       ; get the shift count
+        shl     bx, 1                       ; convert to word ptr
 
 #ifndef CGA_NO_SYNC
         mov     dx, CGA_STATUS_REG          ; CGA status port
         in      al, dx                      ; read status port
         test    al, 8                       ; in vertical retrace?
-        jnz     SBANK0                      ; already in retrace - risk it (for performance)
+        jnz     SHFT                        ; already in retrace - risk it (for performance)
 
-AWAIT1: in      al, dx                      ; read status port
+SWAIT1: in      al, dx                      ; read status port
         test    al, 8                       ; vertical retrace started?
-        jz      AWAIT1                      ;wait for it to start
+        jz      SWAIT1                      ; wait for it to start
 #endif
+
+SHFT:   mov     ax, CGA_HI_RES_MASKS[bx]    ; load the byte mask
+        mov     cx, 1FB0h + 1               ; bank 0 stride
+        mov     dx, 2000h - 1               ; bank 1 stride
+        lds     si, data                    ; DS:SI -> data (safe now)
+        test    di, 2000h                   ; starting bank?
+        jnz     SBANK1
 
 SBANK0:
 
 SBANK1:
+        mov     es:[di], ax
+        //movsb
+        jmp     END
 
-
-FAST:   shr     bx, 1                       ; calculate column byte x / 8
-        shr     bx, 1                       ; 8086 limited to single step shifts
-        shr     bx, 1                       ; BX is now *column* byte
-        add     di, bx                      ; ES:DI -> VRAM (x,y)
+FAST:   shr     ax, 1                       ; calculate column byte x / 8
+        shr     ax, 1                       ; 8086 limited to single step shifts
+        shr     ax, 1                       ; BX is now *column* byte
+        add     di, ax                      ; ES:DI -> VRAM (x,y)
         lds     si, data                    ; DS:SI -> data (safe now)
-        mov     bx, 1FB0h + 1               ; bank 0 stride
-        mov     cx, 2000h - 1               ; bank 1 stride
-        test    di, 2000h                   ; starting bank?
-        jnz     FBANK1
+        mov     cx, 1FB0h + 1               ; bank 0 stride
 
 #ifndef CGA_NO_SYNC
         mov     dx, CGA_STATUS_REG          ; CGA status port
         in      al, dx                      ; read status port
         test    al, 8                       ; in vertical retrace?
-        jnz     FBANK0                      ; already in retrace - risk it (for performance)
+        jnz     BLT                         ; already in retrace - risk it (for performance)
 
-BWAIT1: in      al, dx                      ; read status port
+FWAIT1: in      al, dx                      ; read status port
         test    al, 8                       ; vertical retrace started?
-        jz      BWAIT1                      ; wait for it to start
+        jz      FWAIT1                      ; wait for it to start
 #endif
 
+BLT:    mov     dx, 2000h - 1               ; bank 1 stride
+        test    di, 2000h                   ; starting bank?
+        jnz     FBANK1
+
 FBANK0: movsb                               ; DS:SI -> ES:DI
-        add     di, cx                      ; bank1 - stride
+        add     di, dx                      ; bank1 - stride
 FBANK1: movsb                               ; DS:SI -> ES:DI
-        sub     di, bx                      ; bank 0 stride
+        sub     di, cx                      ; bank 0 stride
         movsb                               ; unrolled 8 loop...
-        add     di, cx
+        add     di, dx
         movsb
-        sub     di, bx
+        sub     di, cx
         movsb
-        add     di, cx
+        add     di, dx
         movsb
-        sub     di, bx
+        sub     di, cx
         movsb
-        add     di, cx
+        add     di, dx
         movsb
-        sub     di, bx
+        sub     di, cx
 END:
         popf
         pop     es
