@@ -222,13 +222,20 @@ void test_blt() {
 
     //cga_hi_res_blt8x8(320, 84, bmp.data);
 
-    cga_plot(318, 0, CGA_WHITE);
+    cga_plot(320, 0, CGA_WHITE);
+    cga_plot(327, 0, CGA_WHITE);
 
     bios_read_system_clock(&t1);
 
     for(int i = 0; i < 1000; ++i) {
         //cga_hi_res_blt(320, 0, bmp.width, bmp.height, bmp.data);
         cga_hi_res_blt8x8(321, 1, bmp.data);
+        cga_hi_res_blt8x8(322, 2, bmp.data);
+        cga_hi_res_blt8x8(323, 3, bmp.data);
+        cga_hi_res_blt8x8(324, 4, bmp.data);
+        cga_hi_res_blt8x8(325, 5, bmp.data);
+        cga_hi_res_blt8x8(326, 6, bmp.data);
+        cga_hi_res_blt8x8(327, 7, bmp.data);
     }
 
     bios_read_system_clock(&t2);
