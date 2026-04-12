@@ -45,7 +45,7 @@ typedef enum {          // palette 0    1    2
 	cga_red = 0x80,     //              x
 	cga_yellow = 0xC0,  //         x
 	cga_white = 0xC0    //              x    x
-} cga_colour_palette_t;
+} cga_lo_res_colour_t;
 
 
 

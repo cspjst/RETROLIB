@@ -1,5 +1,5 @@
-#ifndef TEST_CGA_H
-#define TEST_CGA_H
+#ifndef TEST_HI_CGA_H
+#define TEST_HI_CGA_H
 
 #include <errno.h>
 #include <string.h>
@@ -34,21 +34,6 @@ void make_data_1bit(cga_bitmap_t* bmp) {
         unsigned char* row = data + (y * bpl);
         if (y & 1) memset(row, 0x55, bpl);
         else memset(row, 0xFF, bpl);
-    }
-}
-
-void make_data_2bit(cga_bitmap_t* bmp) {
-    if(!bmp || !bmp->data) return;
-    uint16_t bpl = bmp->width / 4;           // bytes per line (2 bits/pixel)
-    unsigned char* data = (unsigned char*)bmp->data;
-    for (uint16_t y = 0; y < bmp->height; y++) {
-        unsigned char* row = data + (y * bpl);
-        switch (y % 4) {
-            case 0: memset(row, 0x00, bpl); break;  // Black
-            case 1: memset(row, 0x55, bpl); break;  // Color 1
-            case 2: memset(row, 0xAA, bpl); break;  // Color 2
-            case 3: memset(row, 0xFF, bpl); break;  // Color 3
-        }
     }
 }
 
@@ -126,7 +111,7 @@ static void draw_dithered_pixel(cga_coord_t x, cga_coord_t y, uint8_t intensity)
 }
 
 /* Main Test Pattern Routine */
-void test_pattern(void) {
+void test_hipattern(void) {
     const cga_coord_t WIDTH = 640;
     const cga_coord_t HEIGHT = 200;
     const cga_coord_t CX = WIDTH / 2;
@@ -184,7 +169,7 @@ void test_pattern(void) {
     printf("Time = %fsec\n", env_ticks_to_seconds(t2-t1));
 }
 
-void test_screen_blt() {
+void test_hi_screen_blt() {
     mem_arena_t* arena = mem_new_arena(4096);   // 64K
     if(!arena) printf("Failed to create arena!\n");
 
@@ -208,7 +193,7 @@ void test_screen_blt() {
     mem_free_arena(arena);
 }
 
-void test_blt() {
+void test_hi_blt() {
     bios_ticks_since_midnight_t t1, t2;
 
     int w = 8;
@@ -239,13 +224,13 @@ void test_blt() {
     mem_free_arena(arena);
 }
 
-void test_cga() {
+void test_hi_cga() {
     bios_video_mode_t m = env_get_video_mode();
     env_set_video_mode(CGA_GRAPHICS_MONOCHROME_640X200);
 
-    //test_pattern();
-    //test_screen_blt();
-    test_blt();
+    //test_hi_pattern();
+    test_hi_screen_blt();
+    test_hi_blt();
 
     getchar();
     env_set_video_mode(m);

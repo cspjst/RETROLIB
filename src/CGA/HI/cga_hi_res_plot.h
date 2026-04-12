@@ -6,7 +6,8 @@
 #ifndef CGA_HI_RES_PLOT_H
 #define CGA_HI_RES_PLOT_H
 
-#include "cga_types.h"
+#include "../cga_types.h"
+#include "cga_hi_res_colours.h"
 
 #define cga_plot(x, y, c) cga_hi_res_plot_lookup(x, y, c)
 

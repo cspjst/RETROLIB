@@ -6,9 +6,6 @@
 #ifndef CGA_HI_RES_CONSTANTS_H
 #define CGA_HI_RES_CONSTANTS_H
 
-#define CGA_WHITE   0x80
-#define CGA_BLACK   0
-
 /**
  * Mode 6 macro definitions for assembly
  *

@@ -6,16 +6,18 @@
 #ifndef CGA_LOOKUP_TABLE_Y_H
 #define CGA_LOOKUP_TABLE_Y_H
 
-// on 8088 memory 8 bit bus is this slower than shl?
+/**
+ * hi res mask bits to clear background for shifted bitmap bytes
+ */
 static const unsigned short CGA_HI_RES_MASKS[8] = {
-    0x00FF,     // 0    0000 0000 1111 1111 (unused)
-    0x807F,     // 1    1000 0000 0111 1111
-    0xC03F,     // 2    1100 0000 0011 1111
-    0xE01F,     // 3    1111 0000 0000 1111
-    0xF00F,     // 4    1111 1000 0000 0111
-    0xF807,     // 5    1111 1100 0000 0011
-    0xFC03,     // 6    1111 1110 0000 0001
-    0xFE01,     // 7    1111 1111 0000 0000
+    0xFF00,     // 0    1111 1111 0000 0000(unused)
+    0x7F80,     // 1    0111 1111 1000 0000
+    0x3FC0,     // 2    0011 1111 1100 0000
+    0x1FE0,     // 3    0001 1111 1110 0000
+    0x0FF0,     // 4    0000 1111 1111 0000
+    0x07F8,     // 5    0000 0111 1111 1000
+    0x03FC,     // 6    0000 0011 1111 1100
+    0x01FE,     // 7    0000 0001 1111 1110
 };
 
 /**
