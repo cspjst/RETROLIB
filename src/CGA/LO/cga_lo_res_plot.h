@@ -1,8 +1,13 @@
 #ifndef CGA_LO_RES_PLOT_H
 #define CGA_LO_RES_PLOT_H
 
+#include "cga_lo_res_colours.h"
 #include "../cga_types.h"
 
-void __fastcall cga_hi_res_plot_lookup(cga_coord_t x, cga_coord_t y, cga_lo_res_colour_t colour);
+#define cga_plot(x, y, c) cga_lo_res_plot(x, y, c)
+
+void __fastcall cga_lo_res_plot(cga_coord_t x, cga_coord_t y, cga_lo_res_colour_t colour);
+
+char __fastcall cga_lo_res_sync_plot(cga_coord_t x, cga_coord_t y, cga_lo_res_colour_t colour);
 
 #endif

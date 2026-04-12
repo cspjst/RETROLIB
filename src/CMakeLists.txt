@@ -80,7 +80,7 @@ file(GLOB SOURCES
     MEM/*.c
     CGA/*.c
     CGA/HI/*.c
-    CGA/HI/*.c
+    CGA/LO/*.c
     EGA/*.c
     HGA/*.c
     VGA/*.c

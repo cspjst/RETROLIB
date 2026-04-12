@@ -112,7 +112,7 @@ static void draw_dithered_pixel(cga_coord_t x, cga_coord_t y, uint8_t intensity)
 }
 
 /* Main Test Pattern Routine */
-void test_hipattern(void) {
+void test_hi_pattern(void) {
     const cga_coord_t WIDTH = 640;
     const cga_coord_t HEIGHT = 200;
     const cga_coord_t CX = WIDTH / 2;
