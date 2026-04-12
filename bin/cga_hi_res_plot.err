@@ -1,1 +1,1 @@
-/Users/jeremythornton/dosbox/cspjst/RETROLIB/src/CGA/cga_lookup_table_y.h(10): Warning! W202: Symbol 'CGA_HI_RES_MASKS' has been defined, but not referenced
+/Users/jeremythornton/dosbox/cspjst/RETROLIB/src/CGA/HI/../cga_lookup_table_y.h(12): Warning! W202: Symbol 'CGA_HI_RES_MASKS' has been defined, but not referenced

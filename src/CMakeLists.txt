@@ -79,6 +79,8 @@ file(GLOB SOURCES
     LOG/*.c
     MEM/*.c
     CGA/*.c
+    CGA/HI/*.c
+    CGA/HI/*.c
     EGA/*.c
     HGA/*.c
     VGA/*.c

@@ -5,14 +5,14 @@
 * 2026 04 02 use __watcall for performance at the expense compiler agnostic
 */
 #include "cga_hi_res_plot.h"
-#include "cga_constants.h"
-#include "cga_lookup_table_y.h"
+#include "../cga_constants.h"
+#include "../cga_lookup_table_y.h"
 
 /**
  * Use fast bit manipulation calculate row byte y/2 * 80 bytes per row
  * Use CL to rotate mask and shift pixel bit
  */
-void cga_hi_res_plot_calculate(cga_coord_t x, cga_coord_t y, cga_colour_t colour) {
+void cga_hi_res_plot_calculate(cga_coord_t x, cga_coord_t y, cga_hi_res_colours_t colour) {
     __asm {
         .8086
 
@@ -52,7 +52,7 @@ EVEN:   mov     es, ax                      ; transer segment into es
  * Use a lookup table for y is 16.7% faster
  * Use __fastcall for 6.12% faster AX = x, DX = y, BX = colour
  */
-void __fastcall cga_hi_res_plot_lookup(cga_coord_t x, cga_coord_t y, cga_colour_t colour) {
+void __fastcall cga_hi_res_plot_lookup(cga_coord_t x, cga_coord_t y, cga_hi_res_colours_t colour) {
     // AX = x, DX = y, BX = colour
     __asm {
         .8086

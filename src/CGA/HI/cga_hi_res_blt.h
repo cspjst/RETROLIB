@@ -6,7 +6,7 @@
 #ifndef CGA_HI_RES_BLT_H
 #define CGA_HI_RES_BLT_H
 
-#include "cga_types.h"
+#include "../cga_types.h"
 
 void cga_hi_res_screen_blt(const char* data);
 

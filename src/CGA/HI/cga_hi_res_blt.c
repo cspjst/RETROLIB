@@ -4,8 +4,8 @@
  * @version     0.2.0
  */
 #include "cga_hi_res_blt.h"
-#include "cga_constants.h"
-#include "cga_lookup_table_y.h"
+#include "../cga_constants.h"
+#include "../cga_lookup_table_y.h"
 
 #define CGA_NO_SYNC
 

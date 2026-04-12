@@ -1,9 +1,12 @@
 #ifndef CGA_HI_RES_COLOURS_H
 #define CGA_HI_RES_COLOURS_H
 
+/**
+ * White is deliberating set MSB (rather than LSB) to enable fast plot routine shift right by low nybble
+ */
 typedef enum {
     CGA_BLACK,
-    CGA_WHITE = 0x80
-} cga_h_res_colours_t;
+    CGA_WHITE = 0x80    // 1000 0000
+} cga_hi_res_colours_t;
 
 #endif
