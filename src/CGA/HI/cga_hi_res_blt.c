@@ -7,17 +7,7 @@
 #include "../cga_constants.h"
 #include "../cga_lookup_table_y.h"
 
-#define CGA_NO_SYNC
-
-void cga_hi_res_screen_blt(const char* data) {
-    __asm {
-        .8086
-        push    ds
-        push    es
-        push    bp
-        pushf
-
-#ifndef CGA_NO_SYNC
+/* sync function
         mov     dx, CGA_STATUS_REG          ; CGA status port
 WAIT0:  in      al, dx                      ; read status port
         test    al, 8                       ; in vertical retrace?
@@ -26,7 +16,15 @@ WAIT0:  in      al, dx                      ; read status port
 WAIT1:  in      al, dx                      ; read status port
         test    al, 8                       ; vertical retrace started?
         jz      WAIT1                       ; wait for it to start
-#endif
+*/
+
+void cga_hi_res_screen_blt(const char* data) {
+    __asm {
+        .8086
+        push    ds
+        push    es
+        push    bp
+        pushf
 
         cld                                 ; incremental MOVSW
         mov     di, CGA_VIDEO_RAM_SEGMENT
