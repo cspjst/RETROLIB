@@ -1,3 +1,8 @@
+/**
+ * @author      Jeremy Simon Thornton
+ * @copyright   2026 Jeremy Simon Thornton
+ * @version     0.1.5
+ */
 #ifndef CGA_BITMAP_CONSTANTS_H
 #define CGA_BITMAP_CONSTANTS_H
 
