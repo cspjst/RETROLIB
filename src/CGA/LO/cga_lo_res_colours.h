@@ -37,10 +37,28 @@
 *  This allows for some variation, as well as flashing effects, as the background color can be changed without having to redraw the screen (i.e. without changing the contents of the video RAM.)
 */
 typedef enum {
-    CGA_BLACK   = 0X00,     // 0000 0000
-	CGA_CYAN    = 0X40,     // 0100 0000
-	CGA_MAGENTA = 0X80,     // 1000 0000
-	CGA_WHITE   = 0XC0      // 1100 0000
+    CGA_BLACK       = 0x00,     // 0000 0000
+    // Palette 1
+	CGA_CYAN        = 0x40,     // 0100 0000
+	CGA_MAGENTA     = 0x80,     // 1000 0000
+	CGA_LT_GRAY     = 0xC0,     // 1100 0000
+	// Palette 1 High Intensity
+	CGA_LT_CYAN     = 0x40,
+	CGA_LT_MAGENTA  = 0x80,
+	CGA_WHITE       = 0xC0,
+	// Palette 0
+	CGA_GREEN
+	CGA_RED,
+	CGA_BROWN,
+	// Palette 0 High Intensity
+	CGA_LT_GREEN,
+	CGA_LT_RED,
+	CGA_YELLOW,
+	// Palette 2
+	CGA_0 = 0x00,   // 00
+	CGA_1 = 0x40,   // 01
+	CGA_2 = 0x80,   // 10
+	CGA_3 = 0xC0    // 11
 } cga_lo_res_colour_t;
 
 #endif
