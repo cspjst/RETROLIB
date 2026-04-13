@@ -1,3 +1,8 @@
+/**
+ * @author      Jeremy Simon Thornton
+ * @copyright   2026 Jeremy Simon Thornton
+ * @version     0.1.5
+ */
 #include "cga_bitmap.h"
 #include "cga_bitmap_constants.h"
 #include <errno.h>
