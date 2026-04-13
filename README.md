@@ -7,4 +7,4 @@
 ╚═╝  ╚═╝╚══════╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝╚═════╝
 © Jeremy Simon Thornton 2026 
 ```                                                             
-C99 Programming Tools to help you build programs for DOS era computers, and their emulators.
+C99 Programming Tools to help me (and you) build programs for DOS era computers, and their emulators.
