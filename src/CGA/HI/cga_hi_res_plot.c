@@ -56,7 +56,7 @@ void __fastcall cga_hi_res_plot_lookup(cga_coord_t x, cga_coord_t y, cga_hi_res_
     // AX = x, DX = y, BX = colour
     __asm {
         .8086
-        mov     cx, CGA_VIDEO_RAM_SEGMENT   ; load the VRAM segment address
+        mov     cx, CGA_VIDEO_RAM_SEGMENT   ; load even VRAM segment address
         mov     es, cx                      ; transer segment into es
         xchg    bx, dx                      ; BX = y DX = colour
         shl     bx, 1                       ; turn y into a word table index
