@@ -48,7 +48,7 @@ EVEN:   mov     es, ax                      ; transer segment into es
 }
 
 /**
- * 23.80% faster than cga_hi_res_plot_calculate
+ * 23.8% faster than cga_hi_res_plot_calculate
  * Use a lookup table for y is 16.7% faster
  * Use __fastcall for 6.12% faster AX = x, DX = y, BX = colour
  */
