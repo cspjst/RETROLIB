@@ -1,3 +1,8 @@
+/**
+ * @author      Jeremy Simon Thornton
+ * @copyright   2024, 2026 Jeremy Simon Thornton
+ * @version     0.2.5
+ */
 #ifndef CGA_HI_RES_COLOURS_H
 #define CGA_HI_RES_COLOURS_H
 
