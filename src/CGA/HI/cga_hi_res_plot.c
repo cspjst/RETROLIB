@@ -56,24 +56,20 @@ void __fastcall cga_hi_res_plot_lookup(cga_coord_t x, cga_coord_t y, cga_hi_res_
     // AX = x, DX = y, BX = colour
     __asm {
         .8086
-        // 1. prepare registers
         mov     cx, CGA_VIDEO_RAM_SEGMENT   ; load the VRAM segment address
         mov     es, cx                      ; transer segment into es
         xchg    bx, dx                      ; BX = y DX = colour
         shl     bx, 1                       ; turn y into a word table index
         mov     bx, CGA_ROW_OFFSETS[bx]     ; load the VRAM row offset address
         mov     cx, ax                      ; copy of x in CX
-        // 2. calculate colour and mask
         and     cx, 7h                      ; mask off 0111 lower bits i.e.mod 8 (thanks powers of 2)
         mov     dh, 01111111b               ; load DH with pixel mask
         ror		dh, cl                      ; roll mask around by x mod 8
         shr     dl, cl                      ; shift single bit along by x mod 8
-        // 3. calculate offset
         shr     ax, 1                       ; calculate column byte x / 8
         shr     ax, 1                       ; 8086 limited to single step shifts
         shr     ax, 1                       ;
         add     bx, ax                      ; add in column byte
-        // 4. plot point
         and		es:[bx], dh		            ; mask out the pixel bits
         or		es:[bx], dl		            ; plot point
     }
