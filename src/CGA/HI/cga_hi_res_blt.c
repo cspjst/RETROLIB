@@ -1,7 +1,7 @@
 /**
  * @author      Jeremy Simon Thornton
  * @copyright   2026 Jeremy Simon Thornton
- * @version     0.2.0
+ * @version     0.2.5
  */
 #include "cga_hi_res_blt.h"
 #include "../cga_constants.h"
@@ -27,8 +27,8 @@ void cga_hi_res_screen_blt(const char* data) {
         pushf
 
         cld                                 ; incremental MOVSW
-        mov     di, CGA_VIDEO_RAM_SEGMENT
-        mov     es, di
+        mov     di, CGA_VIDEO_RAM_SEGMENT   ; load even VRAM segment address
+        mov     es, di                      ; ES:DI -> VRAM
         xor     di, di                      ; 0 is an even number so bank 0
         mov     ax, 1FB0h                   ; 2000h - 80 byte row increment & because add reg, reg is 1 cycle faster than xor reg,imm on 8086
         mov     bx, CGA_WORDS_PER_ROW       ; 40 words per row
@@ -55,14 +55,13 @@ ROWS:   mov     cx, bx                      ; load REP count
 void cga_hi_res_blt4x4(cga_coord_t x, cga_coord_t y, const char* data) {
     __asm {
         .8086
-// ifndef CGA_NO_SYNC test in vsync if not jmp END
         push    ds
         push    es
         pushf
 
         cld                                 ; incremental MOVS
-        mov     di, CGA_VIDEO_RAM_SEGMENT   ; more 8086 quirks
-        mov     es, di                      ; ES = VRAM segment
+        mov     di, CGA_VIDEO_RAM_SEGMENT   ; load even VRAM segment address
+        mov     es, di                      ; ES:DI -> VRAM segment
         mov     di, y                       ; DI = y
         shl     di, 1                       ; DI is a word offset
         mov     di, CGA_ROW_OFFSETS[di]     ; ES:DI -> VRAM
@@ -97,7 +96,7 @@ SBANK1: and     es:[di], dx
         ror     ax, cl
         or      es:[di], ax
         sub     di, 1FB0h                   ; ES:DI->bank 0
-        and     es:[di], dx                 ; unrolled 8 loop
+        and     es:[di], dx                 ; unrolled 8 loop..
         lodsb
         xor     ah, ah
         ror     ax, cl
@@ -116,7 +115,6 @@ SBANK1: and     es:[di], dx
         xor     ah, ah
         ror     ax, cl
         or      es:[di], ax
-
         jmp     END
 
 BYTE_ALIGNED:
@@ -131,7 +129,7 @@ FBANK0: movsb                               ; DS:SI -> ES:DI
         add     di, 1FFFh                   ; bank1 - stride
 FBANK1: movsb                               ; DS:SI -> ES:DI
         sub     di, 1FB1h                   ; bank 0 stride
-        movsb                               ; unrolled 8 loop...
+        movsb                               ; unrolled 4 loop...
         add     di, 1FFFh
         movsb
         test    di, CGA_BANK_BIT            ; finishing bank?
@@ -148,14 +146,13 @@ END:
 void cga_hi_res_blt8x8(cga_coord_t x, cga_coord_t y, const char* data) {
     __asm {
         .8086
-// ifndef CGA_NO_SYNC test in vsync if not jmp END
         push    ds
         push    es
         pushf
 
         cld                                 ; incremental MOVS
-        mov     di, CGA_VIDEO_RAM_SEGMENT   ; more 8086 quirks
-        mov     es, di                      ; ES = VRAM segment
+        mov     di, CGA_VIDEO_RAM_SEGMENT   ; load even VRAM segment address
+        mov     es, di                      ; ES:DI -> VRAM
         mov     di, y                       ; DI = y
         shl     di, 1                       ; DI is a word offset
         mov     di, CGA_ROW_OFFSETS[di]     ; ES:DI -> VRAM
@@ -190,7 +187,7 @@ SBANK1: and     es:[di], dx
         ror     ax, cl
         or      es:[di], ax
         sub     di, 1FB0h                   ; ES:DI->bank 0
-        and     es:[di], dx                 ; unrolled 8 loop
+        and     es:[di], dx                 ; unrolled 8 loop...
         lodsb
         xor     ah, ah
         ror     ax, cl
@@ -284,11 +281,11 @@ void cga_hi_res_blt(cga_coord_t x, cga_coord_t y, cga_coord_t w, cga_coord_t h, 
         shr     cx, 1                       ; calculate byte  width w / 8
         shr     cx, 1                       ; 8086 limited to single step shifts
         shr     cx, 1                       ; CX is now *byte* width
-        mov     di, CGA_VIDEO_RAM_SEGMENT   ; more 8086 quirks
-        mov     es, di                      ; ES = VRAM segment
+        mov     di, CGA_VIDEO_RAM_SEGMENT   ; load even VRAM segment address
+        mov     es, di                      ; ES:DI-> VRAM
         mov     di, bx                      ; DI = y
         shl     di, 1                       ; DI is a word offset
-        mov     di, CGA_ROW_OFFSETS[di]     ; ES:DI -> VRAM
+        mov     di, CGA_ROW_OFFSETS[di]     ; DI -> line segment
         mov     ax, x                       ; AX = x
         test    al, 7                       ; test lower 3 bits (x mod 8)
         jz      BYTE_ALIGNED                ; byte aligned x coord
@@ -302,8 +299,7 @@ NOT_ALIGNED:
         mov     bx, CGA_BYTES_PER_ROW       ; 80 bytes per VRAM row
         sub     bx, cx                      ; 80 - *byte* width
         lds     si, data                    ; DS:SI -> data (safe now)
-        //
-        //
+// TODO: ...
         jmp     END
 
 BYTE_ALIGNED:
