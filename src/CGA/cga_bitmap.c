@@ -8,6 +8,16 @@
 #include <errno.h>
 #include <stdio.h>
 
+cga_bitmap_t* cga_make_bmp(cga_bitmap_t* bmp, unsigned short depth, cga_coord_t width, cga_coord_t height) {
+    if(!bmp || width == 0 || height == 0) return NULL;
+    bmp->depth  = depth;
+    bmp->width  = width;
+    bmp->height = height;
+    bmp->size = ((dos_memsize_t)width * depth + 7) >> 3 * bmp->height;
+    bmp->data = NULL;
+    return bmp;
+}
+
 FILE* cga_read_meta_raw_pbm(FILE* f, cga_bitmap_t* bmp) {
     errno = EINVAL;                             // POSIX error Invalid Arguement
     if(!f) return NULL;
@@ -32,19 +42,4 @@ dos_memsize_t cga_load_bmp_raw_pbm(FILE* f, cga_bitmap_t* bmp) {
     if (fread(bmp->data, 1, bmp->size, f) != bmp->size) return 0;
     errno = 0;
     return bmp->size;
-}
-
-cga_bitmap_t* cga_make_bmp(cga_bitmap_t* bmp, unsigned short depth, cga_coord_t width, cga_coord_t height) {
-    if(!bmp || width == 0 || height == 0) return NULL;
-
-    bmp->depth  = depth;
-    bmp->width  = width;
-    bmp->height = height;
-
-    // bytes per line = ceil(width * depth / 8)
-    int bpl = ((dos_memsize_t)width * depth + 7) >> 3;
-    bmp->size = bpl * bmp->height;
-
-    bmp->data = NULL;  // caller allocates via arena or other means
-    return bmp;
 }

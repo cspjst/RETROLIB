@@ -23,21 +23,16 @@ typedef struct {
     char* data;         // limited to 64K max
 } cga_bitmap_t;
 
+cga_bitmap_t* cga_make_bmp(cga_bitmap_t* bmp, unsigned short depth, cga_coord_t width, cga_coord_t height);
+
 /**
  * The portable bitmap format (PBM) as the raw byte format is ideal for mode 6
  */
- FILE* cga_read_meta_raw_pbm(FILE* f, cga_bitmap_t* bmp);
-
- FILE* cga_write_meta_raw_pbm(FILE* f, cga_bitmap_t* bmp);
-
- cga_bitmap_t* cga_make_bmp(cga_bitmap_t* bmp, unsigned short depth, cga_coord_t width, cga_coord_t height);
-
-/**
- * With a reserved, sized memory block in hand, load data into 2 memory blocks
- * of odd and even rows that mirrors the CGA VRAM buffer layout.
- */
+FILE* cga_read_meta_raw_pbm(FILE* f, cga_bitmap_t* bmp);
+FILE* cga_write_meta_raw_pbm(FILE* f, cga_bitmap_t* bmp);
 dos_memsize_t cga_load_bmp_raw_pbm(FILE* f, cga_bitmap_t* bmp);
-
 dos_memsize_t cga_save_bmp_raw_pbm(FILE* f, cga_bitmap_t* bmp);
+
+
 
 #endif

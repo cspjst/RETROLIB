@@ -6,10 +6,10 @@
  * CGA "low resolution" 320x200 pixels width:height ratio 1.6
  * Four sets of 3 sprite optimised fast blt routine:
  * Bitmaps and Sprites aesthetic ratio 1.33 width:height for CGA lo-res mode
- * 32x24 large  - 2 registers + extra shift byte
- * 24x18 medium - less detail but fast, 2 registers for shift
- * 16x12 small  - 1 register and a byte to shift
- *  8x6  tiny   - 1 register shift
+ * 32x24 large
+ * 24x18 medium
+ * 16x12 small
+ *  8x6  tiny
  */
 #ifndef CGA_LO_RES_BLT_H
 #define CGA_LO_RES_BLT_H

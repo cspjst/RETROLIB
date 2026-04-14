@@ -1,4 +1,5 @@
 #include "cga_lo_res_blt.h"
+#include "../cga_constants.h"
 
 void cga_lo_res_screen_blt(const char* data) {
   __asm {

@@ -47,14 +47,16 @@ typedef enum {
 	CGA_LT_MAGENTA  = 0x80,
 	CGA_WHITE       = 0xC0,
 	// Palette 0
-	CGA_GREEN
-	CGA_RED,
-	CGA_BROWN,
+	CGA_GREEN       = 0x40,
+	CGA_RED         = 0x80,
+	CGA_BROWN       = 0xC0,
 	// Palette 0 High Intensity
-	CGA_LT_GREEN,
-	CGA_LT_RED,
-	CGA_YELLOW,
+	CGA_LT_GREEN   = 0x40,
+	CGA_LT_RED     = 0x80,
+	CGA_YELLOW     = 0xC0,
 	// Palette 2
+
+	// Generic
 	CGA_0 = 0x00,   // 00
 	CGA_1 = 0x40,   // 01
 	CGA_2 = 0x80,   // 10
