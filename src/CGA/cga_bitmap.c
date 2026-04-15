@@ -8,7 +8,7 @@
 #include <errno.h>
 #include <stdio.h>
 
-cga_bitmap_t* cga_make_bmp(cga_bitmap_t* bmp, unsigned short depth, cga_coord_t width, cga_coord_t height) {
+cga_bitmap_t* cga_make_bmp(cga_bitmap_t* bmp, cga_colour_depth_t depth, cga_coord_t width, cga_coord_t height) {
     if(!bmp || width == 0 || height == 0) return NULL;
     bmp->depth  = depth;
     bmp->width  = width;
