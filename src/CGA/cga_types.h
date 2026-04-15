@@ -7,5 +7,6 @@
 #define CGA_TYPES_H
 
 typedef unsigned short cga_coord_t;
+typedef unisgned short cga_colour_depth_t;
 
 #endif
