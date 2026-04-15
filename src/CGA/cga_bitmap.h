@@ -23,7 +23,7 @@ typedef struct {
     char* data;             // limited to 64K max
 } cga_bitmap_t;
 
-cga_bitmap_t* cga_make_bmp(cga_bitmap_t* bmp, unsigned short depth, cga_coord_t width, cga_coord_t height);
+cga_bitmap_t* cga_make_bmp(cga_bitmap_t* bmp, cga_colour_depth_t depth, cga_coord_t width, cga_coord_t height);
 
 /**
  * The portable bitmap format (PBM) as the raw byte format is ideal for mode 6
