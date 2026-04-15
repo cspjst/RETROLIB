@@ -16,11 +16,11 @@
 #include <stdio.h>
 
 typedef struct {
-    unsigned short depth;
+    cga_colour_depth_t depth;    
     cga_coord_t width;
     cga_coord_t height;
     dos_memsize_t size;
-    char* data;         // limited to 64K max
+    char* data;             // limited to 64K max
 } cga_bitmap_t;
 
 cga_bitmap_t* cga_make_bmp(cga_bitmap_t* bmp, unsigned short depth, cga_coord_t width, cga_coord_t height);
