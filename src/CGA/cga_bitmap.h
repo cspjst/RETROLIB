@@ -16,23 +16,28 @@
 #include <stdio.h>
 
 typedef struct {
-    cga_colour_depth_t depth;    
+    cga_colour_depth_t depth;
     cga_coord_t width;
     cga_coord_t height;
     dos_memsize_t size;
+    unsigned int palette;
     char* data;             // limited to 64K max
 } cga_bitmap_t;
 
-cga_bitmap_t* cga_make_bmp(cga_bitmap_t* bmp, cga_colour_depth_t depth, cga_coord_t width, cga_coord_t height);
+cga_bitmap_t* cga_make_bmp(cga_bitmap_t* bmp, cga_colour_depth_t depth, cga_coord_t width, cga_coord_t height, unsigned int pal);
 
 /**
- * The portable bitmap format (PBM) as the raw byte format is ideal for mode 6
+ * The portable bitmap format (PBM) as the raw byte format is ideal for mode 6 monochrome
  */
 FILE* cga_read_meta_raw_pbm(FILE* f, cga_bitmap_t* bmp);
 FILE* cga_write_meta_raw_pbm(FILE* f, cga_bitmap_t* bmp);
 dos_memsize_t cga_load_bmp_raw_pbm(FILE* f, cga_bitmap_t* bmp);
 dos_memsize_t cga_save_bmp_raw_pbm(FILE* f, cga_bitmap_t* bmp);
 
+/**
+ * The portable pixmap format (PPM) as the raw byte format requires more processing for mode 4/5
+ */
+FILE* cga_read_meta_raw_ppm(FILE* f, cga_bitmap_t* bmp);
 
 
 #endif
