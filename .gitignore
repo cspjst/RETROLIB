@@ -6,10 +6,20 @@ Makefile
 *.so
 *.dylib
 
-# Executables
+# compilation
 *.out
 *.bin
-*.exe# Ignore .DS_Store everywhere
+*.err
+*.map
+**/*.out
+**/*.bin
+**/*.err
+**/*.map
+
+# Executables
+#*.exe
+
+# Ignore .DS_Store everywhere
 .DS_Store
 **/.DS_Store
 
@@ -30,11 +40,6 @@ compile_commands.json
 CTestTestfile.cmake
 _deps
 CMakeUserPresets.json
-
-.DS_Store
-**/.DS_Store
-*.sh
-**/*.sh
 
 # CLion
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can

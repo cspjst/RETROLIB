@@ -6,6 +6,10 @@
 #ifndef CGA_BITMAP_CONSTANTS_H
 #define CGA_BITMAP_CONSTANTS_H
 
+#define CGA_META_HI_RES_FG "#CGA_FG %u"     // extract meta comment foreground colour mode 6
+#define CGA_META_LO_RES_PAL "#CGA_PAL %u"   // extract meta comment palette number mode 4
+#define CGA_META_WIDTH_HEIGHT "%hu %hu"     // extract meta width and height
+
 typedef enum {
     CGA_LO_RES,
     CGA_HI_RES

@@ -7,6 +7,7 @@
 #include "cga_bitmap_constants.h"
 #include <errno.h>
 #include <stdio.h>
+#include <string.h>
 
 // helper function
 dos_memsize_t cga_read_rgb(FILE* f, cga_rgb_t* rgb) {
@@ -29,24 +30,25 @@ cga_bitmap_t* cga_make_bmp(cga_bitmap_t* bmp, cga_colour_depth_t depth, cga_coor
     bmp->depth  = depth;
     bmp->width  = width;
     bmp->height = height;
-    bmp->size = ((dos_memsize_t)width * depth + 7) >> 3 * bmp->height;
+    bmp->size = ((bmp->width * bmp->depth + 7) >> 3) * bmp->height;
     bmp->palette = pal;
     bmp->data = NULL;
     return bmp;
 }
 
-FILE* cga_read_meta_raw_pbm(FILE* f, cga_bitmap_t* bmp) {
+FILE* cga_bmp_read_meta_raw_pbm(FILE* f, cga_bitmap_t* bmp) {
     errno = EINVAL;                             // POSIX error Invalid Arguement
     if(!f) return NULL;
     char line[10];
     if(!fgets(line, sizeof(line), f)) return NULL;  // read first line
     if(*(unsigned short*)line != CGA_RAW_PBM) return NULL; // only "P4" is valid
     if(!fgets(line, sizeof(line), f)) return NULL;  // read default colour
-    if (sscanf(line, "CGA_FG:%d", &bmp->palette) != 1) return NULL; // extract colour number
+    if (sscanf(line, "#CGA %hu", &bmp->palette) != 1) return NULL; // colour
     while (fgets(line, sizeof(line), f)) {      // read until dimensions
         if (line[0] == '#') continue;           // skip comments
-        if (sscanf(line, "%hu %hu", &bmp->width, &bmp->height) == 2) {
+        if (sscanf(line, CGA_META_WIDTH_HEIGHT, &bmp->width, &bmp->height) == 2) {
             bmp->depth = 1;                     // mode 6
+            bmp->size = ((bmp->width * bmp->depth + 7) >> 3) * bmp->height;
             errno = 0;                          // reset the POSIX error number
             return f;                           // a valid PBM file to work with
         }
@@ -54,7 +56,7 @@ FILE* cga_read_meta_raw_pbm(FILE* f, cga_bitmap_t* bmp) {
     return NULL;                                // the PBM header was malformed
 }
 
-dos_memsize_t cga_load_bmp_raw_pbm(FILE* f, cga_bitmap_t* bmp) {
+dos_memsize_t cga_bmp_load_raw_pbm(FILE* f, cga_bitmap_t* bmp) {
     errno = EINVAL;
     if(!f || !bmp || !bmp->data) return 0;
     errno = EIO;
@@ -63,7 +65,7 @@ dos_memsize_t cga_load_bmp_raw_pbm(FILE* f, cga_bitmap_t* bmp) {
     return bmp->size;
 }
 
-FILE* cga_read_meta_raw_ppm(FILE* f, cga_bitmap_t* bmp) {
+FILE* cga_bmp_read_meta_raw_ppm(FILE* f, cga_bitmap_t* bmp) {
     errno = EINVAL;
     char line[10];
     unsigned short max;
@@ -87,4 +89,21 @@ FILE* cga_read_meta_raw_ppm(FILE* f, cga_bitmap_t* bmp) {
         }
     }
     return NULL;
+}
+
+void cga_bmp_dump(FILE* f, cga_bitmap_t* bmp) {
+    if (!f || !bmp) return;
+
+    fprintf(f, "CGA Bitmap:\n");
+    fprintf(f, "  depth   = %u\n", bmp->depth);
+    fprintf(f, "  width   = %u\n", bmp->width);
+    fprintf(f, "  height  = %u\n", bmp->height);
+    fprintf(f, "  size    = %lu\n", bmp->size);
+    fprintf(f, "  palette = 0x%04X (%u)\n", bmp->palette, bmp->palette);
+    fprintf(f, "  data    = %p\n", (void*)bmp->data);
+
+    if(bmp->data) {
+        for(int i = 0; i < 16; ++i) fprintf(f, "%02X ", (unsigned char)bmp->data[i]);
+        fprintf(f, "\n");
+    }
 }

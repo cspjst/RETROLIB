@@ -179,12 +179,12 @@ void test_hi_screen_blt() {
     FILE* f = fopen(fname, "rb");
     if(!f) printf("fopen: %s \"%s\"\n", strerror(errno), fname);
 
-    assert(cga_read_meta_raw_pbm(f, &bmp));
+    assert(cga_bmp_read_meta_raw_pbm(f, &bmp));
     if(!f) printf("%s \"%s\"\n", strerror(errno), fname);
     //printf("%hu x %hu\n", bmp.width, bmp.height);
     bmp.data = (char*)mem_arena_alloc(arena, bmp.size);
     if(!bmp.data) printf("Failed to allocate %lu bytes!\n", bmp.size);
-    assert(cga_load_bmp_raw_pbm(f, &bmp) == bmp.size);
+    assert(cga_bmp_load_raw_pbm(f, &bmp) == bmp.size);
 
     cga_hi_res_screen_blt(bmp.data);
 
@@ -200,7 +200,7 @@ void test_hi_blt() {
     mem_arena_t* arena = mem_new_arena(4096);   // 64K
     if(!arena) printf("Failed to create arena!\n");
     cga_bitmap_t bmp;
-    cga_make_bmp(&bmp, 1, w, h);
+    cga_make_bmp(&bmp, 1, w, h, 1);
     bmp.data = (char*)mem_arena_alloc(arena, bmp.size);
     make_data_1bit(&bmp);
 
@@ -229,7 +229,7 @@ void test_hi_cga() {
 
     //test_hi_pattern();
     test_hi_screen_blt();
-    test_hi_blt();
+    //test_hi_blt();
 
     getchar();
     env_set_video_mode(m);

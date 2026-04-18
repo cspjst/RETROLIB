@@ -1,3 +1,3 @@
 [submodule "doslib"]
 	path = doslib
-	url = https://github.com/cspjst/DOSLIB.git
+	url = git@github.com:cspjst/DOSLIB.git
