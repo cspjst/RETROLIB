@@ -1,0 +1,4 @@
+# .clangd - place in RETROLIB root folder
+CompileFlags:
+  Add: [-xc, -Wno-ignored-attributes, -fms-extensions]
+  Remove: [-std=c99]

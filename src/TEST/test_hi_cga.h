@@ -6,10 +6,8 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include <math.h>
 #include <assert.h>
 
-#include "../CGA/HI/cga_hi_res_constants.h"
 #include "../CGA/HI/cga_hi_res_plot.h"
 #include "../CGA/HI/cga_hi_res_cls.h"
 #include "../CGA/HI/cga_hi_res_blt.h"
@@ -21,8 +19,6 @@
 #include "../ENV/env_time.h"
 
 #include "../MEM/dos_mem_arena.h"
-
-#include "../LOG/log_tools.h"
 
 #include "../../doslib/bioslib/src/BIOS/bios_clock_services.h"
 

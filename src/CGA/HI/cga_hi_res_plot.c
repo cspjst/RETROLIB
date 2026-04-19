@@ -6,7 +6,7 @@
 */
 #include "cga_hi_res_plot.h"
 #include "../cga_constants.h"
-#include "../cga_lookup_table_y.h"
+#include "../cga_lookup_table_y.h"  // IWYU pragma: keep
 
 /**
  * Use fast bit manipulation calculate row byte y/2 * 80 bytes per row

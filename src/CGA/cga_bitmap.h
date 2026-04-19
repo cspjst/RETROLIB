@@ -10,7 +10,6 @@
 #define CGA_HI_RES_BITMAP_H
 
 #include "cga_types.h"
-#include "cga_bitmap_constants.h"
 #include "../../doslib/src/DOS/dos_memory_types.h"
 
 #include <stddef.h>
@@ -39,7 +38,6 @@ dos_memsize_t cga_bmp_save_raw_pbm(FILE* f, cga_bitmap_t* bmp);
  * The portable pixmap format (PPM) as the raw byte format requires more processing for mode 4/5
  */
 FILE* cga_bmp_read_meta_raw_ppm(FILE* f, cga_bitmap_t* bmp);
-
 
 void cga_bmp_dump(FILE* f, cga_bitmap_t* bmp);
 
