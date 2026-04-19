@@ -13,6 +13,7 @@
 #include "../CGA/HI/cga_hi_res_plot.h"
 #include "../CGA/HI/cga_hi_res_cls.h"
 #include "../CGA/HI/cga_hi_res_blt.h"
+#include "../CGA/HI/cga_hi_res_foreground.h"
 
 #include "../CGA/cga_bitmap.h"
 
@@ -49,7 +50,7 @@ static const uint8_t dither_matrix[4][4] = {
 /* Helper: Draw a line using Bresenham's algorithm */
 static void draw_line(cga_coord_t x0, cga_coord_t y0,
                       cga_coord_t x1, cga_coord_t y1,
-                      cga_hi_res_colours_t col) {
+                      cga_hi_res_colour_t col) {
     int16_t dx = x1 - x0;
     int16_t dy = y1 - y0;
     int16_t sx = (dx < 0) ? -1 : 1;
@@ -72,7 +73,7 @@ static void draw_line(cga_coord_t x0, cga_coord_t y0,
 /* Helper: Draw a filled rectangle */
 static void draw_rect(cga_coord_t x1, cga_coord_t y1,
                       cga_coord_t x2, cga_coord_t y2,
-                      cga_hi_res_colours_t col) {
+                      cga_hi_res_colour_t col) {
     for (cga_coord_t y = y1; y <= y2; y++) {
         for (cga_coord_t x = x1; x <= x2; x++) {
             cga_plot(x, y, col);
@@ -82,7 +83,7 @@ static void draw_rect(cga_coord_t x1, cga_coord_t y1,
 
 /* Helper: Draw a circle using Midpoint Algorithm */
 static void draw_circle(cga_coord_t cx, cga_coord_t cy,
-                        cga_coord_t radius, cga_hi_res_colours_t col) {
+                        cga_coord_t radius, cga_hi_res_colour_t col) {
     int16_t x = radius;
     int16_t y = 0;
     int16_t err = 0;
@@ -186,6 +187,7 @@ void test_hi_screen_blt() {
     if(!bmp.data) printf("Failed to allocate %lu bytes!\n", bmp.size);
     assert(cga_bmp_load_raw_pbm(f, &bmp) == bmp.size);
 
+    cga_hi_res_set_fg(bmp.palette);
     cga_hi_res_screen_blt(bmp.data);
 
     fclose(f);

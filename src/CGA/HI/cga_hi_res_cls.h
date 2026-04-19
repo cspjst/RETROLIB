@@ -6,8 +6,8 @@
 #ifndef CGA_HI_RES_CLS_H
 #define CGA_HI_RES_CLS_H
 
-#include "cga_hi_res_colours.h"
+#include "../cga_colours.h"
 
-void __fastcall cga_hi_res_cls(cga_hi_res_colours_t pattern);
+void __fastcall cga_hi_res_cls(cga_hi_res_colour_t pattern);
 
 #endif

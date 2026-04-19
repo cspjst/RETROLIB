@@ -3,6 +3,10 @@
 
 #include "cga_types.h"
 
+typedef enum {
+    CGA_HI_RES_BLACK = 0,
+    CGA_HI_RES_WHITE = 0x80     // 1000 0000b a performance optimisation easier shr
+} cga_hi_res_colour_t;
 
 typedef enum {
     CGA_BLACK = 0,  // 0000
