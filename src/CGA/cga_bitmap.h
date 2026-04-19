@@ -20,7 +20,7 @@ typedef struct {
     cga_coord_t width;          // mode 6 = 0..639, mode 4 = 0..319
     cga_coord_t height;         // modes 4 and 6 = 0..199
     size_t size;                // data size bytes max 64K
-    unsigned short palette;     // mode 6 = forground colour, mode 4 = palette 0,1,2
+    size_t palette;             // mode 6 = forground colour, mode 4 = palette 0,1,2
     char* data;                 // limited to 64K max
 } cga_bitmap_t;
 
@@ -38,6 +38,9 @@ dos_memsize_t cga_bmp_save_raw_pbm(FILE* f, cga_bitmap_t* bmp);
  * The portable pixmap format (PPM) as the raw byte format requires more processing for mode 4/5
  */
 FILE* cga_bmp_read_meta_raw_ppm(FILE* f, cga_bitmap_t* bmp);
+FILE* cga_bmp_write_meta_raw_ppm(FILE* f, cga_bitmap_t* bmp);
+dos_memsize_t cga_bmp_load_raw_ppm(FILE* f, cga_bitmap_t* bmp);
+dos_memsize_t cga_bmp_save_raw_ppm(FILE* f, cga_bitmap_t* bmp);
 
 void cga_bmp_dump(FILE* f, cga_bitmap_t* bmp);
 

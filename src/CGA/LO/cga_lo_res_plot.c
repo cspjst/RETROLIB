@@ -5,7 +5,7 @@
  */
 #include "cga_lo_res_plot.h"
 #include "../cga_constants.h"
-#include "../cga_lookup_table_y.h"
+#include "../cga_lookup_table_y.h"  // IWYU pragma: keep
 
 void __fastcall cga_lo_res_plot(cga_coord_t x, cga_coord_t y, cga_lo_res_colour_t colour) {
     // AX = x, DX = y, BX = colour

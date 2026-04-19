@@ -5,7 +5,7 @@
 #include <string.h>
 
 #include "../CGA/LO/cga_lo_res_plot.h"
-#include "../CGA/LO/cga_lo_res_colours.h"
+#include "../CGA/cga_colours.h"
 
 #include "../CGA/cga_bitmap.h"
 
@@ -184,9 +184,9 @@ void test_lo_cga() {
     bios_video_mode_t m = env_get_video_mode();
     env_set_video_mode(CGA_GRAPHICS_4_COLOUR_320X200);
 
-    cga_plot(160, 99, CGA_CYAN);
-    cga_plot(159, 98, CGA_MAGENTA);
-    cga_plot(161, 100, CGA_WHITE);
+    cga_plot(160, 99, CGA_LO_RES_CYAN);
+    cga_plot(159, 98, CGA_LO_RES_MAGENTA);
+    cga_plot(161, 100, CGA_LO_RES_WHITE);
 
     getchar();
     env_set_video_mode(m);

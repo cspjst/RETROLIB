@@ -17,10 +17,10 @@ dos_memsize_t cga_read_rgb(FILE* f, cga_rgb_t* rgb) {
     errno = EIO;
     int n = fread(buff, 1, 3, f);   // read 3 bytes into buffer
     if (n != 3) return n;
-    *rgb = 0;                       // ensure bits 24-31 zero
-    *rgb |= ((unsigned long)buff[0] << 16) |    // red bits 16-23
-            ((unsigned long)buff[1] << 8)  |    // green bits 8-15
-            buff[2];                            // blue bits 0-7
+    rgb->argb = 0;
+    rgb->red = buff[0];             // red bots 16..23
+    rgb->green = buff[1];           // green bits 8..15
+    rgb->blue = buff[2];            // blue bits 0..7
     errno = 0;                      // success
     return 3;
 }
@@ -48,7 +48,7 @@ FILE* cga_bmp_read_meta_raw_pbm(FILE* f, cga_bitmap_t* bmp) {
         if (line[0] == '#') continue;           // skip comments
         if (sscanf(line, CGA_META_WIDTH_HEIGHT, &bmp->width, &bmp->height) == 2) {
             bmp->depth = 1;                     // mode 6
-            bmp->size = ((bmp->width * bmp->depth + 7) >> 3) * bmp->height;
+            bmp->size = ((bmp->width * bmp->depth)  >> 3) * bmp->height;
             errno = 0;                          // reset the POSIX error number
             return f;                           // a valid PBM file to work with
         }
@@ -77,6 +77,7 @@ FILE* cga_bmp_read_meta_raw_ppm(FILE* f, cga_bitmap_t* bmp) {
         if (line[0] == '#') continue;           // skip comments
         if (sscanf(line, CGA_META_WIDTH_HEIGHT, &bmp->width, &bmp->height) == 2) {
             bmp->depth = 2;                     // mode 4/5
+            bmp->size = ((bmp->width * bmp->depth)  >> 3) * bmp->height;
             errno = 0;                          // reset the POSIX error number
             break;
         }
@@ -91,6 +92,14 @@ FILE* cga_bmp_read_meta_raw_ppm(FILE* f, cga_bitmap_t* bmp) {
     return NULL;
 }
 
+dos_memsize_t cga_bmp_load_raw_ppm(FILE* f, cga_bitmap_t* bmp) {
+    cga_rgb_t rgb;
+    errno = EINVAL;
+    if(!f || !bmp || !bmp->data) return 0;
+    errno = EIO;
+    if (cga_read_rgb(f, &rgb) != 3) return 0;
+}
+
 void cga_bmp_dump(FILE* f, cga_bitmap_t* bmp) {
     if (!f || !bmp) return;
 
@@ -98,12 +107,13 @@ void cga_bmp_dump(FILE* f, cga_bitmap_t* bmp) {
     fprintf(f, "  depth   = %hu\n", bmp->depth);
     fprintf(f, "  width   = %hu\n", bmp->width);
     fprintf(f, "  height  = %hu\n", bmp->height);
-    fprintf(f, "  size    = %lu\n", bmp->size);
+    fprintf(f, "  size    = %u\n", bmp->size);
     fprintf(f, "  palette = 0x%04X (%hu)\n", bmp->palette, bmp->palette);
     fprintf(f, "  data    = %p\n", (void*)bmp->data);
 
     if(bmp->data) {
-        for(int i = 0; i < 16; ++i) fprintf(f, "%02X ", (unsigned char)bmp->data[i]);
+        for(int i = 0; i < 16; ++i)
+            fprintf(f, "%02X ", (unsigned char)bmp->data[i]);
         fprintf(f, "\n");
     }
 }
