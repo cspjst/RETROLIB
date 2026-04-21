@@ -54,6 +54,7 @@ void test_lo_res_bitmap() {
 
 void test_bitmap() {
     test_hi_res_bitmap();
+    test_lo_res_bitmap();
 }
 
 #endif

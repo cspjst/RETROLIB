@@ -6,8 +6,8 @@
 #ifndef CGA_BITMAP_CONSTANTS_H
 #define CGA_BITMAP_CONSTANTS_H
 
-#define CGA_META_FG "#CGA FG %hu"          // extract meta comment foreground value
-#define CGA_META_PAL "#CGA PAL %hu"         // extract meta comment palette value
+#define CGA_META_FG "#CGA FG=%hu"          // extract meta comment foreground value
+#define CGA_META_PAL "#CGA PAL=%hu"         // extract meta comment palette value
 #define CGA_META_WIDTH_HEIGHT "%hu %hu"     // extract meta width and height
 
 typedef enum {
