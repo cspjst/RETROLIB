@@ -19,8 +19,8 @@ typedef struct {
     cga_colour_depth_t depth;   // mode 6 (hi res) = 1, mode 4 (lo res) = 2
     cga_coord_t width;          // mode 6 = 0..639, mode 4 = 0..319
     cga_coord_t height;         // modes 4 and 6 = 0..199
-    size_t size;                // data size bytes max 64K
-    size_t palette;             // mode 6 = forground colour, mode 4 = palette 0,1,2
+    cga_size_t size;            // data size bytes max 64K
+    cga_size_t palette;         // mode 6 = forground colour, mode 4 = palette 0,1,2
     char* data;                 // limited to 64K max
 } cga_bitmap_t;
 

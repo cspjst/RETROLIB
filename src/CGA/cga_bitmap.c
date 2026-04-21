@@ -43,7 +43,7 @@ FILE* cga_bmp_read_meta_raw_pbm(FILE* f, cga_bitmap_t* bmp) {
     if(!fgets(line, sizeof(line), f)) return NULL;  // read first line
     if(*(unsigned short*)line != CGA_RAW_PBM) return NULL; // only "P4" is valid
     if(!fgets(line, sizeof(line), f)) return NULL;  // read default colour
-    if (sscanf(line, CGA_META_PALETTE, &bmp->palette) != 1) return NULL; // colour
+    if (sscanf(line, CGA_META_FG, &bmp->palette) != 1) return NULL; // colour
     while (fgets(line, sizeof(line), f)) {      // read until dimensions
         if (line[0] == '#') continue;           // skip comments
         if (sscanf(line, CGA_META_WIDTH_HEIGHT, &bmp->width, &bmp->height) == 2) {
@@ -72,7 +72,7 @@ FILE* cga_bmp_read_meta_raw_ppm(FILE* f, cga_bitmap_t* bmp) {
     if(!fgets(line, sizeof(line), f)) return NULL;  // read first line
     if(*(unsigned short*)line != CGA_RAW_PPM) return NULL; // only "P6" is valid
     if(!fgets(line, sizeof(line), f)) return NULL;  // read palette meta data
-    if (sscanf(line, CGA_META_PALETTE, &bmp->palette) != 1) return NULL; // extract palette number
+    if (sscanf(line, CGA_META_FG, &bmp->palette) != 1) return NULL; // extract palette number
     while (fgets(line, sizeof(line), f)) {      // read until dimensions
         if (line[0] == '#') continue;           // skip comments
         if (sscanf(line, CGA_META_WIDTH_HEIGHT, &bmp->width, &bmp->height) == 2) {

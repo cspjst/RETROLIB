@@ -38,7 +38,3 @@ ROWS:   mov     cx, bx                      ; load REP count
 void cga_lo_res_blt4x4(cga_coord_t x, cga_coord_t y, const char* bmp) {
 
 }
-
-void cga_lo_res_blt8x8(cga_coord_t x, cga_coord_t y, const char* bmp) {
-
-}
