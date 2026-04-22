@@ -99,12 +99,16 @@ dos_memsize_t cga_bmp_load_raw_ppm(FILE* f, cga_bitmap_t* bmp) {
     errno = EIO;                                // POSIX error Input/Output
     cga_size_t size = bmp->width * 3;           // PPM row size
     char* row = malloc(size);                   // PPM row data
+   
     if (!row) return 0;
     if (fread(row, 1, size, f) != size) {       // Read a row of RGB values
         free(row);                              // Read error
         return 0;
     }
-    cga_convert_rgb_line(bmp->data, row, bmp->width);
+    for(int i = 0; i < bmp->width; i += 3) {
+        rgb = (cga_rgb_t*)row + i;              // cast as an rgb type pointer
+        printf("%P, %x, %x %x", rgb->argb, rgb->red, rgb->green, rgb->blue);
+    }
     free(row);                                  // Free row data
     errno = 0;                          // reset the POSIX error number
     return bmp->size;
