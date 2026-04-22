@@ -14,7 +14,7 @@
 //void cga_process_rgb_line()
 
 
-dos_memsize_t cga_read_rgb(FILE* f, cga_rgb_t* rgb) {
+dos_memsize_t cga_read_rgb(FILE* f, cga_argb_t* rgb) {
     errno = EINVAL;
     if (!f || !rgb) return 0;
     errno = EIO;
@@ -94,23 +94,37 @@ FILE* cga_bmp_read_meta_raw_ppm(FILE* f, cga_bitmap_t* bmp) {
 
 // --------------------------------------- //
 dos_memsize_t cga_bmp_load_raw_ppm(FILE* f, cga_bitmap_t* bmp) {
-    errno = EINVAL;                             // POSIX error Invalid Arguemen
+    errno = EINVAL;                             // POSIX error Invalid Arguement
     if(!f || !bmp || !bmp->data) return 0;
-    errno = EIO;                                // POSIX error Input/Output
     cga_size_t size = bmp->width * 3;           // PPM row size
+    errno = ENOMEM;                             // POSIX erroe No Memory
     char* row = malloc(size);                   // PPM row data
-   
     if (!row) return 0;
+    errno = EIO;                                // POSIX error Input/Output
     if (fread(row, 1, size, f) != size) {       // Read a row of RGB values
         free(row);                              // Read error
         return 0;
     }
-    for(int i = 0; i < bmp->width; i += 3) {
-        rgb = (cga_rgb_t*)row + i;              // cast as an rgb type pointer
-        printf("%P, %x, %x %x", rgb->argb, rgb->red, rgb->green, rgb->blue);
+    char* ppm = row;
+    size = 39;
+    while(ppm < row + size) {
+        // convert 4 pixels into a bitmap data byte
+        // if EINVAL return 0
+        cga_argb_t* argb = (cga_argb_t*)ppm;    // cast as an argb type pointer
+        printf("R %x, G %x, B %x\n", argb->red, argb->green, argb->blue);
+        ppm += 3;
+        argb = (cga_argb_t*)ppm;
+        printf("R %x, G %x, B %x\n", argb->red, argb->green, argb->blue);
+        ppm += 3;
+        argb = (cga_argb_t*)ppm;
+        printf("R %x, G %x, B %x\n", argb->red, argb->green, argb->blue);
+        ppm += 3;
+        argb = (cga_argb_t*)ppm;
+        printf("R %x, G %x, B %x\n", argb->red, argb->green, argb->blue);
+        ppm += 3;
     }
     free(row);                                  // Free row data
-    errno = 0;                          // reset the POSIX error number
+    errno = 0;                                  // reset the POSIX error number
     return bmp->size;
 }
 

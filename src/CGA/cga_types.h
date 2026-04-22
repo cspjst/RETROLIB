@@ -15,11 +15,11 @@ typedef unsigned char cga_colour_t;
 typedef union {
     unsigned long argb;         // packed: 0x00RRGGBB
     struct {
-        unsigned char blue;     // blue (little-endian)
-        unsigned char green;    // green
-        unsigned char red;      // red
-        unsigned char alpha;    // alpha
+        unsigned char red;
+        unsigned char green;
+        unsigned char blue;
+        unsigned char alpha;
     };
-} cga_rgb_t;
+} cga_argb_t;
 
 #endif

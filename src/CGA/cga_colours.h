@@ -75,7 +75,7 @@ typedef enum {
 *	2		4	red         #AA0000	    13		light red	    #FF5555
 *	3		7	light gray  #AAAAAA     15		white		    #FFFFFF
 */
-static const cga_rgb_t cga_rgb_palette[16] = {
+static const cga_argb_t cga_rgb_palette[16] = {
   0x000000,    // 0  "default" colour aka black
   0x00AA00,	   // 1  green
   0x00AAAA,    // 3	 cyan

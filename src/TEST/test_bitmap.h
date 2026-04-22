@@ -48,6 +48,8 @@ void test_lo_res_bitmap() {
 
     cga_bmp_dump(stdout, &bmp);
 
+    cga_bmp_load_raw_ppm(f, &bmp);
+
     fclose(f);
     mem_free_arena(arena);
 }
