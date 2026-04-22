@@ -92,6 +92,7 @@ FILE* cga_bmp_read_meta_raw_ppm(FILE* f, cga_bitmap_t* bmp) {
     return NULL;
 }
 
+// --------------------------------------- //
 dos_memsize_t cga_bmp_load_raw_ppm(FILE* f, cga_bitmap_t* bmp) {
     errno = EINVAL;                             // POSIX error Invalid Arguemen
     if(!f || !bmp || !bmp->data) return 0;
