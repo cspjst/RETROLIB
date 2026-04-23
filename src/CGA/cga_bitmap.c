@@ -105,6 +105,7 @@ dos_memsize_t cga_bmp_load_raw_ppm(FILE* f, cga_bitmap_t* bmp) {
     errno = EINVAL;                             // POSIX error Invalid Arguement
     if(!f || !bmp || !bmp->data) return 0;
     cga_size_t size = bmp->width * 3;           // PPM row size
+    printf("bytes size = %i\n", size);
     errno = ENOMEM;                             // POSIX erroe No Memory
     char* row = malloc(size);                   // PPM row data
     if (!row) return 0;
