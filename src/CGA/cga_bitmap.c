@@ -5,23 +5,31 @@
  */
 #include "cga_bitmap.h"
 #include "cga_bitmap_constants.h"
+#include "cga_colours.h"
+#include "cga_types.h"
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
 // helper function
-//void cga_process_rgb_line()
-
-
-dos_memsize_t cga_read_rgb(FILE* f, cga_argb_t* rgb) {
-    errno = EINVAL;
-    if (!f || !rgb) return 0;
-    errno = EIO;
-    int n = fread(&rgb->argb, 1, 3, f);   // read 3 bytes into buffer
-    if (n != 3) return n;
+char cga_bmp_rgb_to_pixel(cga_size_t palette, cga_argb_t colour) {
     errno = 0;
-    return 3;
+    if(colour.argb == 0) return 0;
+    switch(palette) {
+        case CGA_PALETTE_1_HI:
+            switch(colour.argb) {
+                case RGB_LT_CYAN: return 1;
+                case RGB_LT_MAGENTA: return 2;
+                case RGB_WHITE: return 3;
+                default:
+                    errno = EINVAL;
+                    return 0;
+            }
+        default:
+            errno = EINVAL;
+            return 0;
+    }
 }
 
 cga_bitmap_t* cga_make_bmp(cga_bitmap_t* bmp, cga_colour_depth_t depth, cga_coord_t width, cga_coord_t height, unsigned int pal) {
@@ -106,24 +114,36 @@ dos_memsize_t cga_bmp_load_raw_ppm(FILE* f, cga_bitmap_t* bmp) {
         return 0;
     }
     char* ppm = row;
-    size = 39;
+    char* byte = bmp->data;
+    cga_argb_t colour = {0};
+    errno = 0;
     while(ppm < row + size) {
         // convert 4 pixels into a bitmap data byte
-        // if EINVAL return 0
-        cga_argb_t* argb = (cga_argb_t*)ppm;    // cast as an argb type pointer
-        printf("R %x, G %x, B %x\n", argb->red, argb->green, argb->blue);
-        ppm += 3;
-        argb = (cga_argb_t*)ppm;
-        printf("R %x, G %x, B %x\n", argb->red, argb->green, argb->blue);
-        ppm += 3;
-        argb = (cga_argb_t*)ppm;
-        printf("R %x, G %x, B %x\n", argb->red, argb->green, argb->blue);
-        ppm += 3;
-        argb = (cga_argb_t*)ppm;
-        printf("R %x, G %x, B %x\n", argb->red, argb->green, argb->blue);
-        ppm += 3;
+        colour.red = *ppm++;
+        colour.green = *ppm++;
+        colour.blue = *ppm++;
+        *byte = cga_bmp_rgb_to_pixel(bmp->palette, colour) << 6;
+        if(errno) return 0;
+        colour.red = *ppm++;
+        colour.green = *ppm++;
+        colour.blue = *ppm++;
+        *byte |= cga_bmp_rgb_to_pixel(bmp->palette, colour) << 4;
+        if(errno) return 0;
+        colour.red = *ppm++;
+        colour.green = *ppm++;
+        colour.blue = *ppm++;
+        *byte |= cga_bmp_rgb_to_pixel(bmp->palette, colour) << 2;
+        if(errno) return 0;
+        colour.red = *ppm++;
+        colour.green = *ppm++;
+        colour.blue = *ppm++;
+        *byte |= cga_bmp_rgb_to_pixel(bmp->palette, colour);
+        if(errno) return 0;
+        byte++;
     }
     free(row);                                  // Free row data
+    printf("bytes read = %i\n", byte - bmp->data);
+    if(byte - bmp->data != bmp->size) return 0;
     errno = 0;                                  // reset the POSIX error number
     return bmp->size;
 }

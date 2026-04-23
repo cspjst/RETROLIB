@@ -1,16 +1,21 @@
 #ifndef TEST_LO_CGA_H
 #define TEST_LO_CGA_H
 
+#include <errno.h>
 #include <stdint.h>
 #include <string.h>
+#include <assert.h>
 
 #include "../CGA/LO/cga_lo_res_plot.h"
+#include "../CGA/LO/cga_lo_res_blt.h"
 #include "../CGA/cga_colours.h"
 
 #include "../CGA/cga_bitmap.h"
 
 #include "../ENV/env_video_mode.h"
 #include "../ENV/env_time.h"
+
+#include "../MEM/dos_mem_arena.h"
 
 /*
 void make_data_2bit(cga_bitmap_t* bmp) {
@@ -180,13 +185,32 @@ void test_lo_pattern(void) {
     printf("Mode 4 Test Pattern Time = %fsec\n", env_ticks_to_seconds(t2 - t1));
 }
 */
+
+void test_lo_screen_blt() {
+    mem_arena_t* arena = mem_new_arena(4096);   // 64K
+    if(!arena) printf("Failed to create arena!\n");
+
+    char fname[] = "../res/tree.ppm";
+    cga_bitmap_t bmp = {0};
+    FILE* f = fopen(fname, "rb");
+    if(!f) printf("fopen: %s \"%s\"\n", strerror(errno), fname);
+
+    assert(cga_bmp_read_meta_raw_ppm(f, &bmp));
+    bmp.data = (char*)mem_arena_alloc(arena, bmp.size);
+    if(!bmp.data) printf("Failed to allocate %lu bytes!\n", bmp.size);
+    //assert(cga_bmp_load_raw_ppm(f, &bmp) == bmp.size);
+    cga_bmp_load_raw_ppm(f, &bmp);
+    cga_lo_res_screen_blt(bmp.data);
+
+    fclose(f);
+    mem_free_arena(arena);
+}
+
 void test_lo_cga() {
     bios_video_mode_t m = env_get_video_mode();
     env_set_video_mode(CGA_GRAPHICS_4_COLOUR_320X200);
 
-    cga_plot(160, 99, CGA_LO_RES_CYAN);
-    cga_plot(159, 98, CGA_LO_RES_MAGENTA);
-    cga_plot(161, 100, CGA_LO_RES_WHITE);
+    test_lo_screen_blt();
 
     getchar();
     env_set_video_mode(m);

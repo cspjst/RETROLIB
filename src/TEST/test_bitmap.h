@@ -45,10 +45,8 @@ void test_lo_res_bitmap() {
     bmp.data = (char*)mem_arena_alloc(arena, bmp.size);
     if(!bmp.data) printf("Failed to allocate %lu bytes!\n", bmp.size);
     //assert(cga_bmp_load_raw_ppm(f, &bmp) == bmp.size);
-
-    cga_bmp_dump(stdout, &bmp);
-
     cga_bmp_load_raw_ppm(f, &bmp);
+    cga_bmp_dump(stdout, &bmp);
 
     fclose(f);
     mem_free_arena(arena);

@@ -3,9 +3,34 @@
 
 #include "cga_types.h"
 
+#define RGB_BLACK       0x000000    // 0 "default" colour aka black
+#define RGB_GREEN       0x00AA00	// 1 green
+#define RGB_CYAN        0x00AAAA    // 3 cyan
+#define RGB_RED         0xAA0000    // 4 red
+#define RGB_MAGENTA     0xAA00AA    // 5 magenta
+#define RGB_BROWN       0xAA5500    // 6 brown
+#define RGB_LT_GRAY     0xAAAAAA    // 7 light gray
+#define RGB_DK_GRAY     0x555555    // 8  dark gray
+#define RGB_LT_BLUE     0x5555FF    // 9  light blue
+#define RGB_LT_GREEN    0x55FF55    // 10 light green
+#define RGB_LT_CYAN     0x55FFFF    // 11 light cyan
+#define RGB_LT_RED      0xFF5555    // 12 light red
+#define RGB_LT_MAGENTA  0xFF55FF    // 13 light magenta
+#define RGB_YELLOW      0xFFFF55    // 14 yellow
+#define RGB_WHITE       0xFFFFFF    // 15 white
+
+typedef enum {
+    CGA_PALETTE_0 = 0,
+    CGA_PALETTE_0_HI,
+    CGA_PALETTE_1,
+    CGA_PALETTE_1_HI,
+    CGA_PALETTE_2,
+    CGA_PALETTE_2_HI
+} cga_palette_number_t;
+
 typedef enum {
     CGA_HI_RES_BLACK = 0,
-    CGA_HI_RES_WHITE = 0x80     // 1000 0000b a performance optimisation easier shr
+    CGA_HI_RES_WHITE = 0x80     // 1000 0000b performance optimisation for easier shr
 } cga_hi_res_colour_t;
 
 typedef enum {
