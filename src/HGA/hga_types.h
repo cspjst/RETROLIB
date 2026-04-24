@@ -7,6 +7,6 @@
 #define HGA_TYPES_H
 
 typedef unsigned short hga_size_t;
-typedef unsigned short hag_coord_t;
+typedef unsigned short hga_coord_t;
 
 #endif
