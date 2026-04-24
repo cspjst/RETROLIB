@@ -1,7 +1,7 @@
 /**
  * @author      Jeremy Simon Thornton
  * @copyright   2026 Jeremy Simon Thornton
- * @version     0.1.0
+ * @version     0.5.0
  *
  * Both CGA graphics modes (hi and lo res) use the same 16K VRAM framebuffer
  * and layout that stores even and odd scanlines in two separate buffers.
