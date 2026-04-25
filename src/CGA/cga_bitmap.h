@@ -21,7 +21,7 @@ typedef struct {
     cga_coord_t height;         // modes 4 and 6 = 0..199
     cga_size_t palette;         // mode 6 = forground colour, mode 4 = palette 0,1,2
     cga_size_t size;            // data block size bytes max 64K
-    char* data;
+    char* data[8];              // pointers 1 or 8 data blocks for pre shifted images
 } cga_bitmap_t;
 
 cga_bitmap_t* cga_make_bmp(cga_bitmap_t* bmp, cga_colour_depth_t depth, cga_coord_t width, cga_coord_t height, unsigned int pal);
