@@ -78,6 +78,7 @@ dos_memsize_t cga_bmp_save(const char* file_path, const cga_bitmap_t* bmp) {
 fail:
     fclose(f);
     remove(file_path);          // clean up partial file
+    printf("FAIL\n");
     return 0;
 }
 

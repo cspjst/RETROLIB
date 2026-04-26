@@ -25,7 +25,7 @@
 #include <string.h>
 
 void make_data_1bit(cga_bitmap_t* bmp) {
-    if(!bmp || !bmp->data) return;
+    if(!bmp || !bmp->data[0]) return;
     uint16_t bpl = bmp->width / 8;           // bytes per line
     unsigned char* data = (unsigned char*)bmp->data;
     for (uint16_t y = 0; y < bmp->height; y++) {
@@ -171,22 +171,13 @@ void test_hi_screen_blt() {
     mem_arena_t* arena = mem_new_arena(4096);   // 64K
     if(!arena) printf("Failed to create arena!\n");
 
-    char fname[] = "../res/joker.pbm";
-    cga_bitmap_t bmp = {0};
-    FILE* f = fopen(fname, "rb");
-    if(!f) printf("fopen: %s \"%s\"\n", strerror(errno), fname);
+    cga_bitmap_t* bmp = cga_bmp_load("../res/joker.cga", arena);
+    if(!bmp) printf("error %s\n", strerror(errno));
+    else {
+        cga_hi_res_set_fg(bmp->palette);
+        cga_hi_res_screen_blt(bmp->data[0]);
+    }
 
-    assert(cga_bmp_read_meta_raw_pbm(f, &bmp));
-    if(!f) printf("%s \"%s\"\n", strerror(errno), fname);
-    //printf("%hu x %hu\n", bmp.width, bmp.height);
-    bmp.data = (char*)mem_arena_alloc(arena, bmp.size);
-    if(!bmp.data) printf("Failed to allocate %lu bytes!\n", bmp.size);
-    assert(cga_bmp_load_raw_pbm(f, &bmp) == bmp.size);
-
-    cga_hi_res_set_fg(bmp.palette);
-    cga_hi_res_screen_blt(bmp.data);
-
-    fclose(f);
     mem_free_arena(arena);
 }
 
@@ -199,7 +190,7 @@ void test_hi_blt() {
     if(!arena) printf("Failed to create arena!\n");
     cga_bitmap_t bmp;
     cga_make_bmp(&bmp, 1, w, h, 1);
-    bmp.data = (char*)mem_arena_alloc(arena, bmp.size);
+    //bmp.data = (char*)mem_arena_alloc(arena, bmp.size);
     make_data_1bit(&bmp);
 
     cga_plot(320, 0, CGA_WHITE);
@@ -209,9 +200,9 @@ void test_hi_blt() {
 
     for(int i = 0; i < 1000; ++i) {
         //cga_hi_res_blt(320, 1, bmp.width, bmp.height, bmp.data);
-        cga_hi_res_blt8x8(320, 23, bmp.data);
-        cga_hi_res_blt8x8(324, 1, bmp.data);
-        cga_hi_res_blt4x4(320, 13, bmp.data);
+        //cga_hi_res_blt8x8(320, 23, bmp.data);
+        //cga_hi_res_blt8x8(324, 1, bmp.data);
+        //cga_hi_res_blt4x4(320, 13, bmp.data);
     }
 
     bios_read_system_clock(&t2);

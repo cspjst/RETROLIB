@@ -10,8 +10,8 @@
 #define RGB_MAGENTA     0xAA00AA    // 5 magenta
 #define RGB_BROWN       0xAA5500    // 6 brown
 #define RGB_LT_GRAY     0xAAAAAA    // 7 light gray
-#define RGB_DK_GRAY     0x555555    // 8  dark gray
-#define RGB_LT_BLUE     0x5555FF    // 9  light blue
+#define RGB_DK_GRAY     0x555555    // 8 dark gray
+#define RGB_LT_BLUE     0x5555FF    // 9 light blue
 #define RGB_LT_GREEN    0x55FF55    // 10 light green
 #define RGB_LT_CYAN     0x55FFFF    // 11 light cyan
 #define RGB_LT_RED      0xFF5555    // 12 light red
