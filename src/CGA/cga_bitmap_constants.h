@@ -6,9 +6,11 @@
 #ifndef CGA_BITMAP_CONSTANTS_H
 #define CGA_BITMAP_CONSTANTS_H
 
-#define CGA_META_FG "#CGA FG=%hu"          // extract meta comment foreground value
-#define CGA_META_PAL "#CGA PAL=%hu"         // extract meta comment palette value
-#define CGA_META_WIDTH_HEIGHT "%hu %hu"     // extract meta width and height
+#define CGA_PBM_FG "#CGA FG=%hu"        // extract pbm meta comment foreground value
+#define CGA_PBM_WIDTH_HEIGHT "%hu %hu"  // extract pbm meta width and height
+#define CGA_PPM_PAL "#CGA PAL=%hu"      // extract ppm meta comment palette value
+#define CGA_PPM_MAXVAL "%hu"            // extract ppm meta maximum colour value
+#define CGA_MAX_COLOUR 255              // byte sized
 
 typedef enum {
     CGA_LO_RES,

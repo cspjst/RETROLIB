@@ -111,7 +111,7 @@ void test_mcb(void) {
     mem_arena_t* arena = mem_new_arena(pcap);
     assert(arena != NULL);
 
-    const char* mcb = mem_arena_mcb(arena);
+    const char* mcb = (char*)mem_arena_mcb(arena);
     assert(*mcb == 'M');
     log_para(mcb);
 
