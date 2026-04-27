@@ -77,11 +77,29 @@ void test_lo_res_bitmap() {
     mem_free_arena(arena);
 }
 
+void test_shift() {
+    char src[4] = {0xFF, 0x55, 0x55, 0x0F};
+    char dst[4] = {0,0,0};
+    cga_bmp_dump_row(src, 4);
+    putchar('\n');
+
+    for(int i = 0; i < 8; ++i) {
+        cga_bmp_shift_row(src, dst, 32);
+        cga_bmp_dump_row(dst, 4);
+        putchar('\n');
+        cga_bmp_shift_row(dst, src, 32);
+        cga_bmp_dump_row(src, 4);
+        putchar('\n');
+    }
+
+}
+
 void test_bitmap() {
-    test_hi_res_convert();
-    test_hi_res_bitmap();
+    //test_hi_res_convert();
+    //test_hi_res_bitmap();
     //test_lo_res_convert();
     //test_lo_res_bitmap();
+    test_shift();
 }
 
 #endif

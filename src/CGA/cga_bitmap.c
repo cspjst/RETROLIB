@@ -87,23 +87,36 @@ void cga_bmp_shift_row(char* src, char* dst, cga_coord_t width) {
     __asm {
         .8086
         push     ds
-        pushf 
+        pushf
 
-        lds      si, src
-        les      di, dst 
-        mov      ax, width
-        shr      ax, 1                ; div 8 
-        shr      ax, 1                ; 8086 single shifts only
-        shr      ax, 1                ; ...
-        sub      ax, 2                ; zero index word 
-        add      si, ax               ; ES:SI -> src last word
-        add      di, ax               ; DS:DI -> dst last word
+        lds     si, src
+        les     di, dst
+        mov     cx, width
+        shr     cx, 1               ; div 8
+        shr     cx, 1               ; 8086 single shifts only
+        shr     cx, 1               ; ...
+        sub     cx, 2               ; zero index word
+        add     si, cx              ; ES:SI -> src last word
+        add     di, cx              ; DS:DI -> dst last word
 
-        mov      ax, ds:[si]          ; load src last word
-        shr      ax, 1                ; shift along by 1 pixel
-        mov      es:[di], ax          ; store in dst
+        mov     ah, ds:[si]         ; load from src
+        mov     al, ds:[si + 1]     ; little endian
+        shr     ax, 1               ; shift along by 1 pixel
+        shr     ax, 1               ; shift along by 1 pixel
+        mov     es:[di], ah         ; store in dst
+        mov     es:[di + 1], al     ; little endian
 
-        // todo
+ NEXT:  dec     si
+        dec     di
+
+        mov     ah, ds:[si]         ; load from src
+        mov     al, ds:[si + 1]     ; ..
+        shr     ax, 1               ; shift word along by 1 pixel
+        shr     ax, 1
+        mov     es:[di], ah         ; store in dst
+        or      es:[di + 1], al     ; ..
+
+        loop    NEXT
 
         popf
         pop      ds
