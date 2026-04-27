@@ -37,7 +37,7 @@ cga_bitmap_t* cga_bmp_load(const char* file_path, mem_arena_t* arena);
  */
 dos_memsize_t cga_bmp_save(const char* file_path, const cga_bitmap_t* bmp);
 
-void cga_bmp_shit_row(char* src, char* dst);
+void cga_bmp_shit_row(char* src, char* dst, cga_coord_t width);
 
 void cga_bmp_dump_row(unsigned char* data, cga_size_t len) {
     for (cga_size_t i = 0; i < len; i++) {
