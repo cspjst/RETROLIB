@@ -37,6 +37,13 @@ cga_bitmap_t* cga_bmp_load(const char* file_path, mem_arena_t* arena);
  */
 dos_memsize_t cga_bmp_save(const char* file_path, const cga_bitmap_t* bmp);
 
+/**
+ * Pre-shifts bitmap data for all sub-byte X offsets (3 variants for 2bpp, 7 for 1bpp) 
+ * to eliminate runtime bit-shifting in the blit loop. 
+ * @note Trades RAM for 8086 performance.
+ */
+dos_memsize_t cga_bmp_make_shift_blocks(cga_bitmap_t* bmp);
+
 void cga_bmp_dump(FILE* f, cga_bitmap_t* bmp);
 
 #endif
