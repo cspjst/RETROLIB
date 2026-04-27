@@ -83,8 +83,31 @@ fail:
 }
 
 // ******************************************
-void cga_bmp_shit_row(char* src, char* dst) {
+void cga_bmp_shift_row(char* src, char* dst, cga_coord_t width) {
+    __asm {
+        .8086
+        push     ds
+        pushf 
 
+        lds      si, src
+        les      di, dst 
+        mov      ax, width
+        shr      ax, 1                ; div 8 
+        shr      ax, 1                ; 8086 single shifts only
+        shr      ax, 1                ; ...
+        sub      ax, 2                ; zero index word 
+        add      si, ax               ; ES:SI -> src last word
+        add      di, ax               ; DS:DI -> dst last word
+
+        mov      ax, ds:[si]          ; load src last word
+        shr      ax, 1                ; shift along by 1 pixel
+        mov      es:[di], ax          ; store in dst
+
+        // todo
+
+        popf
+        pop      ds
+    }
 }
 
 void cga_bmp_dump(FILE* f, cga_bitmap_t* bmp) {
