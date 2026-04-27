@@ -82,6 +82,11 @@ fail:
     return 0;
 }
 
+// ******************************************
+void cga_bmp_shit_row(char* src, char* dst) {
+
+}
+
 void cga_bmp_dump(FILE* f, cga_bitmap_t* bmp) {
     if (!f || !bmp) return;
 
