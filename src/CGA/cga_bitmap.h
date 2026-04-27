@@ -37,6 +37,18 @@ cga_bitmap_t* cga_bmp_load(const char* file_path, mem_arena_t* arena);
  */
 dos_memsize_t cga_bmp_save(const char* file_path, const cga_bitmap_t* bmp);
 
+void cga_bmp_shit_row(char* src, char* dst);
+
+void cga_bmp_dump_row(unsigned char* data, cga_size_t len) {
+    for (cga_size_t i = 0; i < len; i++) {
+        for (cga_size_t b = 7; b >= 0; b--) {
+            printf("%d", (data[i] >> b) & 1);
+        }
+        putchar(' ');  
+    }
+    putchar('\n');
+}
+
 /**
  * Pre-shifts bitmap data for all sub-byte X offsets (3 variants for 2bpp, 7 for 1bpp) 
  * to eliminate runtime bit-shifting in the blit loop. 
