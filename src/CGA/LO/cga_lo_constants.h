@@ -3,8 +3,8 @@
  * @copyright   2024, 2026 Jeremy Simon Thornton
  * @version     0.1.1
  */
-#ifndef CGA_LO_RES_CONSTANTS_H
-#define CGA_LO_RES_CONSTANTS_H
+#ifndef CGA_LO_CONSTANTS_H
+#define CGA_LO_CONSTANTS_H
 
  /**
   * Mode 4 macro definitions for assembly
@@ -22,11 +22,11 @@
   * This matters on an 8088 where reg,imm is only 4 clock cycles as opposed to 12+EA for reg,mem
   * This advantage dwindles on the 286 (2:5) and 386 (2:4), vanishing on the 486(1:1) and beyond
   */
-#define CGA_LO_RES_SCREEN_X_MIN 0
-#define CGA_LO_RES_SCREEN_X_MAX 320
-#define CGA_LO_RES_SCREEN_Y_MIN 0
-#define CGA_LO_RES_SCREEN_Y_MAX 200
-#define CGA_LO_RES_SCREEN_Y_SCALE 0.625
-#define CGA_LO_RES_PIXELS_PER_BYTE 4
+#define CGA_LO_SCREEN_X_MIN 0
+#define CGA_LO_SCREEN_X_MAX 320
+#define CGA_LO_SCREEN_Y_MIN 0
+#define CGA_LO_SCREEN_Y_MAX 200
+#define CGA_LO_SCREEN_Y_SCALE 0.625
+#define CGA_LO_PIXELS_PER_BYTE 4
 
 #endif

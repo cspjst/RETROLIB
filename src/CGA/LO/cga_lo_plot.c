@@ -3,7 +3,7 @@
  * @copyright   2026 Jeremy Simon Thornton
  * @version     0.1.0
  */
-#include "cga_lo_res_plot.h"
+#include "cga_lo_plot.h"
 #include "../cga_constants.h"
 #include "../cga_lookup_table_y.h"  // IWYU pragma: keep
 
