@@ -15,6 +15,15 @@
 
 #include "../../doslib/bioslib/src/BIOS/bios_clock_services.h"
 
+void test_dump_data(char** src, int w, int h) {
+    for(int y = 0; y <h; ++y) {
+        for(int x = 0; y < w; y++) {
+            printf("%02X ", src[y][x]);
+        }
+        putchar('\n');
+    }
+}
+
 void test_hi_res_convert() {
     bios_ticks_since_midnight_t t1, t2;
     printf("Testing CGA hi res convert PPM to CGA bitmap\n");
@@ -78,19 +87,18 @@ void test_lo_res_bitmap() {
 }
 
 void test_shift() {
-    char src[4] = {0xFF, 0x55, 0x55, 0x0F};
-    char dst[4] = {0,0,0};
-    cga_bmp_dump_row(src, 4);
+    char src[4][4] = {  {0xF1, 0x55, 0x55, 0x0F},
+                        {0xF2, 0x55, 0x55, 0x0F},
+                        {0xF3, 0x55, 0x55, 0x0F},
+                        {0xF4, 0x55, 0x55, 0x0F} };
+
+    char dst[4][4] = {0};
+
+
+
+
     putchar('\n');
 
-    for(int i = 0; i < 8; ++i) {
-        cga_bmp_shift_row(src, dst, 32);
-        cga_bmp_dump_row(dst, 4);
-        putchar('\n');
-        cga_bmp_shift_row(dst, src, 32);
-        cga_bmp_dump_row(src, 4);
-        putchar('\n');
-    }
 
 }
 
@@ -99,7 +107,7 @@ void test_bitmap() {
     //test_hi_res_bitmap();
     //test_lo_res_convert();
     //test_lo_res_bitmap();
-    test_shift();
+    //test_shift();
 }
 
 #endif
