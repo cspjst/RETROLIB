@@ -31,8 +31,8 @@ YROW:   sub     cx, 2               ; zero index word
 
         jcxz    NEXT
 
- XCOL:  dec     si
-        dec     di
+ XCOL:  dec     si                  ; right to left
+        dec     di                  ; right to left
 
         mov     ah, ds:[si]         ; load from src
         mov     al, ds:[si + 1]     ; ..
