@@ -15,15 +15,6 @@
 
 #include "../../doslib/bioslib/src/BIOS/bios_clock_services.h"
 
-void test_dump_data(char** src, int w, int h) {
-    for(int y = 0; y <h; ++y) {
-        for(int x = 0; y < w; y++) {
-            printf("%02X ", src[y][x]);
-        }
-        putchar('\n');
-    }
-}
-
 void test_hi_res_convert() {
     bios_ticks_since_midnight_t t1, t2;
     printf("Testing CGA hi res convert PPM to CGA bitmap\n");
@@ -86,28 +77,11 @@ void test_lo_res_bitmap() {
     mem_free_arena(arena);
 }
 
-void test_shift() {
-    char src[4][4] = {  {0xF1, 0x55, 0x55, 0x0F},
-                        {0xF2, 0x55, 0x55, 0x0F},
-                        {0xF3, 0x55, 0x55, 0x0F},
-                        {0xF4, 0x55, 0x55, 0x0F} };
-
-    char dst[4][4] = {0};
-
-
-
-
-    putchar('\n');
-
-
-}
-
 void test_bitmap() {
-    //test_hi_res_convert();
-    //test_hi_res_bitmap();
-    //test_lo_res_convert();
-    //test_lo_res_bitmap();
-    //test_shift();
+    test_hi_res_convert();
+    test_hi_res_bitmap();
+    test_lo_res_convert();
+    test_lo_res_bitmap();
 }
 
 #endif

@@ -6,13 +6,11 @@
 #include <string.h>
 #include <assert.h>
 
-//#include "../CGA/LO/cga_lo_blt.h"
+#include "../CGA/LO/cga_lo_blt.h"
 
 #include "../CGA/cga_bitmap.h"
-#include "../CGA/cga_convert.h"
 
 #include "../ENV/env_video_mode.h"
-#include "../ENV/env_time.h"
 
 #include "../MEM/dos_mem_arena.h"
 
@@ -22,7 +20,7 @@ void test_lo_screen_blt() {
 
     cga_bitmap_t* bmp = cga_bmp_load("../res/tree.cga", arena);
     if(!bmp) printf("error %s\n", strerror(errno));
-    // else cga_lo_screen_blt(bmp->data[0]);
+    else cga_lo_screen_blt(bmp->data[0]);
 
     mem_free_arena(arena);
 }

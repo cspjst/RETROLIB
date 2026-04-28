@@ -5,7 +5,7 @@
  */
 #include "cga_hi_res_blt.h"
 #include "../cga_constants.h"
-#include "../cga_lookup_table_y.h"
+#include "../cga_lookup_table_y.h"  // IWYU pragma: keep
 
 /* sync function
         mov     dx, CGA_STATUS_REG          ; CGA status port
