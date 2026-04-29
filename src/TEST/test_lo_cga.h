@@ -25,11 +25,21 @@ void test_lo_screen_blt() {
     mem_free_arena(arena);
 }
 
+void test_lo_blt() {
+    const char* ptrs[4] = {(char*)0xAAAAFF01, (char*)0xBBBBFF02, (char*)0xCCCCFF03, (char*)0xDDDDFF04};
+    cga_lo_set_blt(0, 0, 1, 1, &ptrs[0]);
+    cga_lo_set_blt(1, 0, 1, 1, &ptrs[0]);
+    cga_lo_set_blt(6, 0, 1, 1, &ptrs[0]);
+    cga_lo_set_blt(7, 0, 1, 1, &ptrs[0]);
+}
+
 void test_lo_cga() {
     bios_video_mode_t m = env_get_video_mode();
     env_set_video_mode(CGA_GRAPHICS_4_COLOUR_320X200);
 
-    test_lo_screen_blt();
+    //test_lo_screen_blt();
+
+    test_lo_blt();
 
     getchar();
     env_set_video_mode(m);

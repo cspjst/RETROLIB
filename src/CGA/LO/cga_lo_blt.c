@@ -2,6 +2,8 @@
 
 #include "../cga_constants.h"
 
+#include <stdio.h>
+
 void cga_lo_screen_blt(const char* data) {
     __asm {
         .8086
@@ -34,4 +36,37 @@ ROWS:   mov     cx, bx                      ; load REP count
         pop     es
         pop     ds
     }
+}
+
+void cga_lo_set_blt(cga_coord_t x, cga_coord_t y, cga_size_t width, cga_size_t height, const char** ptrs) {
+    cga_size_t index, cseg, coff;
+    index = cseg = coff = 0;
+    __asm {
+        .8086
+        push    ds
+        pushf
+
+        mov     ax, CGA_VIDEO_RAM_SEGMENT
+        mov     es, ax          ; ES = VRAM segment
+        lds     si, ptrs        ; DS:SI = char**
+
+        mov     ax, x           ; AX = x
+        mov     di, ax          ; DI = x
+        shr     di, 1           ; DI = x div 4
+        shr     di, 1           ; DI is now VRAM byte column aligned
+        and     ax, 3           ; AX = x mod 4
+        mov     index, ax
+        shl     ax, 1           ; Convert to sizeof char* index
+        shl     ax, 1           ; AX = (x mod 4) * 4
+        add     si, ax          ; offset to correct char*
+        lds     si, ds:[si]     ; DS:SI -> pre shifted data
+        mov     ax, ds
+        mov     cseg, ax
+        mov     coff, si
+
+
+        popf
+        pop     ds
+    }
+    printf("data[%hu] = %X%X\n", index, cseg, coff);
 }

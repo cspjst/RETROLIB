@@ -4,8 +4,8 @@
 //#include "TEST/test_genv.h"
 //#include "TEST/test_bitmap.h"
 //#include "TEST/test_hi_cga.h"
-//#include "TEST/test_lo_cga.h"
-#include "TEST/test_scroll.h"
+#include "TEST/test_lo_cga.h"
+//#include "TEST/test_scroll.h"
 
 int main() {
     //test_arena();
@@ -13,6 +13,6 @@ int main() {
     //test_genv();
     //test_bitmap();
     //test_hi_cga();
-    //test_lo_cga();
-    test_scroll();
+    test_lo_cga();
+    //test_scroll();
 }
