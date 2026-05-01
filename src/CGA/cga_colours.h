@@ -82,7 +82,7 @@ typedef enum {
 *	0		    default						    default
 *	1		2	green		#00AA00		10	    light green     #55FF55
 *	2		4	red			#AA0000		12	    light red	    #FF5555
-*	3		6	brown		#AA5500		14	y   ellow		    #FFFF55
+*	3		6	brown		#AA5500		14	    yellow		    #FFFF55
 *
 *		Palette 1				        Palette 1 high intensity
 *	#   palette colour      RGB         palette colour          RGB
