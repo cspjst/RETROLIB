@@ -1,12 +1,50 @@
 #include "cga_convert.h"
 
 #include <errno.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "cga_bitmap.h"
 #include "cga_bitmap_constants.h"
 #include "cga_colours.h"
+
+static const uint16_t CONVERT_RGB_TABLE[26] = {
+    0x0000, 0x0000,
+    0x0100, 0xAA00,
+    0x0100, 0xAAAA,
+    0x02AA, 0x0000,
+    0x02AA, 0x00AA,
+    0x03AA, 0x5500,
+    0x03AA, 0xAAAA,
+    0x0155, 0xFF55,
+    0x0155, 0xFFFF,
+    0x02FF, 0x5555,
+    0x02FF, 0x55FF,
+    0x03FF, 0xFF55,
+    0x03FF, 0xFFFF,
+};
+
+char cga_convert_rgb_to_bit_pair(uint32_t* rgb) {
+    uint16_t whi, wlo;
+    __asm {
+        push    ds
+
+        cld
+        lds     si, rgb
+        //mov     ax, CONVERT_RGB_TABLE[bx]
+        lodsw
+        mov     wlo, ax
+        //mov     ax, CONVERT_RGB_TABLE[bx + 2]
+        lodsw
+        mov     whi, ax
+
+
+        pop     ds
+    }
+    printf("TABLE ENTRY = %04X%04X\n", whi, wlo);
+    return 0;
+}
 
 char cga_convert_rgb_to_pixel(cga_size_t palette, cga_argb_t colour) {
     errno = 0;
@@ -138,7 +176,7 @@ dos_memsize_t cga_convert_pbm_to_raw(
     cga_bitmap_t* bmp = cga_convert_load_pbm(pbm_file_in_path, arena);
     if(!bmp) return 0;                          // failed: errno set by loader
     // save as raw cga_bitmap_t format (header + packed 2bpp payload)
-    return cga_bmp_save(pbm_file_out_path, bmp); // success: bytes written, or 0 on fail (errno set)
+    return cga_bmp_save(pbm_file_out_path, bmp, 0); // success: bytes written, or 0 on fail (errno set)
 }
 
 FILE* cga_convert_read_meta_ppm(FILE* f, cga_bitmap_t* bmp) {
@@ -241,5 +279,5 @@ dos_memsize_t cga_convert_ppm_to_raw(
     cga_bitmap_t* bmp = cga_convert_load_ppm(ppm_file_in_path, arena);
     if(!bmp) return 0;                          // failed: errno set by loader
     // save as raw cga_bitmap_t format (header + packed 2bpp payload)
-    return cga_bmp_save(ppm_file_out_path, bmp); // success: bytes written, or 0 on fail (errno set)
+    return cga_bmp_save(ppm_file_out_path, bmp, 0); // success: bytes written, or 0 on fail (errno set)
 }

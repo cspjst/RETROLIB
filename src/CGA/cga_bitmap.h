@@ -30,12 +30,12 @@ cga_bitmap_t* cga_make_bmp(cga_bitmap_t* bmp, cga_colour_depth_t depth, cga_coor
 /**
  * Load a cga bitmap from native format raw data file, typically as a .cga file
  */
-cga_bitmap_t* cga_bmp_load(const char* file_path, mem_arena_t* arena);
+cga_bitmap_t* cga_bmp_load(const char* file_path, mem_arena_t* arena, cga_size_t block);
 
 /**
  * Save a cga bitmap in native format, typically as a .cga file
  */
-dos_memsize_t cga_bmp_save(const char* file_path, const cga_bitmap_t* bmp);
+dos_memsize_t cga_bmp_save(const char* file_path, const cga_bitmap_t* bmp, cga_size_t block);
 
 /**
  * Pre-shifts bitmap data for all sub-byte X offsets (3 variants for 2bpp, 7 for 1bpp)

@@ -6,7 +6,11 @@
 #ifndef CGA_CONVERT_H
 #define CGA_CONVERT_H
 
+#include <stdint.h>
+
 #include "../MEM/dos_mem_arena.h"
+
+char cga_convert_rgb_to_bit_pair(uint32_t* rgb);
 
 /**
  * The PBM (P4) bitstream file format is a close match to the 1-bit-per-pixel (1bpp)

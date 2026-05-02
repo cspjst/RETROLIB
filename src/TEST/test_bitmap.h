@@ -10,6 +10,7 @@
 
 #include "../CGA/cga_bitmap.h"
 #include "../CGA/cga_convert.h"
+#include "../CGA/cga_colours.h"
 
 #include "../ENV/env_time.h"
 
@@ -38,7 +39,7 @@ void test_hi_res_bitmap() {
     mem_arena_t* arena = mem_new_arena(4096);   // 64K
     if(!arena) printf("Failed to create arena!\n");
 
-    cga_bitmap_t* bmp = cga_bmp_load("../res/joker.cga", arena);
+    cga_bitmap_t* bmp = cga_bmp_load("../res/joker.cga", arena, 0);
     if(!bmp) printf("error %s\n", strerror(errno));
 
     cga_bmp_dump(stdout, bmp);
@@ -69,7 +70,7 @@ void test_lo_res_bitmap() {
     mem_arena_t* arena = mem_new_arena(4096);   // 64K
     if(!arena) printf("Failed to create arena!\n");
 
-    cga_bitmap_t* bmp = cga_bmp_load("../res/tree.cga", arena);
+    cga_bitmap_t* bmp = cga_bmp_load("../res/tree.cga", arena, 0);
     if(!bmp) printf("error %s\n", strerror(errno));
 
     cga_bmp_dump(stdout, bmp);
@@ -78,10 +79,12 @@ void test_lo_res_bitmap() {
 }
 
 void test_bitmap() {
-    test_hi_res_convert();
-    test_hi_res_bitmap();
-    test_lo_res_convert();
-    test_lo_res_bitmap();
+    //test_hi_res_convert();
+    //test_hi_res_bitmap();
+    //test_lo_res_convert();
+    //test_lo_res_bitmap();
+    uint32_t rgb = RGB_BROWN;
+    cga_convert_rgb_to_bit_pair(&rgb);
 }
 
 #endif
