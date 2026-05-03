@@ -7,7 +7,22 @@
 #include "../cga_constants.h"
 #include "../cga_lookup_table_y.h"  // IWYU pragma: keep
 
-void __fastcall cga_lo_res_plot(cga_coord_t x, cga_coord_t y, cga_lo_res_colour_t colour) {
+/**
+*   mov  al, es:[bx]    ; 12 + EA(5) + Seg(2) = 19
+*   and  al, dh         ;  3
+*   or   al, dl         ;  3
+*   mov  es:[bx], al    ; 13 + EA(5) + Seg(2) = 20
+*   -----------------------------------------------
+*   Total EU cycles                    : 45
+*   Bus transactions (fetch + data)    : 12
+*
+*   and  es:[bx], dh    ; 24 + EA(5) + Seg(2) = 31
+*   or   es:[bx], dl    ; 24 + EA(5) + Seg(2) = 31
+*   -----------------------------------------------
+*   Total EU cycles                    : 62
+*   Bus transactions (fetch + data)    : 10
+*/
+void __fastcall cga_lo_plot(cga_coord_t x, cga_coord_t y, cga_lo_res_colour_t colour) {
     // AX = x, DX = y, BX = colour
     __asm {
         .8086
@@ -27,5 +42,9 @@ void __fastcall cga_lo_res_plot(cga_coord_t x, cga_coord_t y, cga_lo_res_colour_
         add     bx, ax                      ; add in column byte
         and		es:[bx], dh		            ; mask out the pixel bits
         or		es:[bx], dl		            ; or in the pixel colour
+        //mov     al, es:[bx]
+        //and     al, dh
+        //or      al, dl
+        //mov     es:[bx], al
     }
 }

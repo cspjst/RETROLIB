@@ -7,12 +7,16 @@
 #include <assert.h>
 
 #include "../CGA/LO/cga_lo_blt.h"
-
+#include "../CGA/LO/cga_lo_plot.h"
 #include "../CGA/cga_bitmap.h"
+#include "../CGA/cga_colours.h"
 
 #include "../ENV/env_video_mode.h"
+#include "../ENV/env_time.h"
 
 #include "../MEM/dos_mem_arena.h"
+
+#include "../../doslib/bioslib/src/BIOS/bios_clock_services.h"
 
 void test_lo_screen_blt() {
     mem_arena_t* arena = mem_new_arena(4096);   // 64K
@@ -23,6 +27,22 @@ void test_lo_screen_blt() {
     else cga_lo_screen_blt(bmp->data[0]);
 
     mem_free_arena(arena);
+}
+
+void test_lo_plot() {
+    bios_ticks_since_midnight_t t1, t2;
+
+    bios_read_system_clock(&t1);
+    for(int y = 0; y < 200; ++y) {
+        for(int x = 0; x < 320; ++x) {
+            cga_lo_plot(x, y, CGA_LO_RES_CYAN);
+            cga_lo_plot(x, y, CGA_LO_RES_BLACK);
+            cga_lo_plot(x, y, CGA_LO_RES_WHITE);
+            cga_lo_plot(x, y, CGA_LO_RES_MAGENTA);
+        }
+    }
+    bios_read_system_clock(&t2);
+    printf("Time = %fsec\n", env_ticks_to_seconds(t2-t1));
 }
 
 void test_lo_blt() {
@@ -38,7 +58,7 @@ void test_lo_cga() {
     env_set_video_mode(CGA_GRAPHICS_4_COLOUR_320X200);
 
     test_lo_screen_blt();
-
+    test_lo_plot();
     //test_lo_blt();
 
     getchar();

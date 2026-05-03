@@ -13,8 +13,8 @@
 
 void cga_hi_res_plot_calculate(cga_coord_t x, cga_coord_t y, cga_hi_res_colour_t colour);
 
-void __fastcall cga_hi_res_plot_lookup(cga_coord_t x, cga_coord_t y, cga_hi_res_colour_t colour);
+void cga_hi_res_plot_lookup(cga_coord_t x, cga_coord_t y, cga_hi_res_colour_t colour);
 
-char __fastcall cga_hi_res_sync_plot(cga_coord_t x, cga_coord_t y, cga_hi_res_colour_t colour);
+char cga_hi_res_sync_plot(cga_coord_t x, cga_coord_t y, cga_hi_res_colour_t colour);
 
 #endif

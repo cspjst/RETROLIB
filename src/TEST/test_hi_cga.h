@@ -105,7 +105,7 @@ static void draw_circle(cga_coord_t cx, cga_coord_t cy,
 static void draw_dithered_pixel(cga_coord_t x, cga_coord_t y, uint8_t intensity) {
     /* Intensity 0-15 maps to the threshold in the matrix */
     uint8_t threshold = dither_matrix[y % 4][x % 4];
-    cga_plot(x, y, (intensity > threshold) ? CGA_WHITE : CGA_BLACK);
+    cga_plot(x, y, (intensity > threshold) ? CGA_HI_RES_WHITE : CGA_HI_RES_BLACK);
 }
 
 /* Main Test Pattern Routine */
@@ -120,20 +120,20 @@ void test_hi_pattern(void) {
     cga_hi_res_cls(0xAA);
 
     /* 1. Paint White Background */
-    draw_rect(0, 0, WIDTH - 1, HEIGHT - 1, CGA_WHITE);
+    draw_rect(0, 0, WIDTH - 1, HEIGHT - 1, CGA_HI_RES_WHITE);
 
     /* Horizontal center line */
-    draw_line(0, CY, WIDTH - 1, CY, CGA_BLACK);
+    draw_line(0, CY, WIDTH - 1, CY, CGA_HI_RES_BLACK);
 
     /* Vertical center line */
-    draw_line(CX, 0, CX, HEIGHT - 1, CGA_BLACK);
+    draw_line(CX, 0, CX, HEIGHT - 1, CGA_HI_RES_BLACK);
 
     /* Diagonal top-left to bottom-right */
-    draw_line(0, 0, WIDTH - 1, HEIGHT - 1, CGA_BLACK);
+    draw_line(0, 0, WIDTH - 1, HEIGHT - 1, CGA_HI_RES_BLACK);
 
     /* 2. Central Resolution Wedges (Simulated with concentric circles) */
     for (uint8_t r = 10; r < 90; r += 5) {
-        draw_circle(CX, CY, r, CGA_BLACK);
+        draw_circle(CX, CY, r, CGA_HI_RES_BLACK);
     }
 
     /* 3. Top Grayscale Bar (Dithered) */
@@ -146,21 +146,21 @@ void test_hi_pattern(void) {
     }
 
     /* 4. Geometric Calibration Shapes (Bottom) */
-    draw_rect(100, 160, 140, 190, CGA_BLACK); /* Square */
+    draw_rect(100, 160, 140, 190, CGA_HI_RES_BLACK); /* Square */
 
     /* Triangle (Simple line approximation) */
     for (cga_coord_t i = 0; i < 30; i++) {
         for (cga_coord_t x = 200 - i; x <= 200 + i; x++) {
-            cga_plot(x, 175 + i, CGA_BLACK);
+            cga_plot(x, 175 + i, CGA_HI_RES_BLACK);
         }
     }
 
     /* 5. Crosshair */
     for (cga_coord_t i = 0; i < 20; i++) {
-        cga_plot(CX + i, CY, CGA_BLACK);
-        cga_plot(CX - i, CY, CGA_BLACK);
-        cga_plot(CX, CY + i, CGA_BLACK);
-        cga_plot(CX, CY - i, CGA_BLACK);
+        cga_plot(CX + i, CY, CGA_HI_RES_BLACK);
+        cga_plot(CX - i, CY, CGA_HI_RES_BLACK);
+        cga_plot(CX, CY + i, CGA_HI_RES_BLACK);
+        cga_plot(CX, CY - i, CGA_HI_RES_BLACK);
     }
 
     bios_read_system_clock(&t2);
@@ -171,7 +171,7 @@ void test_hi_screen_blt() {
     mem_arena_t* arena = mem_new_arena(4096);   // 64K
     if(!arena) printf("Failed to create arena!\n");
 
-    cga_bitmap_t* bmp = cga_bmp_load("../res/joker.cga", arena);
+    cga_bitmap_t* bmp = cga_bmp_load("../res/joker.cga", arena, 0);
     if(!bmp) printf("error %s\n", strerror(errno));
     else {
         cga_hi_res_set_fg(bmp->palette);
@@ -193,8 +193,8 @@ void test_hi_blt() {
     //bmp.data = (char*)mem_arena_alloc(arena, bmp.size);
     make_data_1bit(&bmp);
 
-    cga_plot(320, 0, CGA_WHITE);
-    cga_plot(327, 0, CGA_WHITE);
+    cga_plot(320, 0, CGA_HI_RES_WHITE);
+    cga_plot(327, 0, CGA_HI_RES_WHITE);
 
     bios_read_system_clock(&t1);
 
@@ -212,13 +212,27 @@ void test_hi_blt() {
     mem_free_arena(arena);
 }
 
+void test_hi_plot() {
+    bios_ticks_since_midnight_t t1, t2;
+
+    bios_read_system_clock(&t1);
+    for(int y = 0; y < 200; ++y) {
+        for(int x = 0; x < 640; ++x) {
+            cga_plot(x, y, CGA_HI_RES_WHITE);
+        }
+    }
+    bios_read_system_clock(&t2);
+    printf("Time = %fsec\n", env_ticks_to_seconds(t2-t1));
+}
+
 void test_hi_cga() {
     bios_video_mode_t m = env_get_video_mode();
     env_set_video_mode(CGA_GRAPHICS_MONOCHROME_640X200);
 
-    //test_hi_pattern();
     test_hi_screen_blt();
     //test_hi_blt();
+    //test_hi_plot();
+    test_hi_pattern();
 
     getchar();
     env_set_video_mode(m);
