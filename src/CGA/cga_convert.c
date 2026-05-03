@@ -7,220 +7,33 @@
 
 #include "cga_bitmap.h"
 #include "cga_bitmap_constants.h"
-#include "cga_colours.h"
+#include "cga_types.h"
 
-/*static const uint16_t CONVERT_RGB_TABLE[26] = {
-    0x0000, 0x0000,
-    0x0100, 0xAA00,
-    0x0100, 0xAAAA,
-    0x02AA, 0x0000,
-    0x02AA, 0x00AA,
-    0x03AA, 0x5500,
-    0x03AA, 0xAAAA,
-    0x0155, 0xFF55,
-    0x0155, 0xFFFF,
-    0x02FF, 0x5555,
-    0x02FF, 0x55FF,
-    0x03FF, 0xFF55,
-    0x03FF, 0xFFFF,
-};*/
-
-static const uint16_t CONVERT_RGB_TABLE[26] = {
-    0x0100, 0x0000,   /* #000000 */
-    0x0200, 0xAA00,   /* #00AA00 */
-    0x0300, 0xAAAA,   /* #00AAAA */
-    0x0455, 0xFF55,   /* #55FF55 */
-    0x0555, 0xFFFF,   /* #55FFFF */
-    0x06AA, 0x0000,   /* #AA0000 */
-    0x07AA, 0x00AA,   /* #AA00AA */
-    0x08AA, 0x5500,   /* #AA5500 */
-    0x09AA, 0xAAAA,   /* #AAAAAA */
-    0x0AFF, 0x5555,   /* #FF5555 */
-    0x0BFF, 0x55FF,   /* #FF55FF */
-    0x0CFF, 0xFF55,   /* #FFFF55 */
-    0x0DFF, 0xFFFF,   /* #FFFFFF */
-};
-
-char cga_convert_rgb_to_bit_pair(uint32_t* rgb) {
-    char bits;
-    __asm {
-        .8086
-        push    es
-
-        les     si, rgb
-        mov     di, es:[si]                     ; DI = low word RGB (bits 15-0)
-        mov     dx, es:[si+2]                   ; DX:DI = 24bit RGB
-
-B7:     mov     si, CONVERT_RGB_TABLE[24+2]     ; SI = low word (Intel little endian)
-        mov     bx, CONVERT_RGB_TABLE[24]       ; BX:DI key:value pair
-        cmp     dl, bl                          ; BL, DL low bytes of high words
-        jae     J0                              ; trampoline due to branch limitation 128 bytes
-        jmp     B3                              ; lower pivot is 3rd in table
-J0:     jle     J1
-        jmp     A10                             ; higher pivot is 10th in table
-J1:     cmp     di, si                          ; compare the low order word in the RGB
-        jae     J3                              ; trampoline due to branch limitation 128 bytes
-        jmp     B3                              ; lower pivot is 3rd in table
-J3:     je      J4
-        jmp     A10                             ; higher pivot is 10th in table
-J4:     jmp     DONE                            ; match
-
-B0:     mov     si, CONVERT_RGB_TABLE[0+2]
-        mov     bx, CONVERT_RGB_TABLE[0]
-        cmp     dl, bl
-        jae     J5
-        jmp      ERR
-J5:     ja      B1
-        cmp     di, si
-        jae     J6
-        jmp     ERR
-J6:     ja      B1
-        jmp     DONE
-
-B1:     mov     bx, CONVERT_RGB_TABLE[4]
-        jmp     DONE
-
-B3:     mov     si, CONVERT_RGB_TABLE[8+2]
-        mov     bx, CONVERT_RGB_TABLE[8]
-        cmp     dl, bl
-        jb      B0
-        ja      A5
-        cmp     di, si
-        jb      B0
-        ja      A5
-        jmp     DONE
-
-B4:     mov     bx, CONVERT_RGB_TABLE[12]
-        jmp     DONE
-
-A5:     mov     si, CONVERT_RGB_TABLE[16+2]
-        mov     bx, CONVERT_RGB_TABLE[16]
-        cmp     dl, bl
-        jb      ERR
-        ja      A6
-        cmp     di, si
-        jb      B4
-        ja      A6
-        jmp     DONE
-
-A6:     mov     bx, CONVERT_RGB_TABLE[20]
-        jmp     DONE
-
-B8:     mov     si, CONVERT_RGB_TABLE[28+2]
-        mov     bx, CONVERT_RGB_TABLE[28]
-        cmp     dl, bl
-        jb      ERR
-        ja      A9
-        cmp     di, si
-        jb      ERR
-        ja      A9
-        jmp     DONE
-
-A9:     mov     bx, CONVERT_RGB_TABLE[32]
-        jmp     DONE
-
-A10:    mov     si, CONVERT_RGB_TABLE[36+2]
-        mov     bx, CONVERT_RGB_TABLE[36]
-        cmp     dl, bl
-        jb      B8
-        ja      A12
-        cmp     di, si
-        jb      B8
-        ja      A12
-        jmp     DONE
-
-B11:    mov     bx, CONVERT_RGB_TABLE[40]
-        jmp     DONE
-
-A12:    mov     si, CONVERT_RGB_TABLE[44+2]
-        mov     bx, CONVERT_RGB_TABLE[44]
-        cmp     dl, bl
-        jb      B11
-        ja      A13
-        cmp     di, si
-        jb      B11
-        ja      A13
-        jmp     DONE
-
-A13:    mov     bx, CONVERT_RGB_TABLE[48]
-        jmp     DONE
-
-ERR:    mov     bh, 0FFh
-DONE:   mov     bits, bh                        ; value in high byte of high word
-
-        pop     es
-    }
-    return bits;
-}
-
-char cga_convert_rgb_to_pixel(cga_size_t palette, cga_argb_t colour) {
-    errno = 0;
-    if (colour.argb == 0) return 0;
-
-    switch (palette) {
-        case CGA_PALETTE_0:
-            switch (colour.argb) {
-                case RGB_GREEN:     return 1;
-                case RGB_RED:       return 2;
-                case RGB_BROWN:     return 3;
-                default:
-                    errno = EINVAL;
-                    return 0;
+char cga_convert_rgb_to_bit_pair(cga_argb_t rgb) {
+    switch(rgb.red) {
+        case 0x00:
+            switch(rgb.green) {
+                case 0x00: return 0;  // #000000 black
+                case 0xAA: return 1;  // #00AA00 or #00AAAA (green or cyan)
+                default:   return -1;
             }
-
-        case CGA_PALETTE_0_HI:
-            switch (colour.argb) {
-                case RGB_LT_GREEN:  return 1;
-                case RGB_LT_RED:    return 2;
-                case RGB_YELLOW:    return 3;
-                default:
-                    errno = EINVAL;
-                    return 0;
+        case 0x55:
+            if(rgb.green == 0xFF) return 1;  // lt green or lt cyan
+            return -1;
+        case 0xAA:
+            switch(rgb.green) {
+                case 0x00: return 2;  // red or magenta
+                case 0x55: return 3;  // brown
+                case 0xAA: return 3;  // lt gray
+                default:   return -1;
             }
-
-        case CGA_PALETTE_1:
-            switch (colour.argb) {
-                case RGB_CYAN:      return 1;
-                case RGB_MAGENTA:   return 2;
-                case RGB_LT_GRAY:   return 3;
-                default:
-                    errno = EINVAL;
-                    return 0;
+        case 0xFF:
+            switch(rgb.green) {
+                case 0x55: return 2;  // lt red or lt magenta
+                case 0xFF: return 3;  // yellow or white
+                default:   return -1;
             }
-
-        case CGA_PALETTE_1_HI:
-            switch (colour.argb) {
-                case RGB_LT_CYAN:   return 1;
-                case RGB_LT_MAGENTA: return 2;
-                case RGB_WHITE:     return 3;
-                default:
-                    errno = EINVAL;
-                    return 0;
-            }
-
-        case CGA_PALETTE_2:
-            switch (colour.argb) {
-                case RGB_CYAN:      return 1;
-                case RGB_RED:       return 2;
-                case RGB_LT_GRAY:   return 3;
-                default:
-                    errno = EINVAL;
-                    return 0;
-            }
-
-        case CGA_PALETTE_2_HI:
-            switch (colour.argb) {
-                case RGB_LT_CYAN:   return 1;
-                case RGB_LT_RED:    return 2;
-                case RGB_WHITE:     return 3;
-                default:
-                    errno = EINVAL;
-                    return 0;
-            }
-
-        default:
-            errno = EINVAL;
-            return 0;
+        default: return -1;
     }
 }
 
@@ -341,13 +154,13 @@ dos_memsize_t cga_convert_read_data_ppm(FILE* f, cga_bitmap_t* bmp) {
         // process a row in 4 pixel packed 2bpp byte chunks...
         while (rgb < row_end) {
             colour.red = *rgb++; colour.green = *rgb++; colour.blue = *rgb++;
-            *byte = cga_convert_rgb_to_pixel(palette, colour) << 6; // pixel 0
+            *byte = cga_convert_rgb_to_bit_pair(colour) << 6; // pixel 0
             colour.red = *rgb++; colour.green = *rgb++; colour.blue = *rgb++;
-            *byte |= cga_convert_rgb_to_pixel(palette, colour) << 4; // pixel 1
+            *byte |= cga_convert_rgb_to_bit_pair(colour) << 4; // pixel 1
             colour.red = *rgb++; colour.green = *rgb++; colour.blue = *rgb++;
-            *byte |= cga_convert_rgb_to_pixel(palette, colour) << 2; // pixel 2
+            *byte |= cga_convert_rgb_to_bit_pair(colour) << 2; // pixel 2
             colour.red = *rgb++; colour.green = *rgb++; colour.blue = *rgb++;
-            *byte |= cga_convert_rgb_to_pixel(palette, colour);      // pixel 3
+            *byte |= cga_convert_rgb_to_bit_pair(colour);      // pixel 3
             byte++;                             // next packed destination byte
         }
     }

@@ -1,6 +1,7 @@
 #ifndef TEST_BITMAP_H
 #define TEST_BITMAP_H
 
+#include <stdint.h>
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
@@ -78,11 +79,7 @@ void test_lo_res_bitmap() {
     mem_free_arena(arena);
 }
 
-void test_bitmap() {
-    //test_hi_res_convert();
-    //test_hi_res_bitmap();
-    //test_lo_res_convert();
-    //test_lo_res_bitmap();
+void test_argb_bits() {
     uint32_t rgb;
     uint32_t test[13] = {
         RGB_BLACK,
@@ -101,8 +98,20 @@ void test_bitmap() {
     };
     for(int i = 0; i < 13; ++i) {
         rgb = test[i];
-        printf("bits=%02X rgb=%08lX\n", cga_convert_rgb_to_bit_pair(&rgb), rgb);
+        //printf("bits=%02X rgb=%08lX\n", cga_convert_rgb_to_bit_pair(&rgb), rgb);
     }
+    cga_argb_t argb;
+    argb.argb = RGB_LT_CYAN;
+    //printf("...bits=%02X rgb=%08lX\n", cga_convert_rgb_to_bit_pair(&argb.argb), argb.argb);
+}
+
+void test_bitmap() {
+    //test_argb_bits();
+    //test_hi_res_convert();
+    //test_hi_res_bitmap();
+    test_lo_res_convert();
+    test_lo_res_bitmap();
+    //test_argb_bits();
 }
 
 #endif
