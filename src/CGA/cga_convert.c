@@ -26,19 +26,19 @@
 };*/
 
 static const uint16_t CONVERT_RGB_TABLE[26] = {
-    0x0100, 0x0000,
-    0x0200, 0xAA00,
-    0x0300, 0xAAAA,
-    0x04AA, 0x0000,
-    0x05AA, 0x00AA,
-    0x06AA, 0x5500,
-    0x07AA, 0xAAAA,
-    0x0855, 0xFF55,
-    0x0955, 0xFFFF,
-    0x0AFF, 0x5555,
-    0x0BFF, 0x55FF,
-    0x0CFF, 0xFF55,
-    0x0DFF, 0xFFFF,
+    0x0100, 0x0000,   /* #000000 */
+    0x0200, 0xAA00,   /* #00AA00 */
+    0x0300, 0xAAAA,   /* #00AAAA */
+    0x0455, 0xFF55,   /* #55FF55 */
+    0x0555, 0xFFFF,   /* #55FFFF */
+    0x06AA, 0x0000,   /* #AA0000 */
+    0x07AA, 0x00AA,   /* #AA00AA */
+    0x08AA, 0x5500,   /* #AA5500 */
+    0x09AA, 0xAAAA,   /* #AAAAAA */
+    0x0AFF, 0x5555,   /* #FF5555 */
+    0x0BFF, 0x55FF,   /* #FF55FF */
+    0x0CFF, 0xFF55,   /* #FFFF55 */
+    0x0DFF, 0xFFFF,   /* #FFFFFF */
 };
 
 char cga_convert_rgb_to_bit_pair(uint32_t* rgb) {
@@ -51,24 +51,30 @@ char cga_convert_rgb_to_bit_pair(uint32_t* rgb) {
         mov     di, es:[si]                     ; DI = low word RGB (bits 15-0)
         mov     dx, es:[si+2]                   ; DX:DI = 24bit RGB
 
-        mov     si, CONVERT_RGB_TABLE[24+2]     ; SI = low word (Intel little endian)
+B7:     mov     si, CONVERT_RGB_TABLE[24+2]     ; SI = low word (Intel little endian)
         mov     bx, CONVERT_RGB_TABLE[24]       ; BX:DI key:value pair
         cmp     dl, bl                          ; BL, DL low bytes of high words
-        jb      B3                              ; lower pivot is 3rd in table
-        ja      A10                             ; higher pivot is 10th in table
-        cmp     di, si                          ; compare the low order word in the RGB
-        jb      B3
-        ja      A10
-        jmp     DONE                            ; match
+        jae     J0                              ; trampoline due to branch limitation 128 bytes
+        jmp     B3                              ; lower pivot is 3rd in table
+J0:     jle     J1
+        jmp     A10                             ; higher pivot is 10th in table
+J1:     cmp     di, si                          ; compare the low order word in the RGB
+        jae     J3                              ; trampoline due to branch limitation 128 bytes
+        jmp     B3                              ; lower pivot is 3rd in table
+J3:     je      J4
+        jmp     A10                             ; higher pivot is 10th in table
+J4:     jmp     DONE                            ; match
 
 B0:     mov     si, CONVERT_RGB_TABLE[0+2]
         mov     bx, CONVERT_RGB_TABLE[0]
         cmp     dl, bl
-        jb      ERR
-        ja      B1
+        jae     J5
+        jmp      ERR
+J5:     ja      B1
         cmp     di, si
-        jb      ERR
-        ja      B1
+        jae     J6
+        jmp     ERR
+J6:     ja      B1
         jmp     DONE
 
 B1:     mov     bx, CONVERT_RGB_TABLE[4]
@@ -90,28 +96,58 @@ B4:     mov     bx, CONVERT_RGB_TABLE[12]
 A5:     mov     si, CONVERT_RGB_TABLE[16+2]
         mov     bx, CONVERT_RGB_TABLE[16]
         cmp     dl, bl
-        jb      B4
-        ja      ERR
+        jb      ERR
+        ja      A6
         cmp     di, si
         jb      B4
-        ja      ERR
+        ja      A6
+        jmp     DONE
+
+A6:     mov     bx, CONVERT_RGB_TABLE[20]
+        jmp     DONE
+
+B8:     mov     si, CONVERT_RGB_TABLE[28+2]
+        mov     bx, CONVERT_RGB_TABLE[28]
+        cmp     dl, bl
+        jb      ERR
+        ja      A9
+        cmp     di, si
+        jb      ERR
+        ja      A9
+        jmp     DONE
+
+A9:     mov     bx, CONVERT_RGB_TABLE[32]
         jmp     DONE
 
 A10:    mov     si, CONVERT_RGB_TABLE[36+2]
         mov     bx, CONVERT_RGB_TABLE[36]
         cmp     dl, bl
-        jb      ERR
-        ja      ERR
+        jb      B8
+        ja      A12
         cmp     di, si
-        jb      ERR
-        ja      ERR
+        jb      B8
+        ja      A12
         jmp     DONE
 
+B11:    mov     bx, CONVERT_RGB_TABLE[40]
+        jmp     DONE
 
+A12:    mov     si, CONVERT_RGB_TABLE[44+2]
+        mov     bx, CONVERT_RGB_TABLE[44]
+        cmp     dl, bl
+        jb      B11
+        ja      A13
+        cmp     di, si
+        jb      B11
+        ja      A13
+        jmp     DONE
+
+A13:    mov     bx, CONVERT_RGB_TABLE[48]
+        jmp     DONE
 
 ERR:    mov     bh, 0FFh
 DONE:   mov     bits, bh                        ; value in high byte of high word
-        pop     si
+
         pop     es
     }
     return bits;
