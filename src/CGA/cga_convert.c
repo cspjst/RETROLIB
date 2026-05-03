@@ -46,139 +46,71 @@ char cga_convert_rgb_to_bit_pair(uint32_t* rgb) {
     __asm {
         .8086
         push    es
-        push    si
 
         les     si, rgb
-        mov     ax, es:[si]          ; AX = low word RGB (bits 15-0)
-        mov     dx, es:[si+2]        ; DX = high word (bits 31-16)
-        and     dx, 0FFh             ; DX = high byte RGB (bits 23-16)
+        mov     di, es:[si]                     ; DI = low word RGB (bits 15-0)
+        mov     dx, es:[si+2]                   ; DX:DI = 24bit RGB
 
-        mov     ah, 0FFh             ; Default not found
+        mov     si, CONVERT_RGB_TABLE[24+2]     ; SI = low word (Intel little endian)
+        mov     bx, CONVERT_RGB_TABLE[24]       ; BX:DI key:value pair
+        cmp     dl, bl                          ; BL, DL low bytes of high words
+        jb      B3                              ; lower pivot is 3rd in table
+        ja      A10                             ; higher pivot is 10th in table
+        cmp     di, si                          ; compare the low order word in the RGB
+        jb      B3
+        ja      A10
+        jmp     DONE                            ; match
 
-        ; Index 6 (midpoint)
-        mov     bx, CONVERT_RGB_TABLE[24]     ; BX = low word (value in BH)
-        mov     cx, CONVERT_RGB_TABLE[24+2]   ; CX = high word (key_high in CL)
-        cmp     cl, dl
-        jb      I9
-        ja      I2
-        cmp     al, bl
-        jb      I9
-        ja      I2
-        mov     ah, bh
-        jmp     DONE
-
-I2:     ; Index 2
-        mov     bx, CONVERT_RGB_TABLE[8]
-        mov     cx, CONVERT_RGB_TABLE[8+2]
-        cmp     cl, dl
-        jb      I4
-        ja      I0
-        cmp     al, bl
-        jb      I4
-        ja      I0
-        mov     ah, bh
-        jmp     DONE
-
-I0:     ; Index 0
+B0:     mov     si, CONVERT_RGB_TABLE[0+2]
         mov     bx, CONVERT_RGB_TABLE[0]
-        mov     cx, CONVERT_RGB_TABLE[0+2]
-        cmp     cl, dl
-        jne     I1
-        cmp     al, bl
-        je      FOUND
-I1:     ; Index 1
-        mov     bx, CONVERT_RGB_TABLE[4]
-        mov     cx, CONVERT_RGB_TABLE[4+2]
-        cmp     cl, dl
-        jne     DONE
-        cmp     al, bl
-        jne     DONE
-        jmp     FOUND
+        cmp     dl, bl
+        jb      ERR
+        ja      B1
+        cmp     di, si
+        jb      ERR
+        ja      B1
+        jmp     DONE
 
-I4:     ; Index 4
+B1:     mov     bx, CONVERT_RGB_TABLE[4]
+        jmp     DONE
+
+B3:     mov     si, CONVERT_RGB_TABLE[8+2]
+        mov     bx, CONVERT_RGB_TABLE[8]
+        cmp     dl, bl
+        jb      B0
+        ja      A5
+        cmp     di, si
+        jb      B0
+        ja      A5
+        jmp     DONE
+
+B4:     mov     bx, CONVERT_RGB_TABLE[12]
+        jmp     DONE
+
+A5:     mov     si, CONVERT_RGB_TABLE[16+2]
         mov     bx, CONVERT_RGB_TABLE[16]
-        mov     cx, CONVERT_RGB_TABLE[16+2]
-        cmp     cl, dl
-        jb      I5
-        ja      I3
-        cmp     al, bl
-        jb      I5
-        ja      I3
-        mov     ah, bh
+        cmp     dl, bl
+        jb      B4
+        ja      ERR
+        cmp     di, si
+        jb      B4
+        ja      ERR
         jmp     DONE
-I3:     ; Index 3
-        mov     bx, CONVERT_RGB_TABLE[12]
-        mov     cx, CONVERT_RGB_TABLE[12+2]
-        cmp     cl, dl
-        jne     DONE
-        cmp     al, bl
-        jne     DONE
-        jmp     FOUND
-I5:     ; Index 5
-        mov     bx, CONVERT_RGB_TABLE[20]
-        mov     cx, CONVERT_RGB_TABLE[20+2]
-        cmp     cl, dl
-        jne     DONE
-        cmp     al, bl
-        jne     DONE
 
-I9:     ; Index 9
+A10:    mov     si, CONVERT_RGB_TABLE[36+2]
         mov     bx, CONVERT_RGB_TABLE[36]
-        mov     cx, CONVERT_RGB_TABLE[36+2]
-        cmp     cl, dl
-        jb      I11
-        ja      I7
-        cmp     al, bl
-        jb      I11
-        ja      I7
-        mov     ah, bh
+        cmp     dl, bl
+        jb      ERR
+        ja      ERR
+        cmp     di, si
+        jb      ERR
+        ja      ERR
         jmp     DONE
 
-I7:     ; Index 7
-        mov     bx, CONVERT_RGB_TABLE[28]
-        mov     cx, CONVERT_RGB_TABLE[28+2]
-        cmp     cl, dl
-        jne     I8
-        cmp     al, bl
-        je      FOUND
-I8:     ; Index 8
-        mov     bx, CONVERT_RGB_TABLE[32]
-        mov     cx, CONVERT_RGB_TABLE[32+2]
-        cmp     cl, dl
-        jne     DONE
-        cmp     al, bl
-        jne     DONE
-        jmp     FOUND
 
-I11:    ; Index 11
-        mov     bx, CONVERT_RGB_TABLE[44]
-        mov     cx, CONVERT_RGB_TABLE[44+2]
-        cmp     cl, dl
-        jb      I12
-        ja      I10
-        cmp     al, bl
-        jb      I12
-        ja      I10
-        mov     ah, bh
-        jmp     DONE
-I10:    ; Index 10
-        mov     bx, CONVERT_RGB_TABLE[40]
-        mov     cx, CONVERT_RGB_TABLE[40+2]
-        cmp     cl, dl
-        jne     I12
-        cmp     al, bl
-        je      FOUND
-I12:    ; Index 12
-        mov     bx, CONVERT_RGB_TABLE[48]
-        mov     cx, CONVERT_RGB_TABLE[48+2]
-        cmp     cl, dl
-        jne     DONE
-        cmp     al, bl
-        jne     DONE
 
-FOUND:  mov     ah, bh
-
-DONE:   mov     bits, ah
+ERR:    mov     bh, 0FFh
+DONE:   mov     bits, bh                        ; value in high byte of high word
         pop     si
         pop     es
     }
