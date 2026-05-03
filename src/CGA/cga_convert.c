@@ -9,7 +9,7 @@
 #include "cga_bitmap_constants.h"
 #include "cga_colours.h"
 
-static const uint16_t CONVERT_RGB_TABLE[26] = {
+/*static const uint16_t CONVERT_RGB_TABLE[26] = {
     0x0000, 0x0000,
     0x0100, 0xAA00,
     0x0100, 0xAAAA,
@@ -23,27 +23,166 @@ static const uint16_t CONVERT_RGB_TABLE[26] = {
     0x02FF, 0x55FF,
     0x03FF, 0xFF55,
     0x03FF, 0xFFFF,
+};*/
+
+static const uint16_t CONVERT_RGB_TABLE[26] = {
+    0x0100, 0x0000,
+    0x0200, 0xAA00,
+    0x0300, 0xAAAA,
+    0x04AA, 0x0000,
+    0x05AA, 0x00AA,
+    0x06AA, 0x5500,
+    0x07AA, 0xAAAA,
+    0x0855, 0xFF55,
+    0x0955, 0xFFFF,
+    0x0AFF, 0x5555,
+    0x0BFF, 0x55FF,
+    0x0CFF, 0xFF55,
+    0x0DFF, 0xFFFF,
 };
 
 char cga_convert_rgb_to_bit_pair(uint32_t* rgb) {
-    uint16_t whi, wlo;
+    char bits;
     __asm {
-        push    ds
+        .8086
+        push    es
+        push    si
 
-        cld
-        lds     si, rgb
-        //mov     ax, CONVERT_RGB_TABLE[bx]
-        lodsw
-        mov     wlo, ax
-        //mov     ax, CONVERT_RGB_TABLE[bx + 2]
-        lodsw
-        mov     whi, ax
+        les     si, rgb
+        mov     ax, es:[si]          ; AX = low word RGB (bits 15-0)
+        mov     dx, es:[si+2]        ; DX = high word (bits 31-16)
+        and     dx, 0FFh             ; DX = high byte RGB (bits 23-16)
 
+        mov     ah, 0FFh             ; Default not found
 
-        pop     ds
+        ; Index 6 (midpoint)
+        mov     bx, CONVERT_RGB_TABLE[24]     ; BX = low word (value in BH)
+        mov     cx, CONVERT_RGB_TABLE[24+2]   ; CX = high word (key_high in CL)
+        cmp     cl, dl
+        jb      I9
+        ja      I2
+        cmp     al, bl
+        jb      I9
+        ja      I2
+        mov     ah, bh
+        jmp     DONE
+
+I2:     ; Index 2
+        mov     bx, CONVERT_RGB_TABLE[8]
+        mov     cx, CONVERT_RGB_TABLE[8+2]
+        cmp     cl, dl
+        jb      I4
+        ja      I0
+        cmp     al, bl
+        jb      I4
+        ja      I0
+        mov     ah, bh
+        jmp     DONE
+
+I0:     ; Index 0
+        mov     bx, CONVERT_RGB_TABLE[0]
+        mov     cx, CONVERT_RGB_TABLE[0+2]
+        cmp     cl, dl
+        jne     I1
+        cmp     al, bl
+        je      FOUND
+I1:     ; Index 1
+        mov     bx, CONVERT_RGB_TABLE[4]
+        mov     cx, CONVERT_RGB_TABLE[4+2]
+        cmp     cl, dl
+        jne     DONE
+        cmp     al, bl
+        jne     DONE
+        jmp     FOUND
+
+I4:     ; Index 4
+        mov     bx, CONVERT_RGB_TABLE[16]
+        mov     cx, CONVERT_RGB_TABLE[16+2]
+        cmp     cl, dl
+        jb      I5
+        ja      I3
+        cmp     al, bl
+        jb      I5
+        ja      I3
+        mov     ah, bh
+        jmp     DONE
+I3:     ; Index 3
+        mov     bx, CONVERT_RGB_TABLE[12]
+        mov     cx, CONVERT_RGB_TABLE[12+2]
+        cmp     cl, dl
+        jne     DONE
+        cmp     al, bl
+        jne     DONE
+        jmp     FOUND
+I5:     ; Index 5
+        mov     bx, CONVERT_RGB_TABLE[20]
+        mov     cx, CONVERT_RGB_TABLE[20+2]
+        cmp     cl, dl
+        jne     DONE
+        cmp     al, bl
+        jne     DONE
+
+I9:     ; Index 9
+        mov     bx, CONVERT_RGB_TABLE[36]
+        mov     cx, CONVERT_RGB_TABLE[36+2]
+        cmp     cl, dl
+        jb      I11
+        ja      I7
+        cmp     al, bl
+        jb      I11
+        ja      I7
+        mov     ah, bh
+        jmp     DONE
+
+I7:     ; Index 7
+        mov     bx, CONVERT_RGB_TABLE[28]
+        mov     cx, CONVERT_RGB_TABLE[28+2]
+        cmp     cl, dl
+        jne     I8
+        cmp     al, bl
+        je      FOUND
+I8:     ; Index 8
+        mov     bx, CONVERT_RGB_TABLE[32]
+        mov     cx, CONVERT_RGB_TABLE[32+2]
+        cmp     cl, dl
+        jne     DONE
+        cmp     al, bl
+        jne     DONE
+        jmp     FOUND
+
+I11:    ; Index 11
+        mov     bx, CONVERT_RGB_TABLE[44]
+        mov     cx, CONVERT_RGB_TABLE[44+2]
+        cmp     cl, dl
+        jb      I12
+        ja      I10
+        cmp     al, bl
+        jb      I12
+        ja      I10
+        mov     ah, bh
+        jmp     DONE
+I10:    ; Index 10
+        mov     bx, CONVERT_RGB_TABLE[40]
+        mov     cx, CONVERT_RGB_TABLE[40+2]
+        cmp     cl, dl
+        jne     I12
+        cmp     al, bl
+        je      FOUND
+I12:    ; Index 12
+        mov     bx, CONVERT_RGB_TABLE[48]
+        mov     cx, CONVERT_RGB_TABLE[48+2]
+        cmp     cl, dl
+        jne     DONE
+        cmp     al, bl
+        jne     DONE
+
+FOUND:  mov     ah, bh
+
+DONE:   mov     bits, ah
+        pop     si
+        pop     es
     }
-    printf("TABLE ENTRY = %04X%04X\n", whi, wlo);
-    return 0;
+    return bits;
 }
 
 char cga_convert_rgb_to_pixel(cga_size_t palette, cga_argb_t colour) {

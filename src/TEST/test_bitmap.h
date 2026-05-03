@@ -83,8 +83,28 @@ void test_bitmap() {
     //test_hi_res_bitmap();
     //test_lo_res_convert();
     //test_lo_res_bitmap();
-    uint32_t rgb = RGB_BROWN;
-    cga_convert_rgb_to_bit_pair(&rgb);
+    uint32_t rgb;
+    uint32_t test[16] = {
+        RGB_BLACK,
+        RGB_GREEN,
+        RGB_CYAN,
+        RGB_RED,
+        RGB_MAGENTA,
+        RGB_BROWN,
+        RGB_LT_GRAY,
+        RGB_DK_GRAY,
+        RGB_LT_BLUE,
+        RGB_LT_GREEN,
+        RGB_LT_CYAN,
+        RGB_LT_RED,
+        RGB_LT_MAGENTA,
+        RGB_YELLOW,
+        RGB_WHITE
+    };
+    for(int i = 0; i < 16; ++i) {
+        rgb = test[i];
+        printf("bits=%02X rgb=%08lX\n", cga_convert_rgb_to_bit_pair(&rgb), rgb);
+    }
 }
 
 #endif
