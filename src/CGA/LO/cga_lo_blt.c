@@ -64,7 +64,6 @@ void cga_lo_set_blt(cga_coord_t x, cga_coord_t y, cga_size_t width, cga_size_t h
         mov     cseg, ax
         mov     coff, si
 
-
         popf
         pop     ds
     }

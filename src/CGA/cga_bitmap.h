@@ -21,28 +21,15 @@ typedef struct {
     cga_coord_t height;         // modes 4 and 6 = 0..199
     cga_size_t palette;         // mode 6 = forground colour, mode 4 = palette 0,1,2
     cga_size_t size;            // data block size bytes max 64K
-    cga_size_t shifts;          // number of shift optimised data blocks 0, 3 lo res 7 hi res
+    cga_size_t blocks;          // number of shift optimised data blocks 0, 3 lo res 7 hi res
     char* data[8];              // pointers 1 or 8 data blocks for pre shifted images
 } cga_bitmap_t;
 
 cga_bitmap_t* cga_make_bmp(cga_bitmap_t* bmp, cga_colour_depth_t depth, cga_coord_t width, cga_coord_t height, unsigned int pal);
 
-/**
- * Load a cga bitmap from native format raw data file, typically as a .cga file
- */
-cga_bitmap_t* cga_bmp_load(const char* file_path, mem_arena_t* arena, cga_size_t block);
+cga_bitmap_t* cga_bmp_load(const char* file_path, mem_arena_t* arena, cga_size_t blocks);
 
-/**
- * Save a cga bitmap in native format, typically as a .cga file
- */
-dos_memsize_t cga_bmp_save(const char* file_path, const cga_bitmap_t* bmp, cga_size_t block);
-
-/**
- * Pre-shifts bitmap data for all sub-byte X offsets (3 variants for 2bpp, 7 for 1bpp)
- * to eliminate runtime bit-shifting in the blit loop.
- * @note Trades RAM for 8086 performance.
- */
-dos_memsize_t cga_bmp_make_shift_blocks(cga_bitmap_t* bmp);
+dos_memsize_t cga_bmp_save(const char* file_path, const cga_bitmap_t* bmp, cga_size_t blocks);
 
 void cga_bmp_dump(FILE* f, cga_bitmap_t* bmp);
 

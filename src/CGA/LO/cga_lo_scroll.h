@@ -3,7 +3,7 @@
 
 #include "../cga_types.h"
 
-void cga_lo_scroll_row_right(char* src, char* dst, cga_size_t width, cga_size_t height, cga_size_t stride);
+void cga_lo_scroll_right(char* src, char* dst, cga_size_t width, cga_size_t height, cga_size_t stride);
 
 void cga_lo_scroll_left();
 

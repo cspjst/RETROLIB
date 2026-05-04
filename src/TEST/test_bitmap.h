@@ -12,6 +12,7 @@
 #include "../CGA/cga_bitmap.h"
 #include "../CGA/cga_convert.h"
 #include "../CGA/cga_colours.h"
+#include "../CGA/LO/cga_lo_scroll.h"
 
 #include "../ENV/env_time.h"
 
@@ -40,7 +41,7 @@ void test_hi_res_bitmap() {
     mem_arena_t* arena = mem_new_arena(4096);   // 64K
     if(!arena) printf("Failed to create arena!\n");
 
-    cga_bitmap_t* bmp = cga_bmp_load("../res/joker.cga", arena, 0);
+    cga_bitmap_t* bmp = cga_bmp_load("../res/joker.cga", arena, 1);
     if(!bmp) printf("error %s\n", strerror(errno));
 
     cga_bmp_dump(stdout, bmp);
@@ -56,7 +57,7 @@ void test_lo_res_convert() {
     printf("converting PPM to CGA...\n");
 
     bios_read_system_clock(&t1);
-    if(!cga_convert_ppm_to_raw("../res/tree.ppm", "../res/tree.cga", arena))
+    if(!cga_convert_ppm_to_raw("../res/tree.ppm", "../res/tree0.cga", arena))
         printf("\tconversion error %s\n", strerror(errno));
     else {
         bios_read_system_clock(&t2);
@@ -67,11 +68,11 @@ void test_lo_res_convert() {
 }
 
 void test_lo_res_bitmap() {
-    printf("Testing CGA lo res \"tree.cga\" bitmap\n");
+    printf("Testing CGA lo res \"tree0.cga\" bitmap\n");
     mem_arena_t* arena = mem_new_arena(4096);   // 64K
     if(!arena) printf("Failed to create arena!\n");
 
-    cga_bitmap_t* bmp = cga_bmp_load("../res/tree.cga", arena, 0);
+    cga_bitmap_t* bmp = cga_bmp_load("../res/tree0.cga", arena, 1);
     if(!bmp) printf("error %s\n", strerror(errno));
 
     cga_bmp_dump(stdout, bmp);
@@ -105,12 +106,31 @@ void test_argb_bits() {
     //printf("...bits=%02X rgb=%08lX\n", cga_convert_rgb_to_bit_pair(&argb.argb), argb.argb);
 }
 
+void test_lo_res_scroll() {
+    mem_arena_t* arena = mem_new_arena(4096);   // 64K
+    if(!arena) printf("Failed to create arena!\n");
+    printf("shifting right...\n");
+
+    cga_bitmap_t* bmp = cga_bmp_load("../res/tree0.cga", arena, 1);
+    if(!bmp) printf("error %s\n", strerror(errno));
+    bmp->data[1] = (char*)mem_arena_alloc(arena, bmp->size);
+    for(int i = 2; i < 8; ++i) bmp->data[i] = NULL;
+    cga_lo_scroll_right(bmp->data[0], bmp->data[0], bmp->width, bmp->height, 0);
+    cga_lo_scroll_right(bmp->data[0], bmp->data[0], bmp->width, bmp->height, 0);
+    cga_lo_scroll_right(bmp->data[0], bmp->data[0], bmp->width, bmp->height, 0);
+    cga_bmp_dump(stdout, bmp);
+    cga_bmp_save("../res/tree1.cga", bmp, 1);
+
+    mem_free_arena(arena);
+}
+
 void test_bitmap() {
     //test_argb_bits();
     //test_hi_res_convert();
     //test_hi_res_bitmap();
-    test_lo_res_convert();
-    test_lo_res_bitmap();
+    //test_lo_res_convert();
+    test_lo_res_scroll();
+    //test_lo_res_bitmap();
     //test_argb_bits();
 }
 

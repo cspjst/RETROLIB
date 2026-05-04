@@ -8,6 +8,14 @@
 #include "cga_bitmap.h"
 #include "cga_bitmap_constants.h"
 #include "cga_types.h"
+#include "LO/cga_lo_scroll.h"
+
+dos_memsize_t cga_convert_bmp_shifts_lo_res(cga_bitmap_t* bmp, mem_arena_t* arena) {
+    errno = EINVAL;
+    if(!bmp || !bmp->data[0] || !arena) return 0;           // must be a bmp and bmp data to shift and an arena to put them in
+
+    return 0;
+}
 
 char cga_convert_rgb_to_bit_pair(cga_argb_t rgb) {
     switch(rgb.red) {
@@ -96,7 +104,7 @@ dos_memsize_t cga_convert_pbm_to_raw(
     cga_bitmap_t* bmp = cga_convert_load_pbm(pbm_file_in_path, arena);
     if(!bmp) return 0;                          // failed: errno set by loader
     // save as raw cga_bitmap_t format (header + packed 2bpp payload)
-    return cga_bmp_save(pbm_file_out_path, bmp, 0); // success: bytes written, or 0 on fail (errno set)
+    return cga_bmp_save(pbm_file_out_path, bmp, 1); // success: bytes written, or 0 on fail (errno set)
 }
 
 FILE* cga_convert_read_meta_ppm(FILE* f, cga_bitmap_t* bmp) {
@@ -121,7 +129,7 @@ FILE* cga_convert_read_meta_ppm(FILE* f, cga_bitmap_t* bmp) {
         if (line[0] == '#') continue;           // skip comments
         if (sscanf(line, CGA_PPM_MAXVAL, &max) == 1) {
             if(max > CGA_MAX_COLOUR) return NULL;
-            bmp->shifts = 0;
+            bmp->blocks = 0;
             for(int i = 0; i < 8; ++i) bmp->data[i] = NULL;
             errno = 0;                          // reset the POSIX error number
             return f;                           // a valid PPM file to work with
@@ -164,6 +172,7 @@ dos_memsize_t cga_convert_read_data_ppm(FILE* f, cga_bitmap_t* bmp) {
             byte++;                             // next packed destination byte
         }
     }
+    bmp->blocks = 1;
     free(row);                                  // free temp row buffer
     return bmp->size;                           // success
 }
@@ -199,5 +208,5 @@ dos_memsize_t cga_convert_ppm_to_raw(
     cga_bitmap_t* bmp = cga_convert_load_ppm(ppm_file_in_path, arena);
     if(!bmp) return 0;                          // failed: errno set by loader
     // save as raw cga_bitmap_t format (header + packed 2bpp payload)
-    return cga_bmp_save(ppm_file_out_path, bmp, 0); // success: bytes written, or 0 on fail (errno set)
+    return cga_bmp_save(ppm_file_out_path, bmp, 1); // success: bytes written, or 0 on fail (errno set)
 }

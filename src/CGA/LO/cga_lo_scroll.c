@@ -1,6 +1,6 @@
 #include "cga_lo_scroll.h"
 
-void cga_lo_scroll_row_right(char* src, char* dst, cga_size_t width, cga_size_t height, cga_size_t stride) {
+void cga_lo_scroll_right(char* src, char* dst, cga_size_t width, cga_size_t height, cga_size_t stride) {
     __asm {
         .8086
         push     ds
@@ -13,9 +13,8 @@ void cga_lo_scroll_row_right(char* src, char* dst, cga_size_t width, cga_size_t 
         cmp     cx, 16              ; minimum bitmap width
         jl      END
 
-        shr     cx, 1               ; div 8 to get byte width
-        shr     cx, 1               ; 8086 single shifts only
-        shr     cx, 1               ; ...
+        shr     cx, 1               ; div 4 to get byte width
+        shr     cx, 1               ; lo res mode 4 pixels per byte
         mov     bx, cx              ; copy byte width
 
 YROW:   sub     cx, 2               ; zero index word

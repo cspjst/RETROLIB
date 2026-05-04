@@ -9,9 +9,14 @@
 #include <stdint.h>
 
 #include "../MEM/dos_mem_arena.h"
-#include "cga_types.h"
+#include "cga_bitmap.h"
 
-char cga_convert_rgb_to_bit_pair(cga_argb_t rgb);
+/**
+ * Pre-shifts bitmap data for lo res mode 4 at 2 bits-per-pixel in order to
+ * optimise block transfer to VRAM by providing pre-shifted bitmaps at
+ * sub-byte x mod 4 positions 0..3 by trading RAM for performance.
+ */
+dos_memsize_t cga_convert_bmp_shifts_lo_res(cga_bitmap_t* bmp, mem_arena_t* arena);
 
 /**
  * The PBM (P4) bitstream file format is a close match to the 1-bit-per-pixel (1bpp)

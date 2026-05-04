@@ -22,7 +22,7 @@ void test_right() {
     char dst[4][4] = {0};
     test_dump_data(4, 4, &src[0][0]);
 
-    cga_lo_scroll_row_right(&src[0][0], &dst[0][0], 32, 4, 0);
+    cga_lo_scroll_right(&src[0][0], &dst[0][0], 32, 4, 0);
     putchar('\n');
 
     test_dump_data(4, 4, &dst[0][0]);

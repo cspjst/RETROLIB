@@ -22,9 +22,11 @@ void test_lo_screen_blt() {
     mem_arena_t* arena = mem_new_arena(4096);   // 64K
     if(!arena) printf("Failed to create arena!\n");
 
-    cga_bitmap_t* bmp = cga_bmp_load("../res/tree.cga", arena, 0);
+    cga_bitmap_t* bmp = cga_bmp_load("../res/tree1.cga", arena, 1);
     if(!bmp) printf("error %s\n", strerror(errno));
     else cga_lo_screen_blt(bmp->data[0]);
+
+    //cga_bmp_dump(stdout, bmp);
 
     mem_free_arena(arena);
 }
@@ -58,7 +60,7 @@ void test_lo_cga() {
     env_set_video_mode(CGA_GRAPHICS_4_COLOUR_320X200);
 
     test_lo_screen_blt();
-    test_lo_plot();
+    //test_lo_plot();
     //test_lo_blt();
 
     getchar();
