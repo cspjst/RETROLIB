@@ -20,7 +20,7 @@ cga_bitmap_t* cga_make_bmp(cga_bitmap_t* bmp, cga_colour_depth_t depth, cga_coor
     return bmp;
 }
 
-cga_bitmap_t* cga_bmp_load(const char* file_path, mem_arena_t* arena, cga_size_t block) {
+cga_bitmap_t* cga_bmp_load(const char* file_path, mem_arena_t* arena) {
     errno = EINVAL;
     if(!file_path || !arena) return NULL;
     // allocate a new bitmap
@@ -53,7 +53,7 @@ fail:
     return NULL;
 }
 
-dos_memsize_t cga_bmp_save(const char* file_path, const cga_bitmap_t* bmp, cga_size_t blocks) {
+dos_memsize_t cga_bmp_save(const char* file_path, const cga_bitmap_t* bmp) {
     errno = EINVAL;
     if(!file_path || !bmp) return 0;
     FILE* f = fopen(file_path, "wb");

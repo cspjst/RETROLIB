@@ -27,9 +27,9 @@ typedef struct {
 
 cga_bitmap_t* cga_make_bmp(cga_bitmap_t* bmp, cga_colour_depth_t depth, cga_coord_t width, cga_coord_t height, unsigned int pal);
 
-cga_bitmap_t* cga_bmp_load(const char* file_path, mem_arena_t* arena, cga_size_t blocks);
+cga_bitmap_t* cga_bmp_load(const char* file_path, mem_arena_t* arena);
 
-dos_memsize_t cga_bmp_save(const char* file_path, const cga_bitmap_t* bmp, cga_size_t blocks);
+dos_memsize_t cga_bmp_save(const char* file_path, const cga_bitmap_t* bmp);
 
 void cga_bmp_dump(FILE* f, cga_bitmap_t* bmp);
 
