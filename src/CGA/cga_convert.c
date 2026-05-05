@@ -58,6 +58,7 @@ FILE* cga_convert_read_meta_pbm(FILE* f, cga_bitmap_t* bmp) {
         if (sscanf(line, CGA_PBM_WIDTH_HEIGHT, &bmp->width, &bmp->height) == 2) {
             bmp->depth = 1;                     // mode 6
             bmp->size = ((bmp->width * bmp->depth)  >> 3) * bmp->height;
+            bmp->blocks = 0;
             errno = 0;                          // reset the POSIX error number
             return f;                           // a valid PBM file to work with
         }
@@ -69,6 +70,7 @@ dos_memsize_t cga_convert_read_data_pbm(FILE* f, cga_bitmap_t* bmp) {
     errno = EINVAL;                             // POSIX error Invalid Arguement
     if(!f || !bmp || !bmp->data[0]) return 0;
     if (fread(bmp->data[0], 1, bmp->size, f) != bmp->size) return 0;
+    bmp->blocks = 1;
     errno = 0;                                  // reset the POSIX error number
     return bmp->size;                           // success
 }
@@ -104,7 +106,7 @@ dos_memsize_t cga_convert_pbm_to_raw(
     cga_bitmap_t* bmp = cga_convert_load_pbm(pbm_file_in_path, arena);
     if(!bmp) return 0;                          // failed: errno set by loader
     // save as raw cga_bitmap_t format (header + packed 2bpp payload)
-    return cga_bmp_save(pbm_file_out_path, bmp, 1); // success: bytes written, or 0 on fail (errno set)
+    return cga_bmp_save(pbm_file_out_path, bmp); // success: bytes written, or 0 on fail (errno set)
 }
 
 FILE* cga_convert_read_meta_ppm(FILE* f, cga_bitmap_t* bmp) {
@@ -208,5 +210,5 @@ dos_memsize_t cga_convert_ppm_to_raw(
     cga_bitmap_t* bmp = cga_convert_load_ppm(ppm_file_in_path, arena);
     if(!bmp) return 0;                          // failed: errno set by loader
     // save as raw cga_bitmap_t format (header + packed 2bpp payload)
-    return cga_bmp_save(ppm_file_out_path, bmp, 1); // success: bytes written, or 0 on fail (errno set)
+    return cga_bmp_save(ppm_file_out_path, bmp); // success: bytes written, or 0 on fail (errno set)
 }
