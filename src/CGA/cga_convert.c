@@ -207,9 +207,36 @@ dos_memsize_t cga_convert_ppm_to_raw(
 ) {
     errno = EINVAL;                             // POSIX error Invalid Argument
     if(!ppm_file_in_path || !ppm_file_out_path || !arena) return 0; // failed: null arguments
-    // convert PPM file to cga_bitmap_t
+    printf("convert PPM file to cga_bitmap_t\n");
     cga_bitmap_t* bmp = cga_convert_load_ppm(ppm_file_in_path, arena);
     if(!bmp) return 0;                          // failed: errno set by loader
-    // save as raw cga_bitmap_t format (header + packed 2bpp payload)
+    printf("save as raw cga_bitmap_t format (header + packed 2bpp payload)");
     return cga_bmp_save(ppm_file_out_path, bmp); // success: bytes written, or 0 on fail (errno set)
+}
+
+cga_size_t cga_convert_ppm_pal(
+    const char* ppm_file_in_path,
+    const char* ppm_file_out_path,
+    cga_size_t pal
+) {
+    errno = EINVAL;                                 // POSIX error Invalid Argument
+    if(!ppm_file_in_path) return 0;
+    char line[80];
+    printf("open file %s for read\n", ppm_file_in_path);
+    FILE* fin = fopen(ppm_file_in_path, "r");       // error if file not exist
+    if(!fin) return 0;
+    if(!fgets(line, sizeof(line), fin)) return 0;   // read first line
+    printf("confirm PPM type\n");
+    if(*(unsigned short*)line != CGA_RAW_PPM) goto error; // confirm P6
+    printf("open file %s for write\n", ppm_file_out_path);
+    FILE* fout = fopen(ppm_file_in_path, "w");      // create if file not exist
+    if(!fout) goto error;
+    if(!fputs(line, fout)) goto error;
+    printf("inject #CGA PAL=%i\n", pal);
+
+
+error:
+    fclose(fin);
+    fclose(fout);
+    return 0;
 }
