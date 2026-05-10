@@ -22,7 +22,7 @@ void test_lo_screen_blt() {
     mem_arena_t* arena = mem_new_arena(4096);   // 64K
     if(!arena) printf("Failed to create arena!\n");
 
-    cga_bitmap_t* bmp = cga_bmp_load("../res/tree1.cga", arena, 1);
+    cga_bitmap_t* bmp = cga_bmp_load("../res/cards.cga", arena);
     if(!bmp) printf("error %s\n", strerror(errno));
     else cga_lo_screen_blt(bmp->data[0]);
 
