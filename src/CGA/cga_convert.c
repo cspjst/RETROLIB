@@ -207,32 +207,35 @@ dos_memsize_t cga_convert_ppm_to_raw(
 ) {
     errno = EINVAL;                             // POSIX error Invalid Argument
     if(!ppm_file_in_path || !ppm_file_out_path || !arena) return 0; // failed: null arguments
-    printf("convert PPM file to cga_bitmap_t\n");
+    printf("load and convert PPM file to cga_bitmap_t\n");
     cga_bitmap_t* bmp = cga_convert_load_ppm(ppm_file_in_path, arena);
     if(!bmp) return 0;                          // failed: errno set by loader
     printf("save as raw cga_bitmap_t format (header + packed 2bpp payload)");
     return cga_bmp_save(ppm_file_out_path, bmp); // success: bytes written, or 0 on fail (errno set)
 }
 
-cga_size_t cga_convert_ppm_pal(
+cga_size_t cga_convert_ppm_inject_pal(
     const char* ppm_file_in_path,
     const char* ppm_file_out_path,
-    cga_size_t pal
+    cga_palette_number_t pal                    // CGA_PALETTE_0, CGA_PALETTE_0_HI, CGA_PALETTE_1, CGA_PALETTE_1_HI, CGA_PALETTE_2, CGA_PALETTE_2_HI            
 ) {
-    errno = EINVAL;                                 // POSIX error Invalid Argument
-    if(!ppm_file_in_path) return 0;
+    errno = EINVAL;                             // POSIX error Invalid Argument
+    if(!ppm_file_in_path || pal < CGA_PALETTE_0 || pal > CGA_PALETTE_2_HI) return 0;
     char line[80];
+    cga_size_t width, height;
     printf("open file %s for read\n", ppm_file_in_path);
-    FILE* fin = fopen(ppm_file_in_path, "r");       // error if file not exist
+    FILE* fin = fopen(ppm_file_in_path, "r");   // error if file not exist
     if(!fin) return 0;
-    if(!fgets(line, sizeof(line), fin)) return 0;   // read first line
+    if(!fgets(line, sizeof(line), fin)) return 0; // read first line
     printf("confirm PPM type\n");
     if(*(unsigned short*)line != CGA_RAW_PPM) goto error; // confirm P6
     printf("open file %s for write\n", ppm_file_out_path);
-    FILE* fout = fopen(ppm_file_in_path, "w");      // create if file not exist
+    FILE* fout = fopen(ppm_file_in_path, "w");   // create if file not exist
     if(!fout) goto error;
     if(!fputs(line, fout)) goto error;
     printf("inject #CGA PAL=%i\n", pal);
+    fprintf(fout, "#CGA PAL=%i\n", pal);         // #CGA PAL= must be first comment line after P6 identifier
+    
 
 
 error:
