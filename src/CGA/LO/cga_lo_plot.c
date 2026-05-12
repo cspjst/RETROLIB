@@ -26,6 +26,8 @@ void __fastcall cga_lo_plot(cga_coord_t x, cga_coord_t y, cga_lo_res_colour_t co
     // AX = x, DX = y, BX = colour
     __asm {
         .8086
+        push    es
+
         mov     cx, CGA_VIDEO_RAM_SEGMENT   ; load the VRAM segment address
         mov     es, cx                      ; transer segment into es
         xchg    bx, dx                      ; BX = y DX = colour
@@ -46,5 +48,7 @@ void __fastcall cga_lo_plot(cga_coord_t x, cga_coord_t y, cga_lo_res_colour_t co
         //and     al, dh
         //or      al, dl
         //mov     es:[bx], al
+
+        pop     es
     }
 }

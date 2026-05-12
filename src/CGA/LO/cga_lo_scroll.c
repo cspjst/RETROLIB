@@ -3,7 +3,8 @@
 void cga_lo_scroll_right(char* src, char* dst, cga_size_t width, cga_size_t height, cga_size_t stride) {
     __asm {
         .8086
-        push     ds
+        push    ds
+        push    es
         pushf
 
         lds     si, src             ; DS:SI -> source bitmap
@@ -52,6 +53,7 @@ NEXT:   mov     ax, bx              ; calculate offset to next row
         jnz     YROW
 
 END:    popf
-        pop      ds
+        pop     es
+        pop     ds
     }
 }

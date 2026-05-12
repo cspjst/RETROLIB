@@ -4,12 +4,15 @@
 unsigned char env_read_model_byte() {
     unsigned char id;
     __asm {
+        .8086
         push    es
+
         mov     ax, ROM_BIOS_SEG_END
         mov     es, ax
         mov     al, [es:ROM_BIOS_MODEL_BYTE]
-        pop     es
         mov     id, al
+
+        pop     es
     }
     return id;
 }

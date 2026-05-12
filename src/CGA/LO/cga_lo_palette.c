@@ -61,6 +61,7 @@ MODE5:  mov     es:[65h], al            ; update BDA shadow
 
 /**
  * Background/default colour is restricted to 3 bits
+ * because the intensity bit is set by the palette choice
  * i.e. only
  *  BLACK       // 0000
  *  BLUE        // 0001
@@ -70,6 +71,7 @@ MODE5:  mov     es:[65h], al            ; update BDA shadow
  *  MAGENTA     // 0101
  *  BROWN       // 0110
  *  LTGRAY      // 0111 (IBM: "dark white")
+ *
  */
 void cga_lo_set_background_colour(cga_palette_colour_t col) {
     __asm {
