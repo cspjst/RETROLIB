@@ -9,7 +9,7 @@
  * Bits 3-0: select foreground colour.
  * bit 3 = Intensity, Bit 2 = Red, Bit 1 = Green, Bit 0 = Blue
  */
-void cga_hi_res_set_fg(cga_pallete_colour_t colour);
+void cga_hi_res_set_fg(cga_palette_colour_t colour);
 
 
 #endif

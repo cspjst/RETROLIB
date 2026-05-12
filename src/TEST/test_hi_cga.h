@@ -174,10 +174,9 @@ void test_hi_screen_blt() {
     cga_bitmap_t* bmp = cga_bmp_load("../res/joker.cga", arena);
     if(!bmp) printf("error %s\n", strerror(errno));
     else {
-        cga_hi_res_set_fg(bmp->palette);
+        cga_hi_res_set_fg(CGA_YELLOW);
         cga_hi_res_screen_blt(bmp->data[0]);
     }
-
     mem_free_arena(arena);
 }
 

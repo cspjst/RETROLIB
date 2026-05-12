@@ -1,7 +1,7 @@
 #include "cga_hi_res_foreground.h"
 #include "../cga_constants.h"
 
-void cga_hi_res_set_fg(cga_pallete_colour_t colour) {
+void cga_hi_res_set_fg(cga_palette_colour_t colour) {
     __asm {
         .8086
         push    ds

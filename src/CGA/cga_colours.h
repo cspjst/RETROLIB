@@ -4,16 +4,17 @@
 #include "cga_types.h"
 
 #define RGB_BLACK       0x000000
+#define RGB_BLUE        0x0000AA
 #define RGB_GREEN       0x00AA00
 #define RGB_CYAN        0x00AAAA
-#define RGB_DK_GRAY     0x555555
-#define RGB_LT_BLUE     0x5555FF
-#define RGB_LT_GREEN    0x55FF55
-#define RGB_LT_CYAN     0x55FFFF
 #define RGB_RED         0xAA0000
 #define RGB_MAGENTA     0xAA00AA
 #define RGB_BROWN       0xAA5500
 #define RGB_LT_GRAY     0xAAAAAA
+#define RGB_DK_GRAY     0x555555
+#define RGB_LT_BLUE     0x5555FF
+#define RGB_LT_GREEN    0x55FF55
+#define RGB_LT_CYAN     0x55FFFF
 #define RGB_LT_RED      0xFF5555
 #define RGB_LT_MAGENTA  0xFF55FF
 #define RGB_YELLOW      0xFFFF55
@@ -70,7 +71,7 @@ typedef enum {
     CGA_LTMAGENTA,  // 1101
     CGA_YELLOW,     // 1110 (high-intensity brown)
     CGA_WHITE       // 1111
-} cga_pallete_colour_t;
+} cga_palette_colour_t;
 
 /**
 *  @note in 640x200 monochrome mode 6 the default colour defaults to white but can be selected from any of the 16 colours in the palette
@@ -101,21 +102,22 @@ typedef enum {
 *	3		7	light gray  #AAAAAA     15		white		    #FFFFFF
 */
 static const cga_argb_t cga_rgb_palette[16] = {
-  0x000000,    // 0  "default" colour aka black
-  0x00AA00,	   // 1  green
-  0x00AAAA,    // 3	 cyan
-  0xAA0000,    // 4	 red
-  0xAA00AA,    // 5	 magenta
-  0xAA5500,    // 6	 brown
-  0xAAAAAA,    // 7	 light gray
-  0x555555,    // 8  dark gray
-  0x5555FF,    // 9  light blue
-  0x55FF55,    // 10 light green
-  0x55FFFF,    // 11 light cyan
-  0xFF5555,    // 12 light red
-  0xFF55FF,    // 13 light magenta
-  0xFFFF55,    // 14 yellow
-  0xFFFFFF,    // 15 white
+    RGB_BLACK,
+    RGB_BLUE,
+    RGB_GREEN,
+    RGB_CYAN,
+    RGB_RED,
+    RGB_MAGENTA,
+    RGB_BROWN,
+    RGB_LT_GRAY,
+    RGB_DK_GRAY,
+    RGB_LT_BLUE,
+    RGB_LT_GREEN,
+    RGB_LT_CYAN,
+    RGB_LT_RED,
+    RGB_LT_MAGENTA,
+    RGB_YELLOW,
+    RGB_WHITE,
 };
 
 #endif

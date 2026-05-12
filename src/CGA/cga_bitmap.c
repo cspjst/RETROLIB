@@ -32,7 +32,6 @@ cga_bitmap_t* cga_bmp_load(const char* file_path, mem_arena_t* arena) {
     if( fread(&bmp->depth,   sizeof(bmp->depth),   1, f) != 1 ||
         fread(&bmp->width,   sizeof(bmp->width),   1, f) != 1 ||
         fread(&bmp->height,  sizeof(bmp->height),  1, f) != 1 ||
-        fread(&bmp->palette, sizeof(bmp->palette), 1, f) != 1 ||
         fread(&bmp->size,    sizeof(bmp->size),    1, f) != 1 ||
         fread(&bmp->blocks,  sizeof(bmp->blocks),  1, f) != 1
     ) goto fail;
@@ -62,14 +61,12 @@ dos_memsize_t cga_bmp_save(const char* file_path, const cga_bitmap_t* bmp) {
     dos_memsize_t size = sizeof(bmp->depth) +
                          sizeof(bmp->width) +
                          sizeof(bmp->height) +
-                         sizeof(bmp->palette) +
                          sizeof(bmp->size) +
                          sizeof(bmp->blocks);
     // write header to file...
     if( fwrite(&bmp->depth, sizeof(bmp->depth), 1, f) != 1      ||
         fwrite(&bmp->width, sizeof(bmp->width), 1, f) != 1      ||
         fwrite(&bmp->height, sizeof(bmp->height), 1, f) != 1    ||
-        fwrite(&bmp->palette, sizeof(bmp->palette), 1, f) != 1  ||
         fwrite(&bmp->size, sizeof(bmp->size), 1, f) != 1        ||
         fwrite(&bmp->blocks, sizeof(bmp->blocks), 1, f) != 1
     ) goto fail;
@@ -93,7 +90,6 @@ void cga_bmp_dump(FILE* f, cga_bitmap_t* bmp) {
     fprintf(f, "  depth   = %hu\n", bmp->depth);
     fprintf(f, "  width   = %hu\n", bmp->width);
     fprintf(f, "  height  = %hu\n", bmp->height);
-    fprintf(f, "  palette = 0x%04X (%hu)\n", bmp->palette, bmp->palette);
     fprintf(f, "  size    = %u\n", bmp->size);
     fprintf(f, "  blocks  = %u\n", bmp->blocks);
     fprintf(f, "data[0]%p ",(void*)bmp->data[0]);

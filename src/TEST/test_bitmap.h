@@ -72,7 +72,7 @@ void test_lo_res_bitmap() {
     mem_arena_t* arena = mem_new_arena(4096);   // 64K
     if(!arena) printf("Failed to create arena!\n");
 
-    cga_bitmap_t* bmp = cga_bmp_load("../res/tree0.cga", arena);
+    cga_bitmap_t* bmp = cga_bmp_load("../res/tree.cga", arena);
     if(!bmp) printf("error %s\n", strerror(errno));
 
     cga_bmp_dump(stdout, bmp);

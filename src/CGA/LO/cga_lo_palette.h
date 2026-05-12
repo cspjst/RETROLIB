@@ -14,4 +14,6 @@
  */
 void cga_lo_select_palette(cga_palette_number_t pal);
 
+void cga_lo_set_background(cga_palette_colour_t col);
+
 #endif

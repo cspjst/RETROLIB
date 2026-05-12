@@ -52,7 +52,6 @@ FILE* cga_convert_read_meta_pbm(FILE* f, cga_bitmap_t* bmp) {
     if(!fgets(line, sizeof(line), f)) return NULL;  // read first line
     if(*(unsigned short*)line != CGA_RAW_PBM) return NULL; // only "P4" is valid
     if(!fgets(line, sizeof(line), f)) return NULL;  // read default colour
-    if (sscanf(line, CGA_PBM_FG, &bmp->palette) != 1) return NULL; // colour
     while (fgets(line, sizeof(line), f)) {      // read until dimensions
         if (line[0] == '#') continue;           // skip comments
         if (sscanf(line, CGA_PBM_WIDTH_HEIGHT, &bmp->width, &bmp->height) == 2) {
@@ -117,7 +116,6 @@ FILE* cga_convert_read_meta_ppm(FILE* f, cga_bitmap_t* bmp) {
     if(!fgets(line, sizeof(line), f)) return NULL;  // read first line
     if(*(unsigned short*)line != CGA_RAW_PPM) return NULL; // only "P6" is valid
     if(!fgets(line, sizeof(line), f)) return NULL;  // read palette meta data
-    if (sscanf(line, CGA_PPM_PAL, &bmp->palette) != 1) return NULL; // extract palette number
     while (fgets(line, sizeof(line), f)) {      // read until dimensions
         if (line[0] == '#') continue;           // skip comments
         if (sscanf(line, CGA_PBM_WIDTH_HEIGHT, &bmp->width, &bmp->height) == 2) {
@@ -144,7 +142,6 @@ dos_memsize_t cga_convert_read_data_ppm(FILE* f, cga_bitmap_t* bmp) {
     errno = EINVAL;                             // POSIX error Invalid Argument
     if(!f || !bmp) return 0;
     const cga_size_t size = bmp->width * 3;     // bytes per row: 3 × RGB per pixel
-    const unsigned char palette = bmp->palette; // CGA palette selector for conversion
     errno = ENOMEM;                             // POSIX error Not enough space
     char* row = malloc(size);                   // temp read buffer for one RGB row
     if (!row) return 0;                         // failed
@@ -210,36 +207,6 @@ dos_memsize_t cga_convert_ppm_to_raw(
     printf("load and convert PPM file to cga_bitmap_t\n");
     cga_bitmap_t* bmp = cga_convert_load_ppm(ppm_file_in_path, arena);
     if(!bmp) return 0;                          // failed: errno set by loader
-    printf("save as raw cga_bitmap_t format (header + packed 2bpp payload)");
+    printf("save as raw cga_bitmap_t format (header + packed 2bpp payload)\n");
     return cga_bmp_save(ppm_file_out_path, bmp); // success: bytes written, or 0 on fail (errno set)
-}
-
-cga_size_t cga_convert_ppm_inject_pal(
-    const char* ppm_file_in_path,
-    const char* ppm_file_out_path,
-    cga_palette_number_t pal                    // CGA_PALETTE_0, CGA_PALETTE_0_HI, CGA_PALETTE_1, CGA_PALETTE_1_HI, CGA_PALETTE_2, CGA_PALETTE_2_HI            
-) {
-    errno = EINVAL;                             // POSIX error Invalid Argument
-    if(!ppm_file_in_path || pal < CGA_PALETTE_0 || pal > CGA_PALETTE_2_HI) return 0;
-    char line[80];
-    cga_size_t width, height;
-    printf("open file %s for read\n", ppm_file_in_path);
-    FILE* fin = fopen(ppm_file_in_path, "r");   // error if file not exist
-    if(!fin) return 0;
-    if(!fgets(line, sizeof(line), fin)) return 0; // read first line
-    printf("confirm PPM type\n");
-    if(*(unsigned short*)line != CGA_RAW_PPM) goto error; // confirm P6
-    printf("open file %s for write\n", ppm_file_out_path);
-    FILE* fout = fopen(ppm_file_in_path, "w");   // create if file not exist
-    if(!fout) goto error;
-    if(!fputs(line, fout)) goto error;
-    printf("inject #CGA PAL=%i\n", pal);
-    fprintf(fout, "#CGA PAL=%i\n", pal);         // #CGA PAL= must be first comment line after P6 identifier
-    
-
-
-error:
-    fclose(fin);
-    fclose(fout);
-    return 0;
 }
