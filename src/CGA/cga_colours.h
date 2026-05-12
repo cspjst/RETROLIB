@@ -21,12 +21,12 @@
 #define RGB_WHITE       0xFFFFFF
 
 typedef enum {
-    CGA_PALETTE_0 = 0,
-    CGA_PALETTE_0_HI,
-    CGA_PALETTE_1,
-    CGA_PALETTE_1_HI,
-    CGA_PALETTE_2,
-    CGA_PALETTE_2_HI
+    CGA_PALETTE_0_DARK = 0,
+    CGA_PALETTE_0_BRIGHT,
+    CGA_PALETTE_1_DARK,
+    CGA_PALETTE_1_BRIGHT,
+    CGA_PALETTE_2_DARK,
+    CGA_PALETTE_2_BRIGHT
 } cga_palette_number_t;
 
 typedef enum {

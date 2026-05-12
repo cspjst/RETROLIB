@@ -19,9 +19,11 @@ static const uint8_t PALETTE_TABLE[6] = {
  * Bits 3-0: Background/Border colour (IRGB)
  * @note Colour burst is controlled by bit 2 of the mode control register at 0x3D8
  * To select unofficial Mode 5 palette disable ColorBurst.
+ * @note On real CGA hardware port 3D9h palette register is *write-only*
+ * However, the BIOS itself maintains its own shadow of 0x3D9 in the BIOS Data Area at 0x0465
  */
 void cga_lo_set_palette(cga_palette_number_t pal) {
-    if(pal > CGA_PALETTE_1_HI) {        // disable ColorBurst
+    if(pal > CGA_PALETTE_1_BRIGHT) {        // disable ColorBurst
         __asm {
 
         }
@@ -30,14 +32,14 @@ void cga_lo_set_palette(cga_palette_number_t pal) {
         .8086
         mov     bl, pal
         xor     bh, bh
-        mov     ax, 0x40
-        mov     es, ax
-        mov     al, es:[0x65]           ; read BDA shadow
-        and     al, 0x07                ; preserve background bits
+        mov     ax, 40h                 ; Bios Data Area (BDA) segment
+        mov     es, ax                  ; preserve DS
+        mov     al, es:[65h]            ; read BDA shadow
+        and     al, 7                   ; preserve background bits
         or      al, PALETTE_TABLE[bx]   ; merge palette bits
-        mov     es:[0x65], al           ; update BDA shadow
-        mov     dx, CGA_PALETTE_REG
-        out     dx, al
+        mov     es:[65h], al            ; update BDA shadow
+        mov     dx, CGA_PALETTE_REG     ; port 3D9h
+        out     dx, al                  ; write new value
     }
 }
 
@@ -45,14 +47,14 @@ void cga_lo_set_background_colour(cga_palette_colour_t col) {
     __asm {
         .8086
         mov     cl, col
-        and     cl, 0x0F                ; mask to 4 bits
-        mov     ax, 0x40
-        mov     es, ax
-        mov     al, es:[0x65]           ; read BDA shadow
-        and     al, 0xF0                ; preserve bits 7..4
+        and     cl, 0Fh                 ; mask to 4 bits
+        mov     ax, 40h                 ; Bios Data Area (BDA) segment
+        mov     es, ax                  ; preserve DS
+        mov     al, es:[65h]            ; read BDA shadow
+        and     al, 0F0h                ; preserve bits 7..4
         or      al, cl                  ; merge background colour
-        mov     es:[0x65], al           ; update BDA shadow
-        mov     dx, CGA_PALETTE_REG
-        out     dx, al
+        mov     es:[65h], al            ; update BDA shadow
+        mov     dx, CGA_PALETTE_REG     ; port 3D9h
+        out     dx, al                  ; write new value
     }
 }

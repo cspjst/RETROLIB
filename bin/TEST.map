@@ -1,7 +1,7 @@
 Open Watcom Linker Version 2.0 beta May  3 2025 18:23:37
 Copyright (c) 2002-2025 The Open Watcom Contributors. All Rights Reserved.
 Portions Copyright (c) 1985-2002 Sybase, Inc. All Rights Reserved.
-Created on:       26/05/12 19:53:30
+Created on:       26/05/12 20:18:51
 Executable Image: TEST.exe
 creating a DOS executable
 
@@ -40,27 +40,27 @@ cga_hi_res_foreground_TEXT CODE       AUTO           0000:11dd       00000027
 cga_hi_res_plot_TEXT   CODE           AUTO           0000:1204       0000009e
 cga_hi_res_tile_TEXT   CODE           AUTO           0000:12a2       00000000
 cga_lo_blt_TEXT        CODE           AUTO           0000:12a2       000000c1
-cga_lo_palette_TEXT    CODE           AUTO           0000:1363       00000069
-cga_lo_plot_TEXT       CODE           AUTO           0000:13cc       0000003e
-cga_lo_scroll_TEXT     CODE           AUTO           0000:140a       00000078
-cga_bitmap_TEXT        CODE           AUTO           0000:1482       000008c2
-cga_convert_TEXT       CODE           AUTO           0000:1d44       00000ee5
-cga_detect_adapter_TEXT CODE          AUTO           0000:2c29       00000035
-ega_detect_adapter_TEXT CODE          AUTO           0000:2c5e       00000043
-env_constants_TEXT     CODE           AUTO           0000:2ca1       00000000
-env_detect_crtc_TEXT   CODE           AUTO           0000:2ca1       00000047
-env_detect_emulation_TEXT CODE        AUTO           0000:2ce8       000000a1
-env_detect_graphics_adapter_TEXT CODE AUTO           0000:2d89       00000071
-env_detect_hardware_TEXT CODE         AUTO           0000:2dfa       00000090
-env_graphics_constants_TEXT CODE      AUTO           0000:2e8a       00000000
-env_video_mode_TEXT    CODE           AUTO           0000:2e8a       00000065
-hga_bitmap_TEXT        CODE           AUTO           0000:2eef       0000009c
-hga_detect_adapter_TEXT CODE          AUTO           0000:2f8b       0000007f
-log_tools_TEXT         CODE           AUTO           0000:300a       00000866
-dos_mem_arena_TEXT     CODE           AUTO           0000:3870       00000437
-dos_mem_string_TEXT    CODE           AUTO           0000:3ca7       000001eb
-vga_detect_adapter_TEXT CODE          AUTO           0000:3e92       00000045
-main_TEXT              CODE           AUTO           0000:3ed7       000018af
+cga_lo_palette_TEXT    CODE           AUTO           0000:1363       00000072
+cga_lo_plot_TEXT       CODE           AUTO           0000:13d5       0000003e
+cga_lo_scroll_TEXT     CODE           AUTO           0000:1413       00000078
+cga_bitmap_TEXT        CODE           AUTO           0000:148b       000008c2
+cga_convert_TEXT       CODE           AUTO           0000:1d4d       00000ee5
+cga_detect_adapter_TEXT CODE          AUTO           0000:2c32       00000035
+ega_detect_adapter_TEXT CODE          AUTO           0000:2c67       00000043
+env_constants_TEXT     CODE           AUTO           0000:2caa       00000000
+env_detect_crtc_TEXT   CODE           AUTO           0000:2caa       00000047
+env_detect_emulation_TEXT CODE        AUTO           0000:2cf1       000000a1
+env_detect_graphics_adapter_TEXT CODE AUTO           0000:2d92       00000071
+env_detect_hardware_TEXT CODE         AUTO           0000:2e03       00000090
+env_graphics_constants_TEXT CODE      AUTO           0000:2e93       00000000
+env_video_mode_TEXT    CODE           AUTO           0000:2e93       00000065
+hga_bitmap_TEXT        CODE           AUTO           0000:2ef8       0000009c
+hga_detect_adapter_TEXT CODE          AUTO           0000:2f94       0000007f
+log_tools_TEXT         CODE           AUTO           0000:3013       00000866
+dos_mem_arena_TEXT     CODE           AUTO           0000:3879       00000437
+dos_mem_string_TEXT    CODE           AUTO           0000:3cb0       000001eb
+vga_detect_adapter_TEXT CODE          AUTO           0000:3e9b       00000045
+main_TEXT              CODE           AUTO           0000:3ee0       000018af
 _TEXT                  CODE           AUTO           0000:5790       000073bd
 FAR_DATA               FAR_DATA       AUTO           0cb4:000d       00000000
 _NULL                  BEGDATA        DGROUP         0cb5:0000       00000020
@@ -152,7 +152,7 @@ Module: CMakeFiles/TEST.dir/CGA/HI/cga_hi_res_blt.c.obj(/Users/jeremythornton/do
 Module: CMakeFiles/TEST.dir/CGA/HI/cga_hi_res_cls.c.obj(/Users/jeremythornton/dosbox/cspjst/RETROLIB/src/CGA/HI/cga_hi_res_cls.c)
 0000:11b8      @cga_hi_res_cls
 Module: CMakeFiles/TEST.dir/CGA/HI/cga_hi_res_foreground.c.obj(/Users/jeremythornton/dosbox/cspjst/RETROLIB/src/CGA/HI/cga_hi_res_foreground.c)
-0000:11dd      cga_hi_res_set_fg_
+0000:11dd      cga_hi_set_foreground_colour_
 Module: CMakeFiles/TEST.dir/CGA/HI/cga_hi_res_plot.c.obj(/Users/jeremythornton/dosbox/cspjst/RETROLIB/src/CGA/HI/cga_hi_res_plot.c)
 0000:1204+     cga_hi_res_plot_calculate_
 0000:1262      cga_hi_res_plot_lookup_
@@ -161,31 +161,31 @@ Module: CMakeFiles/TEST.dir/CGA/LO/cga_lo_blt.c.obj(/Users/jeremythornton/dosbox
 0000:12ea      cga_lo_set_blt_
 Module: CMakeFiles/TEST.dir/CGA/LO/cga_lo_palette.c.obj(/Users/jeremythornton/dosbox/cspjst/RETROLIB/src/CGA/LO/cga_lo_palette.c)
 0000:1363      cga_lo_set_palette_
-0000:1398      cga_lo_set_background_colour_
+0000:13a1      cga_lo_set_background_colour_
 Module: CMakeFiles/TEST.dir/CGA/LO/cga_lo_plot.c.obj(/Users/jeremythornton/dosbox/cspjst/RETROLIB/src/CGA/LO/cga_lo_plot.c)
-0000:13cc      @cga_lo_plot
+0000:13d5      @cga_lo_plot
 Module: CMakeFiles/TEST.dir/CGA/LO/cga_lo_scroll.c.obj(/Users/jeremythornton/dosbox/cspjst/RETROLIB/src/CGA/LO/cga_lo_scroll.c)
-0000:140a      cga_lo_scroll_right_
+0000:1413      cga_lo_scroll_right_
 Module: CMakeFiles/TEST.dir/CGA/cga_bitmap.c.obj(/Users/jeremythornton/dosbox/cspjst/RETROLIB/src/CGA/cga_bitmap.c)
-0000:1482      cga_make_bmp_
-0000:1551      cga_bmp_load_
-0000:1850      cga_bmp_save_
-0000:1a8f      cga_bmp_dump_
+0000:148b      cga_make_bmp_
+0000:155a      cga_bmp_load_
+0000:1859      cga_bmp_save_
+0000:1a98      cga_bmp_dump_
 Module: CMakeFiles/TEST.dir/CGA/cga_convert.c.obj(/Users/jeremythornton/dosbox/cspjst/RETROLIB/src/CGA/cga_convert.c)
-0000:1d44+     cga_convert_bmp_shifts_lo_res_
-0000:1dd4+     cga_convert_rgb_to_bit_pair_
-0000:1ed5+     cga_convert_read_meta_pbm_
-0000:2092+     cga_convert_read_data_pbm_
-0000:217e+     cga_convert_load_pbm_
-0000:234a      cga_convert_pbm_to_raw_
-0000:242e+     cga_convert_read_meta_ppm_
-0000:26a3+     cga_convert_read_data_ppm_
-0000:291f+     cga_convert_load_ppm_
-0000:2b27      cga_convert_ppm_to_raw_
+0000:1d4d+     cga_convert_bmp_shifts_lo_res_
+0000:1ddd+     cga_convert_rgb_to_bit_pair_
+0000:1ede+     cga_convert_read_meta_pbm_
+0000:209b+     cga_convert_read_data_pbm_
+0000:2187+     cga_convert_load_pbm_
+0000:2353      cga_convert_pbm_to_raw_
+0000:2437+     cga_convert_read_meta_ppm_
+0000:26ac+     cga_convert_read_data_ppm_
+0000:2928+     cga_convert_load_ppm_
+0000:2b30      cga_convert_ppm_to_raw_
 Module: CMakeFiles/TEST.dir/CGA/cga_detect_adapter.c.obj(/Users/jeremythornton/dosbox/cspjst/RETROLIB/src/CGA/cga_detect_adapter.c)
-0000:2c29      cga_detect_adapter_
+0000:2c32      cga_detect_adapter_
 Module: CMakeFiles/TEST.dir/EGA/ega_detect_adapter.c.obj(/Users/jeremythornton/dosbox/cspjst/RETROLIB/src/EGA/ega_detect_adapter.c)
-0000:2c5e      ega_detect_adapter_
+0000:2c67      ega_detect_adapter_
 Module: CMakeFiles/TEST.dir/ENV/env_constants.c.obj(/Users/jeremythornton/dosbox/cspjst/RETROLIB/src/ENV/env_constants.c)
 0cb5:150c+     _MEM_BLOCK_IVT
 0cb5:1514+     _MEM_BLOCK_BDA
@@ -197,72 +197,72 @@ Module: CMakeFiles/TEST.dir/ENV/env_constants.c.obj(/Users/jeremythornton/dosbox
 0cb5:1544+     _env_names_dosbox
 0cb5:15a4+     _env_names_ibm_model
 Module: CMakeFiles/TEST.dir/ENV/env_detect_crtc.c.obj(/Users/jeremythornton/dosbox/cspjst/RETROLIB/src/ENV/env_detect_crtc.c)
-0000:2ca1      env_detect_crtc_
+0000:2caa      env_detect_crtc_
 Module: CMakeFiles/TEST.dir/ENV/env_detect_emulation.c.obj(/Users/jeremythornton/dosbox/cspjst/RETROLIB/src/ENV/env_detect_emulation.c)
-0000:2ce8+     env_detect_DOSBox_
+0000:2cf1+     env_detect_DOSBox_
 Module: CMakeFiles/TEST.dir/ENV/env_detect_graphics_adapter.c.obj(/Users/jeremythornton/dosbox/cspjst/RETROLIB/src/ENV/env_detect_graphics_adapter.c)
-0000:2d89+     env_detect_monochrome_adapter_
-0000:2da9+     env_detect_colour_adapter_
+0000:2d92+     env_detect_monochrome_adapter_
+0000:2db2+     env_detect_colour_adapter_
 Module: CMakeFiles/TEST.dir/ENV/env_detect_hardware.c.obj(/Users/jeremythornton/dosbox/cspjst/RETROLIB/src/ENV/env_detect_hardware.c)
-0000:2dfa+     env_read_model_byte_
-0000:2e27+     env_detect_IBM_
+0000:2e03+     env_read_model_byte_
+0000:2e30+     env_detect_IBM_
 Module: CMakeFiles/TEST.dir/ENV/env_graphics_constants.c.obj(/Users/jeremythornton/dosbox/cspjst/RETROLIB/src/ENV/env_graphics_constants.c)
 0cb5:1680+     _ENV_VIDEO_ADAPTER_NAMES
 Module: CMakeFiles/TEST.dir/ENV/env_video_mode.c.obj(/Users/jeremythornton/dosbox/cspjst/RETROLIB/src/ENV/env_video_mode.c)
-0000:2e8a      env_set_video_mode_
-0000:2ec3      env_get_video_mode_
+0000:2e93      env_set_video_mode_
+0000:2ecc      env_get_video_mode_
 Module: CMakeFiles/TEST.dir/HGA/hga_bitmap.c.obj(/Users/jeremythornton/dosbox/cspjst/RETROLIB/src/HGA/hga_bitmap.c)
-0000:2eef+     hga_make_bmp_
+0000:2ef8+     hga_make_bmp_
 Module: CMakeFiles/TEST.dir/HGA/hga_detect_adapter.c.obj(/Users/jeremythornton/dosbox/cspjst/RETROLIB/src/HGA/hga_detect_adapter.c)
-0000:2f8b      hga_detect_adapter_
+0000:2f94      hga_detect_adapter_
 Module: CMakeFiles/TEST.dir/LOG/log_tools.c.obj(/Users/jeremythornton/dosbox/cspjst/RETROLIB/src/LOG/log_tools.c)
-0000:300a+     set_log_stream_
-0000:3031+     get_log_stream_
-0000:3058+     log_char_
-0000:30d3+     log_hex_
-0000:3162+     log_bin_
-0000:31f3+     log_byte_
-0000:3272+     log_word_
-0000:32bb+     log_ptr_
-0000:3312+     log_chars_
-0000:33ad+     log_bytes_
-0000:344f+     log_para_
-0000:34db+     log_mem_
-0000:352f+     log_mem_block_
-0000:35ae+     log_timestamp_
-0000:3657+     log_mcb_
-0000:3797+     log_mcb_walk_
+0000:3013+     set_log_stream_
+0000:303a+     get_log_stream_
+0000:3061+     log_char_
+0000:30dc+     log_hex_
+0000:316b+     log_bin_
+0000:31fc+     log_byte_
+0000:327b+     log_word_
+0000:32c4+     log_ptr_
+0000:331b+     log_chars_
+0000:33b6+     log_bytes_
+0000:3458+     log_para_
+0000:34e4+     log_mem_
+0000:3538+     log_mem_block_
+0000:35b7+     log_timestamp_
+0000:3660+     log_mcb_
+0000:37a0+     log_mcb_walk_
 Module: CMakeFiles/TEST.dir/MEM/dos_mem_arena.c.obj(/Users/jeremythornton/dosbox/cspjst/RETROLIB/src/MEM/dos_mem_arena.c)
-0000:3870      mem_new_arena_
-0000:399a+     mem_arena_size_
-0000:39d7+     mem_arena_capacity_
-0000:3a14      mem_arena_alloc_
-0000:3b0d      mem_free_arena_
-0000:3c25+     mem_arena_mcb_
+0000:3879      mem_new_arena_
+0000:39a3+     mem_arena_size_
+0000:39e0+     mem_arena_capacity_
+0000:3a1d      mem_arena_alloc_
+0000:3b16      mem_free_arena_
+0000:3c2e+     mem_arena_mcb_
 Module: CMakeFiles/TEST.dir/MEM/dos_mem_string.c.obj(/Users/jeremythornton/dosbox/cspjst/RETROLIB/src/MEM/dos_mem_string.c)
-0000:3ca7+     mem_cmp_
-0000:3d94      mem_mem_
+0000:3cb0+     mem_cmp_
+0000:3d9d      mem_mem_
 Module: CMakeFiles/TEST.dir/VGA/vga_detect_adapter.c.obj(/Users/jeremythornton/dosbox/cspjst/RETROLIB/src/VGA/vga_detect_adapter.c)
-0000:3e92      vga_detect_adapter_
+0000:3e9b      vga_detect_adapter_
 Module: CMakeFiles/TEST.dir/main.c.obj(/Users/jeremythornton/dosbox/cspjst/RETROLIB/src/main.c)
-0000:3ed7+     test_hi_res_convert_
-0000:402c+     test_hi_res_bitmap_
-0000:4110+     test_lo_res_convert_
-0000:4265+     test_lo_res_bitmap_
-0000:4349+     test_argb_bits_
-0000:43a0+     test_lo_res_scroll_
-0000:4588+     test_bitmap_
-0000:45a1+     make_data_1bit_
-0000:49b8+     test_hi_pattern_
-0000:4bef+     test_hi_screen_blt_
-0000:4ccc+     test_hi_blt_
-0000:4e0a+     test_hi_plot_
-0000:4ed6+     test_hi_cga_
-0000:4f55+     test_lo_screen_blt_
-0000:5027+     test_lo_plot_
-0000:511c+     test_lo_blt_
-0000:519b+     test_lo_cga_
-0000:5765      main_
+0000:3ee0+     test_hi_res_convert_
+0000:4035+     test_hi_res_bitmap_
+0000:4119+     test_lo_res_convert_
+0000:426e+     test_lo_res_bitmap_
+0000:4352+     test_argb_bits_
+0000:43a9+     test_lo_res_scroll_
+0000:4591+     test_bitmap_
+0000:45aa+     make_data_1bit_
+0000:49c1+     test_hi_pattern_
+0000:4bf8+     test_hi_screen_blt_
+0000:4cd5+     test_hi_blt_
+0000:4e13+     test_hi_plot_
+0000:4edf+     test_hi_cga_
+0000:4f5e+     test_lo_screen_blt_
+0000:5030+     test_lo_plot_
+0000:5125+     test_lo_blt_
+0000:51a4+     test_lo_cga_
+0000:576e      main_
 Module: /opt/watcom/lib286/dos/clibl.lib(cmodel)
 0000:5790      _big_code_
 0000:5790*     CodeModelMismatch
@@ -662,4 +662,4 @@ Module: /opt/watcom/lib286/dos/clibl.lib(bfree)
 Stack size:  0800 (2048.)
 Memory size:  f510 (62736.)
 Entry point address: 0000:668c
-Link time: 00:00.73
+Link time: 00:00.56
