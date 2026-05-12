@@ -126,9 +126,9 @@ void test_lo_res_scroll() {
 
 void test_bitmap() {
     //test_argb_bits();
-    //test_hi_res_convert();
+    test_hi_res_convert();
     //test_hi_res_bitmap();
-    test_lo_res_convert();
+    //test_lo_res_convert();
     //test_lo_res_scroll();
     //test_lo_res_bitmap();
     //test_argb_bits();

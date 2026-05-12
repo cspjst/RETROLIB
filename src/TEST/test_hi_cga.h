@@ -231,7 +231,7 @@ void test_hi_cga() {
     test_hi_screen_blt();
     //test_hi_blt();
     //test_hi_plot();
-    test_hi_pattern();
+    //test_hi_pattern();
 
     getchar();
     env_set_video_mode(m);

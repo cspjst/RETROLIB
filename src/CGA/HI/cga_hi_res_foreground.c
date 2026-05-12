@@ -4,16 +4,18 @@
 void cga_hi_set_foreground_colour(cga_palette_colour_t colour) {
     __asm {
         .8086
-        push    ds
-        pushf
+        push    es
 
-        mov     dx, CGA_PALETTE_REG     ; 0x3D9
-        in      al, dx                  ; Read current value
-        and     al, 0F0h                ; Preserve bits 4-7, clear bits 0-3
-        or      al, colour              ; Set new foreground (bits 0-3)
-        out     dx, al                  ; Write back
+        mov     cl, colour
+        mov     ax, 40h                 ; BDA segment
+        mov     es, ax                  ; preserve DS
+        mov     al, es:[66h]            ; read BDA palette shadow
+        and     al, 0F0h                ; preserve bits 7..4
+        or      al, cl                  ; merge foreground colour
+        mov     es:[66h], al            ; update BDA shadow
+        mov     dx, CGA_PALETTE_REG     ; port 3D9h
+        out     dx, al
 
-        popf
-        pop     ds
+        pop     es
     }
 }

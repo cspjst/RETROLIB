@@ -12,7 +12,7 @@ int main() {
     //test_env();
     //test_genv();
     //test_bitmap();
-    //test_hi_cga();
-    test_lo_cga();
+    test_hi_cga();
+    //test_lo_cga();
     //test_scroll();
 }
