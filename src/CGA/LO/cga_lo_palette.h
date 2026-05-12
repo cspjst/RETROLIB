@@ -12,8 +12,9 @@
  *  4        2                  default, cyan, red, lt gray
  *  5        2 high intensity   default, lt cyan, lt red, white
  */
-void cga_lo_select_palette(cga_palette_number_t pal);
+void cga_lo_set_palette(cga_palette_number_t pal);
 
-void cga_lo_set_background(cga_palette_colour_t col);
+
+void cga_lo_set_background_colour(cga_palette_colour_t col);
 
 #endif
