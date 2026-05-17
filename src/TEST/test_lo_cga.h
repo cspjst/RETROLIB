@@ -24,7 +24,7 @@ void test_lo_screen_blt() {
     mem_arena_t* arena = mem_new_arena(4096);   // 64K
     if(!arena) printf("Failed to create arena!\n");
 
-    cga_bitmap_t* bmp = cga_bmp_load("../res/cards.cga", arena);
+    cga_bitmap_t* bmp = cga_bmp_load("../res/tinycard.cga", arena);
     if(!bmp) printf("error %s\n", strerror(errno));
     else cga_lo_screen_blt(bmp->data[0]);
 
@@ -60,7 +60,7 @@ void test_lo_blt() {
 void test_lo_cga() {
     bios_video_mode_t m = env_get_video_mode();
     env_set_video_mode(CGA_GRAPHICS_4_GRAY_320X200);
-    getchar();
+    //getchar();
     cga_lo_set_palette(CGA_PALETTE_0_DARK);
     cga_lo_set_background_colour(CGA_BLACK);
     test_lo_screen_blt();
@@ -91,37 +91,6 @@ void test_lo_cga() {
     test_lo_screen_blt();
     printf("CGA_GRAPHICS_4_GRAY_320X200\nCGA_PALETTE_2_HI\n");
     getchar();
-    env_set_video_mode(CGA_GRAPHICS_4_COLOUR_320X200);
-    getchar();
-    cga_lo_set_palette(CGA_PALETTE_0_DARK);
-    cga_lo_set_background_colour(CGA_BLACK);
-    test_lo_screen_blt();
-    printf("CGA_GRAPHICS_4_COLOUR_320X200\nCGA_PALETTE_0\n");
-    getchar();
-    cga_lo_set_palette(CGA_PALETTE_0_BRIGHT);
-    cga_lo_set_background_colour(CGA_BLACK);
-    test_lo_screen_blt();
-    printf("CGA_GRAPHICS_4_COLOUR_320X200\nCGA_PALETTE_0_HI\n");
-    getchar();
-    cga_lo_set_palette(CGA_PALETTE_1_DARK);
-    cga_lo_set_background_colour(CGA_BLACK);
-    test_lo_screen_blt();
-    printf("CGA_GRAPHICS_4_COLOUR_320X200\nCGA_PALETTE_1\n");
-    getchar();
-    cga_lo_set_palette(CGA_PALETTE_1_BRIGHT);
-    cga_lo_set_background_colour(CGA_BLACK);
-    test_lo_screen_blt();
-    printf("CGA_GRAPHICS_4_COLOUR_320X200\nCGA_PALETTE_1_HI\n");
-    getchar();
-    cga_lo_set_palette(CGA_PALETTE_2_DARK);
-    cga_lo_set_background_colour(CGA_BLACK);
-    test_lo_screen_blt();
-    printf("CGA_GRAPHICS_4_COLOUR_320X200\nCGA_PALETTE_2\n");
-    getchar();
-    cga_lo_set_palette(CGA_PALETTE_2_BRIGHT);
-    cga_lo_set_background_colour(CGA_BLACK);
-    test_lo_screen_blt();
-    printf("CGA_GRAPHICS_4_COLOUR_320X200\nCGA_PALETTE_2_HI\n");
     //test_lo_plot();
     //test_lo_blt();
 
