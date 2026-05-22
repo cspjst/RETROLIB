@@ -43,7 +43,7 @@ dos_memsize_t cga_convert_pbm_to_raw(
  * PPM to CGA 2bpp conversion takes ~19.6 seconds.
  * Ergo, slow convert once and fast load raw subsequently.
  */
-dos_memsize_t cga_convert_ppm_to_raw(
+dos_memsize_t cga_convert_ppm_to_cga(
     const char* ppm_file_in_path,
     const char* ppm_file_out_path,
     mem_arena_t* arena

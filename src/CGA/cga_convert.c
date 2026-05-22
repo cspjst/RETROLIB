@@ -8,7 +8,6 @@
 #include "cga_bitmap.h"
 #include "cga_bitmap_constants.h"
 #include "cga_types.h"
-#include "LO/cga_lo_scroll.h"
 
 dos_memsize_t cga_convert_bmp_shifts_lo_res(cga_bitmap_t* bmp, mem_arena_t* arena) {
     errno = EINVAL;
@@ -197,16 +196,16 @@ cga_bitmap_t* cga_convert_load_ppm(const char* ppm_file_path, mem_arena_t* arena
     return bmp;                                 // success
 }
 
-dos_memsize_t cga_convert_ppm_to_raw(
+dos_memsize_t cga_convert_ppm_to_cga(
     const char* ppm_file_in_path,
     const char* ppm_file_out_path,
     mem_arena_t* arena
 ) {
     errno = EINVAL;                             // POSIX error Invalid Argument
     if(!ppm_file_in_path || !ppm_file_out_path || !arena) return 0; // failed: null arguments
-    printf("load and convert PPM file to cga_bitmap_t\n");
+    printf("load and convert %s PPM file.\n", ppm_file_in_path);
     cga_bitmap_t* bmp = cga_convert_load_ppm(ppm_file_in_path, arena);
     if(!bmp) return 0;                          // failed: errno set by loader
-    printf("save as raw cga_bitmap_t format (header + packed 2bpp payload)\n");
+    printf("save as %s (header + packed 2bpp payload)\n", ppm_file_out_path);
     return cga_bmp_save(ppm_file_out_path, bmp); // success: bytes written, or 0 on fail (errno set)
 }

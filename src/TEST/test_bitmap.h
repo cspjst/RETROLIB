@@ -57,7 +57,7 @@ void test_lo_res_convert() {
     printf("converting PPM to CGA...\n");
 
     bios_read_system_clock(&t1);
-    if(!cga_convert_ppm_to_raw("../res/tinycard.ppm", "../res/tinycard.cga", arena))
+    if(!cga_convert_ppm_to_cga("../res/tinycard.ppm", "../res/tinycard.cga", arena))
         printf("\tconversion error %s\n", strerror(errno));
     else {
         bios_read_system_clock(&t2);

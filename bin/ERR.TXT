@@ -1,0 +1,15 @@
+
+ Volume in drive C has no label
+ Volume Serial Number is 0000-1234
+ Directory of C:\CSPJST\RETROLIB\BIN
+
+CGA_HI~1 ERR                156 05/17/2026 10:00p
+CGA_HI~2 ERR                156 05/12/2026  8:05p
+CGA_HI~3 ERR                319 05/12/2026  8:05p
+CGA_LO~1 ERR                319 05/17/2026 10:00p
+CGA_LO~2 ERR                156 05/17/2026 10:00p
+CGA_LO~3 ERR                319 04/26/2026 11:42p
+ENV_DE~1 ERR                269 05/17/2026 10:00p
+MAIN_T~1 ERR                158 05/21/2026 10:24p
+    8 File(s)             1,852 Bytes
+    0 Dir(s)      2,013,265,920 Bytes free
