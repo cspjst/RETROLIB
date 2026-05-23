@@ -5,7 +5,7 @@
 #include "../doslib/src/DOS/dos_file_services.h"
 
 #define NARGS 2
-#define ERROR "%s\n"
+#define ERROR "DOS errno %i %s\n"
 #define USAGE "usage: ppm2cga <file.ppm> [file2.ppm ...]\n" \
               "       ppm2cga *.ppm\n"
 
@@ -30,7 +30,7 @@ int main(int argc, char* argv[]) {
     errno = DOS_SUCCESS;
     return 0;
 error:
-    fprintf(stderr, ERROR, strerror(errno));
+    fprintf(stderr, ERROR, errno, strerror(errno));
     fprintf(stderr, USAGE);
     return 1;
 }
