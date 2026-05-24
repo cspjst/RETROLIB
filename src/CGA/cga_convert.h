@@ -26,7 +26,7 @@ dos_memsize_t cga_convert_bmp_shifts_lo_res(cga_bitmap_t* bmp, mem_arena_t* aren
  *       palette (1=white, 0=black) *before* saving as PBM raw format to ensure
  *       correct visual appearance in CGA mode 6.
  */
-dos_memsize_t cga_convert_pbm_to_raw(
+dos_memsize_t cga_convert_pbm_to_cga(
     const char* pbm_file_in_path,
     const char* pbm_file_out_path,
     mem_arena_t* arena

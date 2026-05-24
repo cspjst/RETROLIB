@@ -2,6 +2,7 @@
 
 #include <errno.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -149,12 +150,11 @@ dos_memsize_t cga_convert_read_data_ppm(FILE* f, cga_bitmap_t* bmp) {
     cga_argb_t colour = {0};                    // reusable RGB accumulator
 
     for (int i = 0; i < bmp->height; ++i) {     // process each scanline
-        errno = EIO;                            // POSIX error I/O failure
         if (fread(row, 1, size, f) != size) {   // read one RGB row
             free(row);                          // failed, clean up temp buffer
+            perror("read RGB row");
             return 0;
         }
-        errno = 0;                              // reset POSIX error number
         char* rgb = row;                        // input cursor: unpacked RGB triples
         const char* row_end = row + size;       // sentinel for row boundary
         // process a row in 4 pixel packed 2bpp byte chunks...
@@ -176,16 +176,22 @@ dos_memsize_t cga_convert_read_data_ppm(FILE* f, cga_bitmap_t* bmp) {
 }
 
 cga_bitmap_t* cga_convert_load_ppm(const char* ppm_file_path, mem_arena_t* arena) {
-    errno = EINVAL;                             // POSIX error Invalid Argument
-    if(!ppm_file_path || !arena) return NULL;   // failed: null arguments
+    errno = EINVAL;                                 // POSIX error Invalid Argument
+    if(!ppm_file_path || !arena) { perror(__FUNCTION__); return NULL; }
     printf("allocate bitmap descriptor from arena\n");
     cga_bitmap_t* bmp = (cga_bitmap_t*)mem_arena_alloc(arena, sizeof(cga_bitmap_t));
-    if(!bmp) return NULL;                       // failed: arena OOM (errno set by arena)
-    FILE* f = fopen(ppm_file_path, "rb");       // open PPM file for binary read
-    if(!f) return NULL;                         // failed: fopen error (errno set by fopen)
+    if(!bmp) { perror(__FUNCTION__); return NULL; } // failed: arena OOM (errno set by arena)
+    FILE* f = fopen(ppm_file_path, "rb");           // open PPM file for binary read
+    if(!f) {                                        // failed: fopen error (errno set by fopen)
+        perror(ppm_file_path);
+        return NULL;
+    }
     printf("parse PPM header first\n");
+    if(!cga_convert_read_meta_ppm(f, bmp)) { perror(__FUNCTION__); return NULL; }  // failed: malformed header
 
-    if(!cga_convert_read_meta_ppm(f, bmp)) return NULL; // failed: malformed header
+
+TODO: error handling
+
     printf("allocate packed 2bpp pixel buffer from arena\n");
     bmp->data[0] = (char*)mem_arena_alloc(arena, bmp->size);
     if(!bmp->data[0]) return NULL;              // failed: arena OOM for pixel data
