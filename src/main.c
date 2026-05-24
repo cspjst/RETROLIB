@@ -3,6 +3,7 @@
 #include <errno.h>
 
 #include "../doslib/src/DOS/dos_file_services.h"
+#include "../doslib/src/DOS/dos_error.h"
 
 #define NARGS 2
 #define ERROR "DOS errno %i %s\n"
@@ -10,7 +11,7 @@
               "       ppm2cga *.ppm\n"
 
 int main(int argc, char* argv[]) {
-    errno = DOS_INVALID_FORMAT;
+    dos_error_code_t e = DOS_INVALID_FORMAT;
     if(argc < NARGS) goto error;
 
 
@@ -21,8 +22,8 @@ int main(int argc, char* argv[]) {
     dos_dta_t dta;
     dos_dta_t** old_dta;
 
-    errno = dos_get_dta(old_dta);
-    if(errno) goto error;
+    e = dos_get_dta(old_dta);
+    if(e) goto error;
 
     dos_set_dta(&dta);
 
@@ -30,7 +31,7 @@ int main(int argc, char* argv[]) {
     errno = DOS_SUCCESS;
     return 0;
 error:
-    fprintf(stderr, ERROR, errno, strerror(errno));
+    fprintf(stderr, ERROR, e, dos_strerror(e));
     fprintf(stderr, USAGE);
     return 1;
 }
