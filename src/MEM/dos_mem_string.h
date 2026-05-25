@@ -1,7 +1,7 @@
 /**
 * @author      Jeremy Simon Thornton
 * @copyright   2026 Jeremy Simon Thornton
-* @version     0.2.0
+*
 */
 #ifndef DOS_MEM_STRING_H
 #define DOS_MEM_STRING_H

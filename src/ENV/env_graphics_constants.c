@@ -1,7 +1,7 @@
 /**
 * @author      Jeremy Simon Thornton
 * @copyright   2026 Jeremy Simon Thornton
-* @version     0.1.0
+*
 */
 
 const char ENV_VIDEO_ADAPTER_NAMES[11][32] = {

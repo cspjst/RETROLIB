@@ -1,7 +1,7 @@
 /**
 * @author      Jeremy Simon Thornton
 * @copyright   2026 Jeremy Simon Thornton
-* @version     0.1.0
+*
 */
 #ifndef ENV_DETECT_EMULATION_H
 #define ENV_DETECT_EMULATION_H

@@ -1,7 +1,7 @@
 /**
  * @author      Jeremy Simon Thornton
  * @copyright   2026 Jeremy Simon Thornton
- * @version     0.5.1
+ *
  */
 #ifndef CGA_CONVERT_H
 #define CGA_CONVERT_H

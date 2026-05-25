@@ -1,7 +1,7 @@
 /**
  * @author      Jeremy Simon Thornton
  * @copyright   2026 Jeremy Simon Thornton
- * @version     0.1.3
+ *
  * formatting characters:
  * + 'x'  lower case hexadecimal
  * + 'X'  upper case hexadecimal

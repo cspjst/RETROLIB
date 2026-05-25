@@ -1,7 +1,7 @@
 /**
  * @author      Jeremy Simon Thornton
  * @copyright   2026 Jeremy Simon Thornton
- * @version     0.2.3
+ *
  *
  * Fast tiling functions these block transfer functions are byte aligned
  * ignoring the lower 7 bits of the x position being designed for use with

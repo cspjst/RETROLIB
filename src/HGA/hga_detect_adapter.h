@@ -1,7 +1,7 @@
 /**
  * @author      Jeremy Simon Thornton
  * @copyright   2024 Jeremy Simon Thornton
- * @version     0.1.0
+ *
  */
 #ifndef HGA_DETECT_ADAPTER_H
 #define HGA_DETECT_ADAPTER_H

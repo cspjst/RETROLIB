@@ -1,7 +1,7 @@
 /**
  * @author      Jeremy Simon Thornton
  * @copyright   2026 Jeremy Simon Thornton
- * @version     0.1.0
+ *
  */
 #include "cga_hi_res_cls.h"
 #include "../cga_constants.h"

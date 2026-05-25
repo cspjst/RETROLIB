@@ -1,7 +1,7 @@
 /**
  * @author      Jeremy Simon Thornton
  * @copyright   2024, 2026 Jeremy Simon Thornton
- * @version     0.1.1
+ *
  */
 #ifndef CGA_LO_CONSTANTS_H
 #define CGA_LO_CONSTANTS_H

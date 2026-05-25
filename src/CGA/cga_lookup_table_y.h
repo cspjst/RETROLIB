@@ -1,7 +1,7 @@
 /**
  * @author      Jeremy Simon Thornton
  * @copyright   2026 Jeremy Simon Thornton
- * @version     0.1.0
+ *
  */
 #ifndef CGA_LOOKUP_TABLE_Y_H
 #define CGA_LOOKUP_TABLE_Y_H

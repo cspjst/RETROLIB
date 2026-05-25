@@ -1,14 +1,17 @@
+/**
+ * @author      Jeremy Simon Thornton
+ * @copyright   2026 Jeremy Simon Thornton
+ */
 #include "cga_convert.h"
+#include "cga_bitmap.h"
+#include "cga_bitmap_constants.h"
+#include "cga_types.h"
 
 #include <errno.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include "cga_bitmap.h"
-#include "cga_bitmap_constants.h"
-#include "cga_types.h"
 
 dos_memsize_t cga_convert_bmp_shifts_lo_res(cga_bitmap_t* bmp, mem_arena_t* arena) {
     errno = EINVAL;

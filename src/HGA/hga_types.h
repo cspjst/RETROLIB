@@ -1,7 +1,7 @@
 /**
  * @author      Jeremy Simon Thornton
  * @copyright   2026 Jeremy Simon Thornton
- * @version     0.1.0
+ *
  */
 #ifndef HGA_TYPES_H
 #define HGA_TYPES_H

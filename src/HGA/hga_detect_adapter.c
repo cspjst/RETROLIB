@@ -1,7 +1,7 @@
 /**
  * @author      Jeremy Simon Thornton
  * @copyright   2024,2026 Jeremy Simon Thornton
- * @version     0.1.1
+ *
  */
 #include "hga_detect_adapter.h"
 

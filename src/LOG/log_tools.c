@@ -1,7 +1,7 @@
 /**
  * @author      Jeremy Simon Thornton
  * @copyright   2026 Jeremy Simon Thornton
- * @version     0.1.2
+ *
  */
 #include "log_tools.h"
 #include "../../doslib/src/DOS/dos_memory_constants.h"

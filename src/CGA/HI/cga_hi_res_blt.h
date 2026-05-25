@@ -1,7 +1,7 @@
 /**
  * @author      Jeremy Simon Thornton
  * @copyright   2026 Jeremy Simon Thornton
- * @version     0.2.3
+ *
  */
 #ifndef CGA_HI_RES_BLT_H
 #define CGA_HI_RES_BLT_H
