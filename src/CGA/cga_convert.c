@@ -82,13 +82,13 @@ dos_memsize_t cga_convert_read_data_pbm(FILE* f, cga_bitmap_t* bmp) {
     return bmp->size;                           // success
 }
 
-cga_bitmap_t* cga_convert_load_pbm(const char* pbm_file_path, mem_arena_t* arena) {
+cga_bitmap_t* cga_convert_load_pbm(const char* pbmfile, mem_arena_t* arena) {
     errno = EINVAL;                             // POSIX error Invalid Argument
-    if(!pbm_file_path || !arena) { perror(__FUNCTION__); return NULL; } // failed: null arguments
+    if(!pbmfile || !arena) { perror(__FUNCTION__); return NULL; } // failed: null arguments
     // allocate bitmap descriptor from arena
     cga_bitmap_t* bmp = (cga_bitmap_t*)mem_arena_alloc(arena, sizeof(cga_bitmap_t));
     if(!bmp) { perror(__FUNCTION__); return NULL; } // failed: arena OOM (errno set by arena)
-    FILE* f = fopen(pbm_file_path, "rb");       // open source PBM file for binary read
+    FILE* f = fopen(pbmfile, "rb");       // open source PBM file for binary read
     if(!f) { perror(__FUNCTION__); return NULL; } // failed: fopen error (errno set by fopen)
     // parse PBM header
     if(!cga_convert_read_meta_pbm(f, bmp)) { perror(__FUNCTION__); return NULL; } // failed: malformed header
@@ -102,18 +102,14 @@ cga_bitmap_t* cga_convert_load_pbm(const char* pbm_file_path, mem_arena_t* arena
     return bmp;                                 // success
 }
 
-dos_memsize_t cga_convert_pbm_to_cga(
-    const char* pbm_file_in_path,
-    const char* pbm_file_out_path,
-    mem_arena_t* arena
-) {
+dos_memsize_t cga_convert_pbm_to_cga(const char* pbmfile, const char* cgafile, mem_arena_t* arena) {
     errno = EINVAL;                             // POSIX error Invalid Argument
-    if(!pbm_file_in_path || !pbm_file_out_path || !arena) { perror(__FUNCTION__); return 0; } // failed: null arguments
+    if(!pbmfile || !cgafile || !arena) { perror(__FUNCTION__); return 0; } // failed: null arguments
     // convert PPM file to cga_bitmap_t
-    cga_bitmap_t* bmp = cga_convert_load_pbm(pbm_file_in_path, arena);
+    cga_bitmap_t* bmp = cga_convert_load_pbm(pbmfile, arena);
     if(!bmp) { perror(__FUNCTION__); return 0; } // failed: errno set by loader
     // save as raw cga_bitmap_t format (header + packed 2bpp payload)
-    return cga_bmp_save(pbm_file_out_path, bmp); // success: bytes written, or 0 on fail (errno set)
+    return cga_bmp_save(cgafile, bmp); // success: bytes written, or 0 on fail (errno set)
 }
 
 FILE* cga_convert_read_meta_ppm(FILE* f, cga_bitmap_t* bmp) {
@@ -185,15 +181,15 @@ dos_memsize_t cga_convert_read_data_ppm(FILE* f, cga_bitmap_t* bmp) {
     return bmp->size;                           // success
 }
 
-cga_bitmap_t* cga_convert_load_ppm(const char* ppm_file_path, mem_arena_t* arena) {
+cga_bitmap_t* cga_convert_load_ppm(const char* ppmfile, mem_arena_t* arena) {
     errno = EINVAL;                                 // POSIX error Invalid Argument
-    if(!ppm_file_path || !arena) { perror(__FUNCTION__); return NULL; }
+    if(!ppmfile || !arena) { perror(__FUNCTION__); return NULL; }
     printf("allocate bitmap descriptor from arena\n");
     cga_bitmap_t* bmp = (cga_bitmap_t*)mem_arena_alloc(arena, sizeof(cga_bitmap_t));
     if(!bmp) { perror(__FUNCTION__); return NULL; } // failed: arena OOM (errno set by arena)
-    printf("open %s for binary read\n", ppm_file_path);
-    FILE* f = fopen(ppm_file_path, "rb");           // open PPM file for binary read
-    if(!f) { perror(ppm_file_path); return NULL; }  // failed: fopen error (errno set by fopen)
+    printf("open %s for binary read\n", ppmfile);
+    FILE* f = fopen(ppmfile, "rb");           // open PPM file for binary read
+    if(!f) { perror(ppmfile); return NULL; }  // failed: fopen error (errno set by fopen)
     printf("parse PPM header first\n");
     if(!cga_convert_read_meta_ppm(f, bmp)) { perror(__FUNCTION__); return NULL; }  // failed: malformed header
     printf("allocate packed 2bpp pixel buffer from arena\n");
@@ -206,16 +202,12 @@ cga_bitmap_t* cga_convert_load_ppm(const char* ppm_file_path, mem_arena_t* arena
     return bmp;                                 // success
 }
 
-dos_memsize_t cga_convert_ppm_to_cga(
-    const char* ppm_file_in_path,
-    const char* ppm_file_out_path,
-    mem_arena_t* arena
-) {
+dos_memsize_t cga_convert_ppm_to_cga(const char* ppmfile, const char* cgafile, mem_arena_t* arena) {
     errno = EINVAL;                             // POSIX error Invalid Argument
-    if(!ppm_file_in_path || !ppm_file_out_path || !arena) { perror(__FUNCTION__); return 0; }
-    printf("load and convert %s PPM file.\n", ppm_file_in_path);
-    cga_bitmap_t* bmp = cga_convert_load_ppm(ppm_file_in_path, arena);
+    if(!ppmfile || !cgafile || !arena) { perror(__FUNCTION__); return 0; }
+    printf("load and convert %s PPM file.\n", ppmfile);
+    cga_bitmap_t* bmp = cga_convert_load_ppm(ppmfile, arena);
     if(!bmp) { perror(__FUNCTION__); return 0; } // failed: errno set by loader
-    printf("save as %s (header + packed 2bpp payload)\n", ppm_file_out_path);
-    return cga_bmp_save(ppm_file_out_path, bmp); // success: bytes written, or 0 on fail (errno set)
+    printf("save as %s (header + packed 2bpp payload)\n", cgafile);
+    return cga_bmp_save(cgafile, bmp); // success: bytes written, or 0 on fail (errno set)
 }

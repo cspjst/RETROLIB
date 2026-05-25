@@ -26,11 +26,7 @@ dos_memsize_t cga_convert_bmp_shifts_lo_res(cga_bitmap_t* bmp, mem_arena_t* aren
  *       palette (1=white, 0=black) *before* saving as PBM raw format to ensure
  *       correct visual appearance in CGA mode 6.
  */
-dos_memsize_t cga_convert_pbm_to_cga(
-    const char* pbm_file_in_path,
-    const char* pbm_file_out_path,
-    mem_arena_t* arena
-);
+dos_memsize_t cga_convert_pbm_to_cga(const char* pbmfile, const char* cgafile, mem_arena_t* arena);
 
 /**
  * Conversely, the PPM (P6) format stores 24-bit RGB triples per pixel which is not,
@@ -43,10 +39,6 @@ dos_memsize_t cga_convert_pbm_to_cga(
  * PPM to CGA 2bpp conversion takes ~19.6 seconds.
  * Ergo, slow convert once and fast load raw subsequently.
  */
-dos_memsize_t cga_convert_ppm_to_cga(
-    const char* ppm_file_in_path,
-    const char* ppm_file_out_path,
-    mem_arena_t* arena
-);
+dos_memsize_t cga_convert_ppm_to_cga(const char* ppmfile, const char* cgafile, mem_arena_t* arena);
 
 #endif
