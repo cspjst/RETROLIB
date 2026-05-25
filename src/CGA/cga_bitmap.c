@@ -1,7 +1,7 @@
 /**
  * @author      Jeremy Simon Thornton
  * @copyright   2026 Jeremy Simon Thornton
- * @version     0.1.5
+ * @version     0.1.6
  */
 #include "cga_bitmap.h"
 
@@ -10,7 +10,8 @@
 #include "cga_types.h"
 
 cga_bitmap_t* cga_make_bmp(cga_bitmap_t* bmp, cga_colour_depth_t depth, cga_coord_t width, cga_coord_t height, unsigned int pal) {
-    if(!bmp || width == 0 || height == 0) return NULL;
+    errno = EINVAL;
+    if(!bmp || width == 0 || height == 0) { perror(__FUNCTION__); return NULL; };
     bmp->depth  = depth;
     bmp->width  = width;
     bmp->height = height;
@@ -22,12 +23,12 @@ cga_bitmap_t* cga_make_bmp(cga_bitmap_t* bmp, cga_colour_depth_t depth, cga_coor
 
 cga_bitmap_t* cga_bmp_load(const char* file_path, mem_arena_t* arena) {
     errno = EINVAL;
-    if(!file_path || !arena) return NULL;
+    if(!file_path || !arena) { perror(__FUNCTION__); return NULL; };
     // allocate a new bitmap
     cga_bitmap_t* bmp = (cga_bitmap_t*)mem_arena_alloc(arena, sizeof(cga_bitmap_t));
-    if(!bmp) return NULL;                   // arena sets errno to ENOMEM
+    if(!bmp) { perror(__FUNCTION__); return NULL; };   // arena sets errno to ENOMEM
     FILE* f = fopen(file_path, "rb");
-    if(!f) return NULL;                     // fopen sets errno
+    if(!f) { perror(__FUNCTION__); return NULL; };     // fopen sets errno
      // read header fields...
     if( fread(&bmp->depth,   sizeof(bmp->depth),   1, f) != 1 ||
         fread(&bmp->width,   sizeof(bmp->width),   1, f) != 1 ||
@@ -47,6 +48,7 @@ cga_bitmap_t* cga_bmp_load(const char* file_path, mem_arena_t* arena) {
     errno = 0;
     return bmp;
 fail:
+    perror(__FUNCTION__);
     fclose(f);
     if(errno == 0) errno = EIO;
     return NULL;
@@ -54,9 +56,9 @@ fail:
 
 dos_memsize_t cga_bmp_save(const char* file_path, const cga_bitmap_t* bmp) {
     errno = EINVAL;
-    if(!file_path || !bmp) return 0;
+    if(!file_path || !bmp) { perror(__FUNCTION__); return 0; }
     FILE* f = fopen(file_path, "wb");
-    if(!f) return 0;
+    if(!f) { perror(__FUNCTION__); return 0; };
     // calculate header file size
     dos_memsize_t size = sizeof(bmp->depth) +
                          sizeof(bmp->width) +
@@ -78,6 +80,7 @@ dos_memsize_t cga_bmp_save(const char* file_path, const cga_bitmap_t* bmp) {
     errno = 0;
     return size + bmp->size;
 fail:
+    perror(__FUNCTION__);
     fclose(f);
     remove(file_path);          // clean up partial file
     return 0;

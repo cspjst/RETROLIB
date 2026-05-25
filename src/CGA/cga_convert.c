@@ -12,7 +12,7 @@
 
 dos_memsize_t cga_convert_bmp_shifts_lo_res(cga_bitmap_t* bmp, mem_arena_t* arena) {
     errno = EINVAL;
-    if(!bmp || !bmp->data[0] || !arena) return 0;           // must be a bmp and bmp data to shift and an arena to put them in
+    if(!bmp || !bmp->data[0] || !arena) { perror(__FUNCTION__); return 0; } // must be a bmp and bmp data to shift and an arena to put them in
 
     return 0;
 }
@@ -41,17 +41,21 @@ char cga_convert_rgb_to_bit_pair(cga_argb_t rgb) {
                 case 0xFF: return 3;  // yellow or white
                 default:   return -1;
             }
-        default: return -1;
+        default:
+            errno = EINVAL;
+            perror(__FUNCTION__);
+            return -1;
     }
 }
 
 FILE* cga_convert_read_meta_pbm(FILE* f, cga_bitmap_t* bmp) {
     errno = EINVAL;                             // POSIX error Invalid Arguement
-    if(!f || !bmp) return NULL;
+    if(!f || !bmp) { perror(__FUNCTION__); return NULL; }
     char line[15];
-    if(!fgets(line, sizeof(line), f)) return NULL;  // read first line
-    if(*(unsigned short*)line != CGA_RAW_PBM) return NULL; // only "P4" is valid
-    if(!fgets(line, sizeof(line), f)) return NULL;  // read default colour
+    if(!fgets(line, sizeof(line), f)) { perror(__FUNCTION__); return NULL; }  // read first line
+    errno = EINVAL;
+    if(*(unsigned short*)line != CGA_RAW_PBM) { perror(__FUNCTION__); return NULL; } // only "P4" is valid
+    if(!fgets(line, sizeof(line), f)) { perror(__FUNCTION__); return NULL; }  // read default colour
     while (fgets(line, sizeof(line), f)) {      // read until dimensions
         if (line[0] == '#') continue;           // skip comments
         if (sscanf(line, CGA_PBM_WIDTH_HEIGHT, &bmp->width, &bmp->height) == 2) {
@@ -62,13 +66,14 @@ FILE* cga_convert_read_meta_pbm(FILE* f, cga_bitmap_t* bmp) {
             return f;                           // a valid PBM file to work with
         }
     }
+    perror(__FUNCTION__);
     return NULL;                                // the PBM header was malformed
 }
 
 dos_memsize_t cga_convert_read_data_pbm(FILE* f, cga_bitmap_t* bmp) {
     errno = EINVAL;                             // POSIX error Invalid Arguement
-    if(!f || !bmp || !bmp->data[0]) return 0;
-    if (fread(bmp->data[0], 1, bmp->size, f) != bmp->size) return 0;
+    if(!f || !bmp || !bmp->data[0]) { perror(__FUNCTION__); return 0; }
+    if (fread(bmp->data[0], 1, bmp->size, f) != bmp->size) { perror(__FUNCTION__); return 0; }
     bmp->blocks = 1;
     errno = 0;                                  // reset the POSIX error number
     return bmp->size;                           // success
@@ -76,46 +81,47 @@ dos_memsize_t cga_convert_read_data_pbm(FILE* f, cga_bitmap_t* bmp) {
 
 cga_bitmap_t* cga_convert_load_pbm(const char* pbm_file_path, mem_arena_t* arena) {
     errno = EINVAL;                             // POSIX error Invalid Argument
-    if(!pbm_file_path || !arena) return NULL;   // failed: null arguments
+    if(!pbm_file_path || !arena) { perror(__FUNCTION__); return NULL; } // failed: null arguments
     // allocate bitmap descriptor from arena
     cga_bitmap_t* bmp = (cga_bitmap_t*)mem_arena_alloc(arena, sizeof(cga_bitmap_t));
-    if(!bmp) return NULL;                       // failed: arena OOM (errno set by arena)
+    if(!bmp) { perror(__FUNCTION__); return NULL; } // failed: arena OOM (errno set by arena)
     FILE* f = fopen(pbm_file_path, "rb");       // open source PBM file for binary read
-    if(!f) return NULL;                         // failed: fopen error (errno set by fopen)
+    if(!f) { perror(__FUNCTION__); return NULL; } // failed: fopen error (errno set by fopen)
     // parse PBM header
-    if(!cga_convert_read_meta_pbm(f, bmp)) return NULL; // failed: malformed header
+    if(!cga_convert_read_meta_pbm(f, bmp)) { perror(__FUNCTION__); return NULL; } // failed: malformed header
     // allocate packed 1bpp pixel buffer from arena                            // POSIX error Not enough space
     bmp->data[0] = (char*)mem_arena_alloc(arena, bmp->size);
-    if(!bmp->data[0]) return NULL;              // failed: arena OOM for pixel data
+    if(!bmp->data[0]) { perror(__FUNCTION__); return NULL; }          // failed: arena OOM for pixel data
     // PBM format bitstream -> 1bpp packed scanlines
-    if(!cga_convert_read_data_pbm(f, bmp)) return NULL; // failed: I/O or read error
+    if(!cga_convert_read_data_pbm(f, bmp)) { perror(__FUNCTION__); return NULL; } // failed: I/O or read error
     fclose(f);                                  // close source file
     errno = 0;                                  // reset POSIX error number
     return bmp;                                 // success
 }
 
-dos_memsize_t cga_convert_pbm_to_raw(
+dos_memsize_t cga_convert_pbm_to_cga(
     const char* pbm_file_in_path,
     const char* pbm_file_out_path,
     mem_arena_t* arena
 ) {
     errno = EINVAL;                             // POSIX error Invalid Argument
-    if(!pbm_file_in_path || !pbm_file_out_path || !arena) return 0; // failed: null arguments
+    if(!pbm_file_in_path || !pbm_file_out_path || !arena) { perror(__FUNCTION__); return 0; } // failed: null arguments
     // convert PPM file to cga_bitmap_t
     cga_bitmap_t* bmp = cga_convert_load_pbm(pbm_file_in_path, arena);
-    if(!bmp) return 0;                          // failed: errno set by loader
+    if(!bmp) { perror(__FUNCTION__); return 0; } // failed: errno set by loader
     // save as raw cga_bitmap_t format (header + packed 2bpp payload)
     return cga_bmp_save(pbm_file_out_path, bmp); // success: bytes written, or 0 on fail (errno set)
 }
 
 FILE* cga_convert_read_meta_ppm(FILE* f, cga_bitmap_t* bmp) {
     errno = EINVAL;                             // POSIX error Invalid Arguement
-    if(!f || !bmp) return NULL;
+    if(!f || !bmp) { perror(__FUNCTION__); return NULL; }
     char line[15];                              // buffer for meta data
     unsigned short max;                         // PPM maximum color value
-    if(!fgets(line, sizeof(line), f)) return NULL;  // read first line
-    if(*(unsigned short*)line != CGA_RAW_PPM) return NULL; // only "P6" is valid
-    if(!fgets(line, sizeof(line), f)) return NULL;  // read palette meta data
+    if(!fgets(line, sizeof(line), f)) { perror(__FUNCTION__); return NULL; }  // read first line
+    errno = EINVAL;
+    if(*(unsigned short*)line != CGA_RAW_PPM) { perror(__FUNCTION__); return NULL; } // only "P6" is valid
+    if(!fgets(line, sizeof(line), f)) { perror(__FUNCTION__); return NULL; } // read palette meta data
     while (fgets(line, sizeof(line), f)) {      // read until dimensions
         if (line[0] == '#') continue;           // skip comments
         if (sscanf(line, CGA_PBM_WIDTH_HEIGHT, &bmp->width, &bmp->height) == 2) {
@@ -135,16 +141,17 @@ FILE* cga_convert_read_meta_ppm(FILE* f, cga_bitmap_t* bmp) {
             return f;                           // a valid PPM file to work with
         }
     }
+    perror(__FUNCTION__);
     return NULL;
 }
 
 dos_memsize_t cga_convert_read_data_ppm(FILE* f, cga_bitmap_t* bmp) {
     errno = EINVAL;                             // POSIX error Invalid Argument
-    if(!f || !bmp) return 0;
+    if(!f || !bmp) { perror(__FUNCTION__); return 0; }
     const cga_size_t size = bmp->width * 3;     // bytes per row: 3 × RGB per pixel
     errno = ENOMEM;                             // POSIX error Not enough space
     char* row = malloc(size);                   // temp read buffer for one RGB row
-    if (!row) return 0;                         // failed
+    if (!row) { perror(__FUNCTION__); return 0; } // failed
 
     char* byte = bmp->data[0];                  // output cursor: packed 2bpp bytes
     cga_argb_t colour = {0};                    // reusable RGB accumulator
@@ -152,7 +159,7 @@ dos_memsize_t cga_convert_read_data_ppm(FILE* f, cga_bitmap_t* bmp) {
     for (int i = 0; i < bmp->height; ++i) {     // process each scanline
         if (fread(row, 1, size, f) != size) {   // read one RGB row
             free(row);                          // failed, clean up temp buffer
-            perror("read RGB row");
+            perror(__FUNCTION__);
             return 0;
         }
         char* rgb = row;                        // input cursor: unpacked RGB triples
@@ -181,22 +188,16 @@ cga_bitmap_t* cga_convert_load_ppm(const char* ppm_file_path, mem_arena_t* arena
     printf("allocate bitmap descriptor from arena\n");
     cga_bitmap_t* bmp = (cga_bitmap_t*)mem_arena_alloc(arena, sizeof(cga_bitmap_t));
     if(!bmp) { perror(__FUNCTION__); return NULL; } // failed: arena OOM (errno set by arena)
+    printf("open %s for binary read\n", ppm_file_path);
     FILE* f = fopen(ppm_file_path, "rb");           // open PPM file for binary read
-    if(!f) {                                        // failed: fopen error (errno set by fopen)
-        perror(ppm_file_path);
-        return NULL;
-    }
+    if(!f) { perror(ppm_file_path); return NULL; }  // failed: fopen error (errno set by fopen)
     printf("parse PPM header first\n");
     if(!cga_convert_read_meta_ppm(f, bmp)) { perror(__FUNCTION__); return NULL; }  // failed: malformed header
-
-
-TODO: error handling
-
     printf("allocate packed 2bpp pixel buffer from arena\n");
     bmp->data[0] = (char*)mem_arena_alloc(arena, bmp->size);
-    if(!bmp->data[0]) return NULL;              // failed: arena OOM for pixel data
+    if(!bmp->data[0]) { perror(__FUNCTION__); return NULL; }    // failed: arena OOM for pixel data
     printf("convert RGB rows to packed 2bpp scanlines\n wait...\n");
-    if(!cga_convert_read_data_ppm(f, bmp)) return NULL; // failed: I/O or conversion error
+    if(!cga_convert_read_data_ppm(f, bmp)) { perror(__FUNCTION__); return NULL; } // failed: I/O or conversion error
     fclose(f);                                  // close PPM file
     errno = 0;                                  // reset POSIX error number
     return bmp;                                 // success
@@ -208,10 +209,10 @@ dos_memsize_t cga_convert_ppm_to_cga(
     mem_arena_t* arena
 ) {
     errno = EINVAL;                             // POSIX error Invalid Argument
-    if(!ppm_file_in_path || !ppm_file_out_path || !arena) return 0; // failed: null arguments
+    if(!ppm_file_in_path || !ppm_file_out_path || !arena) { perror(__FUNCTION__); return 0; }
     printf("load and convert %s PPM file.\n", ppm_file_in_path);
     cga_bitmap_t* bmp = cga_convert_load_ppm(ppm_file_in_path, arena);
-    if(!bmp) return 0;                          // failed: errno set by loader
+    if(!bmp) { perror(__FUNCTION__); return 0; } // failed: errno set by loader
     printf("save as %s (header + packed 2bpp payload)\n", ppm_file_out_path);
     return cga_bmp_save(ppm_file_out_path, bmp); // success: bytes written, or 0 on fail (errno set)
 }

@@ -4,6 +4,7 @@
 
 #include "../doslib/src/DOS/dos_file_services.h"
 #include "../doslib/src/DOS/dos_error.h"
+#include "../doslib/src/DOS/dos_error_codes.h"
 #include "../doslib/bioslib/src/BIOS/bios_clock_services.h"
 
 #include "CGA/cga_convert.h"
