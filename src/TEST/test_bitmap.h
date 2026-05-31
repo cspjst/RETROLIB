@@ -26,7 +26,7 @@ void test_hi_res_convert() {
     printf("converting PBM to CGA...\n");
 
     bios_read_system_clock(&t1);
-    if(!cga_convert_pbm_to_raw("../res/joker.pbm", "../res/joker.cga", arena))
+    if(!cga_convert_pbm_to_cga("../res/joker.pbm", "../res/joker.cga", arena))
         printf("\tconversion error %s\n", strerror(errno));
     else {
         bios_read_system_clock(&t2);
