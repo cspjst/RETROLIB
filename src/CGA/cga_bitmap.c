@@ -8,7 +8,7 @@
 
 #include "cga_types.h"
 
-cga_bitmap_t* cga_make_bmp(cga_bitmap_t* bmp, cga_colour_depth_t depth, cga_coord_t width, cga_coord_t height, unsigned int pal) {
+cga_bitmap_t* cga_make_bmp(cga_bitmap_t* bmp, cga_colour_depth_t depth, cga_coord_t width, cga_coord_t height) {
     errno = EINVAL;
     if(!bmp || width == 0 || height == 0) { perror(__FUNCTION__); return NULL; };
     bmp->depth  = depth;

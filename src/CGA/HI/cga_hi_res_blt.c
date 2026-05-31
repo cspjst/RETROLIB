@@ -7,6 +7,20 @@
 #include "../cga_constants.h"
 #include "../cga_lookup_table_y.h"  // IWYU pragma: keep
 
+/**
+ * hi res mask bits to clear background for shifted bitmap bytes
+ */
+static const unsigned short CGA_HI_RES_MASKS[8] = {
+    0xFF00,     // 0    1111 1111 0000 0000(unused)
+    0x7F80,     // 1    0111 1111 1000 0000
+    0x3FC0,     // 2    0011 1111 1100 0000
+    0x1FE0,     // 3    0001 1111 1110 0000
+    0x0FF0,     // 4    0000 1111 1111 0000
+    0x07F8,     // 5    0000 0111 1111 1000
+    0x03FC,     // 6    0000 0011 1111 1100
+    0x01FE,     // 7    0000 0001 1111 1110
+};
+
 /* sync function
         mov     dx, CGA_STATUS_REG          ; CGA status port
 WAIT0:  in      al, dx                      ; read status port

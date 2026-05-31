@@ -14,16 +14,18 @@
 #include <stddef.h>
 #include <stdio.h>
 
+#pragma pack(1)
 typedef struct {
-    cga_colour_depth_t depth;   // mode 6 (hi res) = 1, mode 4 (lo res) = 2
-    cga_coord_t width;          // mode 6 = 0..639, mode 4 = 0..319
-    cga_coord_t height;         // modes 4 and 6 = 0..199
-    cga_size_t size;            // data block size bytes max 64K
-    cga_size_t blocks;          // number of shift optimised data blocks 0, 3 lo res 7 hi res
-    char* data[8];              // pointer(s) 1 data block solitary image, 4 or 8 data blocks for pre shifted images
+    cga_colour_depth_t depth;   // 0    W   mode 6 (hi res) = 1, mode 4 (lo res) = 2
+    cga_coord_t width;          // 16   W   mode 6 = 0..639, mode 4 = 0..319
+    cga_coord_t height;         // 32   W   modes 4 and 6 = 0..199
+    cga_size_t size;            // 48   W   data block size bytes max 64K
+    cga_size_t blocks;          // 64   W   number of shift optimised data blocks 0, 3 lo res 7 hi res
+    char* data[8];              // 80   DW  pointer(s) 1 data block solitary image, 4 or 8 data blocks for pre shifted images
 } cga_bitmap_t;
+#pragma pack()
 
-cga_bitmap_t* cga_make_bmp(cga_bitmap_t* bmp, cga_colour_depth_t depth, cga_coord_t width, cga_coord_t height, unsigned int pal);
+cga_bitmap_t* cga_make_bmp(cga_bitmap_t* bmp, cga_colour_depth_t depth, cga_coord_t width, cga_coord_t height);
 
 cga_bitmap_t* cga_bmp_load(const char* file_path, mem_arena_t* arena);
 
