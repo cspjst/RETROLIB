@@ -12,9 +12,16 @@ void test_cga_lo_blit() {
     env_set_video_mode(CGA_GRAPHICS_4_GRAY_320X200);
     cga_bitmap_t bmp;
     assert(cga_make_bmp(&bmp, 2, 64, 64));
-    bmp.data[0] = (char*)0xAABBCCDD;
+    bmp.blocks = 3;
+    bmp.data[0] = (char*)0xABABAABB;
+    bmp.data[1] = (char*)0xBCBCBBCC;
+    bmp.data[2] = (char*)0xCDCDCCDD;
+    bmp.data[3] = (char*)0xDEDEDDEE;
 
-    cga_lo_paste_blit(10, 10, &bmp);
+    cga_lo_paste_blit_4x4(96, 0, &bmp);
+    cga_lo_paste_blit_4x4(97, 0, &bmp);
+    cga_lo_paste_blit_4x4(98, 0, &bmp);
+    cga_lo_paste_blit_4x4(103, 0, &bmp);
 
     getchar();
     env_set_video_mode(m);
