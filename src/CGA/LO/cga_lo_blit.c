@@ -4,7 +4,7 @@
 
 #include <stdio.h>
 
-void cga_lo_paste_blit_4x4(cga_size_t x, cga_size_t y, cga_bitmap_t* bmp) {
+void cga_lo_paste_blit_36(cga_size_t x, cga_size_t y, cga_bitmap_t* bmp) {
     cga_size_t noff, nseg;
     _asm {
         .8086

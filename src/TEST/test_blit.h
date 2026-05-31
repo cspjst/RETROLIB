@@ -18,10 +18,10 @@ void test_cga_lo_blit() {
     bmp.data[2] = (char*)0xCDCDCCDD;
     bmp.data[3] = (char*)0xDEDEDDEE;
 
-    cga_lo_paste_blit_4x4(96, 0, &bmp);
-    cga_lo_paste_blit_4x4(97, 0, &bmp);
-    cga_lo_paste_blit_4x4(98, 0, &bmp);
-    cga_lo_paste_blit_4x4(103, 0, &bmp);
+    cga_lo_paste_blit_36(96, 0, &bmp);
+    cga_lo_paste_blit_36(97, 0, &bmp);
+    cga_lo_paste_blit_36(98, 0, &bmp);
+    cga_lo_paste_blit_36(103, 0, &bmp);
 
     getchar();
     env_set_video_mode(m);
