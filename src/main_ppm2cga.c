@@ -49,7 +49,7 @@ int do_wildcard(char* argv[]) {
         dos_set_dta(old_dta);
         return 1;
     }
-    char* p = strrchr(argv[1], '/');    // look for a preceding filepath
+    char* p = strrchr(argv[1], '\\');   // look for a preceding filepath
     if(p) *++p = '\0';                  // tokenize argv[1] as filepath
     else argv[1][0] = '\0';
     do {
