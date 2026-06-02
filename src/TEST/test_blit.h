@@ -10,20 +10,17 @@
 void test_cga_lo_blit() {
     bios_video_mode_t m = env_get_video_mode();
     env_set_video_mode(CGA_GRAPHICS_4_GRAY_320X200);
-    cga_bitmap_t bmp;
-    assert(cga_make_bmp(&bmp, 2, 64, 64));
-    bmp.blocks = 3;
-    bmp.data[0] = (char*)0xABABAABB;
-    bmp.data[1] = (char*)0xBCBCBBCC;
-    bmp.data[2] = (char*)0xCDCDCCDD;
-    bmp.data[3] = (char*)0xDEDEDDEE;
+    mem_arena_t* arena = mem_new_arena(4096);
+    cga_bitmap_t* bmp = cga_bmp_load("../res/spade_a.cga", arena);
+    //cga_bmp_dump(stderr, bmp);
 
-    cga_lo_paste_blit_36(96, 0, &bmp);
-    cga_lo_paste_blit_36(97, 0, &bmp);
-    cga_lo_paste_blit_36(98, 0, &bmp);
-    cga_lo_paste_blit_36(103, 0, &bmp);
+    cga_lo_paste_blit_36(96, 10, bmp);
+    //cga_lo_paste_blit_36(97, 20, bmp);
+    //cga_lo_paste_blit_36(98, 30, bmp);
+    //cga_lo_paste_blit_36(103, 40, bmp);
 
     getchar();
+     mem_free_arena(arena);
     env_set_video_mode(m);
 }
 
