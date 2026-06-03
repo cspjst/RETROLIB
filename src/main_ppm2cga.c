@@ -12,6 +12,7 @@
 #include "MEM/dos_mem_arena.h"
 #include "ENV/env_time.h"
 
+#define DOS_MAX_PATH 128
 #define MINARGS 1
 #define ERROR "DOS errno %i %s\n"
 #define USAGE "usage: ppm2cga <file.ppm> [file2.ppm ...]\n" \
