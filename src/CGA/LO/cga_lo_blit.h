@@ -4,10 +4,10 @@
 #include "../cga_types.h"
 #include "../cga_bitmap.h"
 
-void cga_lo_paste_blit_36(cga_size_t x, cga_size_t y, cga_bitmap_t* bmp);
+void cga_lo_blit_paste(cga_size_t x, cga_size_t y, cga_bitmap_t* bmp);
 
-void cga_lo_and_or_blit(cga_size_t x, cga_size_t y, cga_bitmap_t* mask, cga_bitmap_t* bmp);
+void cga_lo_blit_and_or(cga_size_t x, cga_size_t y, cga_bitmap_t* mask, cga_bitmap_t* bmp);
 
-void cga_copy_blit(cga_size_t x, cga_size_t y, cga_bitmap_t* bmp);
+void cga_blit_copy(cga_size_t x, cga_size_t y, cga_bitmap_t* bmp);
 
 #endif

@@ -5,7 +5,7 @@
 #include "../cga_constants.h"
 #include "../cga_lookup_table_y.h"
 
-void cga_lo_paste_blit_36(cga_size_t x, cga_size_t y, cga_bitmap_t* bmp) {
+void cga_lo_blit_paste(cga_size_t x, cga_size_t y, cga_bitmap_t* bmp) {
     cga_size_t noff, nseg;
     noff = nseg = 0;
     _asm {
@@ -41,15 +41,38 @@ void cga_lo_paste_blit_36(cga_size_t x, cga_size_t y, cga_bitmap_t* bmp) {
         mov     es, bx                      ; ES:DI = VRAM*
         mov     ds, ax                      ; DS:SI = data*
 
+        test    di, CGA_BANK_BIT            ; starting bank?
+        jnz     BANK1
+
+BANK0:  mov     bx, cx                      ; BX = copy byte width
         test    cx, 1                       ; odd byte width?
-        je      EVEN
+        je      EVEN0
         movsb                               ; paste 1 byte
         dec     cx                          ; width - 1
-EVEN:   shr     cx, 1                       ; CX DIV 2 = word count
+EVEN0:  shr     cx, 1                       ; CX DIV 2 = word count
         rep movsw                           ; paste remainder
+        add     di, 2000h                   ; bank 1
+        sub     di, bx                      ; - byte width
+        mov     cx, bx                      ; restore count byte width
+        dec     dx                          ; height--
+        jz      END                         ; height == 0
 
+BANK1:  mov     bx, cx                      ; BX = copy byte width
+        test    cx, 1                       ; odd byte width?
+        je      EVEN1
+        movsb                               ; paste 1 byte
+        dec     cx                          ; width - 1
+EVEN1:  shr     cx, 1                       ; CX DIV 2 = word count
+        rep movsw                           ; paste remainder
+        sub     di, 1FB0h                   ; bank 0 next line
+        sub     di, bx                      ; - byte width
+        mov     cx, bx                      ; restore count byte width
+        dec     dx                          ; height--
+        jz      END                         ; height == 0
 
-        popf
+        jmp     BANK0
+
+END:    popf
         pop     ds
     }
     //printf("nseg = %X noff = %X\n", nseg, noff);
