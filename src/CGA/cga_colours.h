@@ -20,6 +20,8 @@
 #define RGB_YELLOW      0xFFFF55
 #define RGB_WHITE       0xFFFFFF
 
+#define DITH_LO_GRAY       0xCC
+
 typedef enum {
     CGA_PALETTE_0_DARK = 0,
     CGA_PALETTE_0_BRIGHT,

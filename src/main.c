@@ -6,9 +6,11 @@
 #include "../doslib/src/DOS/dos_error_codes.h"
 
 #include "CGA/LO/cga_lo_blit.h"
-#include "MEM/dos_mem_arena.h"
 #include "CGA/cga_bitmap.h"
+#include "CGA/LO/cga_lo_cls.h"
+#include "CGA/cga_colours.h"
 #include "ENV/env_video_mode.h"
+#include "MEM/dos_mem_arena.h"
 
 #define USAGE "usage: cgashow <file.cga>\n"
 
@@ -25,17 +27,13 @@ int do_show(const char* cga_file) {
     }
     bios_video_mode_t m = env_get_video_mode();
     env_set_video_mode(CGA_GRAPHICS_4_GRAY_320X200);
+    cga_lo_colour_cls(CGA_LO_RES_CYAN);
     printf("Press enter to display each avialable \nbitmap data block...\n");
     getchar();
     getchar();
 
+    cga_lo_cls();
     cga_lo_blit_paste(0, 0, bmp->width, bmp->height, bmp->data[0]);
-    getchar();
-    cga_lo_blit_paste(16, 10, bmp->width, bmp->height, bmp->data[0]);
-    getchar();
-    cga_lo_blit_paste(32, 20, bmp->width, bmp->height, bmp->data[0]);
-    getchar();
-    cga_lo_blit_paste(48, 30, bmp->width, bmp->height, bmp->data[0]);
     getchar();
 
     env_set_video_mode(m);
