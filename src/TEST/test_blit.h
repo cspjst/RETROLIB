@@ -14,8 +14,8 @@ void test_cga_lo_blit() {
     cga_bitmap_t* bmp = cga_bmp_load("../res/spade_a.cga", arena);
     //cga_bmp_dump(stderr, bmp);
 
-    cga_lo_blit_paste(96, 10, bmp);
-    cga_lo_blit_paste(8, 1, bmp);
+    cga_lo_blit_mov(96, 10, bmp);
+    cga_lo_blit_mov(8, 1, bmp);
     //cga_lo_paste_blit_36(98, 30, bmp);
     //cga_lo_paste_blit_36(103, 40, bmp);
 

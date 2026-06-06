@@ -19,10 +19,7 @@
 
 int do_convert(const char* in_file, const char* out_file) {
     mem_arena_t* arena = mem_new_arena(4096);
-    if(!arena) {
-        dos_perror("mem_new_arena(4096) ", DOS_INSUFFICIENT_MEMORY);
-        return 1;
-    }
+    if(!arena) return 1;
     bios_ticks_since_midnight_t t1, t2;
     bios_read_system_clock(&t1);
     if(!cga_convert_ppm_to_cga(in_file, out_file, arena)) {
@@ -67,11 +64,11 @@ int do_wildcard(char* argv[]) {
 int main(int argc, char* argv[]) {
     switch(argc) {
         case 3:
-            if(strlen(argv[1]) < DOS_MAX_PATH) dos_perror("DOS_MAX_PATH ", DOS_INVALID_FORMAT);
-            //assert(strlen(argv[2])<=DOS_MAX_PATH);
+            if(strlen(argv[1]) > DOS_MAX_PATH) { dos_perror("argv[1] > DOS_MAX_PATH ", DOS_INVALID_FORMAT); return 1; }
+            if(strlen(argv[2]) > DOS_MAX_PATH) { dos_perror("argv[2] > DOS_MAX_PATH ", DOS_INVALID_FORMAT); return 1; }
             return do_convert(argv[1], argv[2]);
         case 2:
-            //assert(strlen(argv[1])<=DOS_MAX_PATH);
+            if(strlen(argv[1]) > DOS_MAX_PATH) { dos_perror("argv[1] > DOS_MAX_PATH ", DOS_INVALID_FORMAT); return 1; }
             return do_wildcard(argv);
         default:
             dos_perror("argc ", DOS_INVALID_FORMAT);

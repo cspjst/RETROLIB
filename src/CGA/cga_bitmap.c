@@ -28,7 +28,7 @@ cga_bitmap_t* cga_bmp_load(const char* file_path, mem_arena_t* arena) {
     if(!bmp) { perror(__FUNCTION__); return NULL; };   // arena sets errno to ENOMEM
     FILE* f = fopen(file_path, "rb");
     if(!f) { perror(__FUNCTION__); return NULL; };     // fopen sets errno
-     // read header fields...
+    // read header fields...
     if( fread(&bmp->depth,   sizeof(bmp->depth),   1, f) != 1 ||
         fread(&bmp->width,   sizeof(bmp->width),   1, f) != 1 ||
         fread(&bmp->height,  sizeof(bmp->height),  1, f) != 1 ||
@@ -47,9 +47,9 @@ cga_bitmap_t* cga_bmp_load(const char* file_path, mem_arena_t* arena) {
     errno = 0;
     return bmp;
 fail:
+    if(errno == 0) errno = EIO;
     perror(__FUNCTION__);
     fclose(f);
-    if(errno == 0) errno = EIO;
     return NULL;
 }
 

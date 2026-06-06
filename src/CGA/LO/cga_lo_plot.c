@@ -44,10 +44,6 @@ void __fastcall cga_lo_plot(cga_coord_t x, cga_coord_t y, cga_lo_res_colour_t co
         add     bx, ax                      ; add in column byte
         and		es:[bx], dh		            ; mask out the pixel bits
         or		es:[bx], dl		            ; or in the pixel colour
-        //mov     al, es:[bx]
-        //and     al, dh
-        //or      al, dl
-        //mov     es:[bx], al
 
         pop     es
     }
