@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
-#include <assert.h>
 
 #include "../doslib/src/DOS/dos_file_constants.h"
 #include "../doslib/src/DOS/dos_file_services.h"
@@ -68,11 +67,11 @@ int do_wildcard(char* argv[]) {
 int main(int argc, char* argv[]) {
     switch(argc) {
         case 3:
-            assert(strlen(argv[1])<=64);    // DOS path limit
-            assert(strlen(argv[2])<=64);
+            if(strlen(argv[1]) < DOS_MAX_PATH) dos_perror("DOS_MAX_PATH ", DOS_INVALID_FORMAT);
+            //assert(strlen(argv[2])<=DOS_MAX_PATH);
             return do_convert(argv[1], argv[2]);
         case 2:
-            assert(strlen(argv[1])<=64);
+            //assert(strlen(argv[1])<=DOS_MAX_PATH);
             return do_wildcard(argv);
         default:
             dos_perror("argc ", DOS_INVALID_FORMAT);
