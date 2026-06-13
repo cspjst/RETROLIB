@@ -6,10 +6,6 @@
 #ifndef ENV_GRAPHICS_CONSTANTS_H
 #define ENV_GRAPHICS_CONSTANTS_H
 
- /**
- * Types of video adapter.
- * Dual screen the hi nibble is adpter 1 and the low nibble is adapter 2
- */
 #define ENV_VIDEO_ADAPTER_UKNOWN        0
 #define ENV_VIDEO_ADAPTER_MDA           1
 #define ENV_VIDEO_ADAPTER_HGA           2

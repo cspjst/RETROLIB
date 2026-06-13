@@ -6,10 +6,7 @@
 #ifndef HGA_DETECT_ADAPTER_H
 #define HGA_DETECT_ADAPTER_H
 
-#include "../ENV/env_graphics_constants.h"
-#include "../ENV/env_detect_crtc.h"
-
-#include "hga_constants.h"
+#include "../ENV/env_graphics_types.h"
 
 /**
 * If an MDA card is detected, however, you can also distinguish between an MDA card and the Hercules cards.
@@ -37,6 +34,6 @@
 * 4 Hercules InColor
 * 5 Hercules Clone
 */
-unsigned char hga_detect_adapter();
+env_adapter_t hga_detect_adapter();
 
 #endif

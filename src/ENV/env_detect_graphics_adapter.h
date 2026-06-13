@@ -10,8 +10,10 @@
 #ifndef HW_DETECT_GRAPHICS_ADAPTER_H
 #define HW_DETECT_GRAPHICS_ADAPTER_H
 
-unsigned char env_detect_monochrome_adapter();
+#include "env_graphics_types.h"
 
-unsigned char env_detect_colour_adapter();
+env_adapter_t env_detect_monochrome_adapter();
+
+env_adapter_t env_detect_colour_adapter();
 
 #endif

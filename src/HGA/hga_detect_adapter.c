@@ -8,7 +8,9 @@
 #include "../ENV/env_detect_crtc.h"
 #include "../ENV/env_graphics_constants.h"
 
-unsigned char hga_detect_adapter() {
+#include "hga_constants.h"
+
+env_adapter_t hga_detect_adapter() {
         unsigned char adapter = ENV_VIDEO_ADAPTER_UKNOWN;
         if (env_detect_crtc(crtc_port_HGA)) {
             __asm {

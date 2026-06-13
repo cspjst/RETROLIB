@@ -6,6 +6,8 @@
 #ifndef VGA_DETECT_ADAPTER_H
 #define VGA_DETECT_ADAPTER_H
 
-unsigned char vga_detect_adapter();
+#include "../ENV/env_graphics_types.h"
+
+env_adapter_t vga_detect_adapter();
 
 #endif
