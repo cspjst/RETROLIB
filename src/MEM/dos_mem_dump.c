@@ -1,9 +1,11 @@
 #include "dos_mem_dump.h"
 
+#include "../../doslib/src/DOS/dos_memory_constants.h"
+
 void dos_mem_dump_paragraph(FILE* ostream, char** mem_block, int* nchars) {
     char* p = *mem_block;
     int i;
-    int n = *nchars > 16 ? 16 : *nchars;
+    int n = *nchars > DOS_PARAGRAPH_SIZE ? DOS_PARAGRAPH_SIZE : *nchars;
     fprintf(ostream, "%p  ", p);
     for(i = 0; i < 16; i++)
         fprintf(ostream, i < n ? "%02X " : "   ", (unsigned char)*p++);

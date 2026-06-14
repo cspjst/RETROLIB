@@ -10,7 +10,7 @@
 #include "../ENV/env_graphics_constants.h"
 #include "../ENV/env_detect_hardware.h"
 #include "../LOG/log_tools.h"
-#include "../../doslib/src/DOS/dos_memory_constants.h"
+//#include "../../doslib/src/DOS/dos_memory_constants.h"
 
 void test_types() {
     printf("Testing DOS environment types...\n");
