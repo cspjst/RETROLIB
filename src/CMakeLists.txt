@@ -77,6 +77,7 @@ file(GLOB SOURCES
     ../doslib/src/DOS/*.c
     ENV/*.c
     LOG/*.c
+    LIB/*.c
     MEM/*.c
     MDA/*.c
     CGA/*.c
