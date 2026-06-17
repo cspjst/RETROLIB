@@ -26,36 +26,47 @@ int mem_dump(dos_address_t addr) {
     bool is_valid_key;
     bios_key_t key;
     bios_keybd_info_t flags;
-    char* begin = (char*)addr.ptr;
+    int step = 0;                   // scroll and window step
+    char* begin = (char*)addr.ptr;  // setup memory window full screen i.e. 448 bytes
     char* end = begin + (DOS_PARAGRAPH_SIZE * HEIGHT);
-    int step = 0;
+    char* from = begin;             // setup dump window, initially = memory window
+    char* to = end;
 
-todo from to scroll up and down
-
+    bios_scroll_active_page_down(0, BIOS_FG_WHITE || BIOS_BG_BLACK, 0, 0, WIDTH, HEIGHT);  // clear page
+    bios_set_cursor_position(0, HEIGHT + 1); // bottom left 
+    printf                      // print key controls
+    bios_set_cursor_position(0, 0); // top left 
     while(true) {
         is_valid_key = false;
-        begin += step;
-        end += step;
-        bios_scroll_active_page_down(0, BIOS_FG_WHITE || BIOS_BG_BLACK, 0, 0, WIDTH, HEIGHT);
-        bios_set_cursor_position(0, 0);
-        dos_mem_dump_block(stdout, begin, end);
+        dos_mem_dump_block(stdout, from, to);
         while(!is_valid_key) {
-            bios_wait_for_keystroke_and_read(&key);
-            bios_get_keyboard_flags(&flags);
+            bios_wait_for_keystroke_and_read(&key);  // key press
+            bios_get_keyboard_flags(&flags);         // modifier keys
+            // scroll by one line (16 bytes 1 paragraph) unless shift key modify to 4 lines (4 paragraphs)
+            step = (flags & (BIOS_KEY_LEFT_SHIFT | BIOS_KEY_RIGHT_SHIFT)) ? 64 : 16;
             switch(key.parts.scan) {
-                case SCAN_ESC: return 0;
+                case SCAN_ESC: return 0;             // ESC to exit 
                 case SCAN_DOWN:
-                    step = (flags & (BIOS_KEY_LEFT_SHIFT | BIOS_KEY_RIGHT_SHIFT)) ? 64 : 16;
                     is_valid_key = true;
+                    bios_scroll_active_page_down(step / 16, BIOS_FG_WHITE || BIOS_BG_BLACK, 0, 0, WIDTH, HEIGHT);
+                    bios_set_cursor_position(0, 0);  // top left
+                    begin += step;                   // move memory window
+                    end += step;                     
+                    from = begin;                    // dump top section memory window
+                    to = from + step;
                     break;
                 case SCAN_UP:
-                    step = (flags & (BIOS_KEY_LEFT_SHIFT | BIOS_KEY_RIGHT_SHIFT)) ? -64 : -16;
                     is_valid_key = true;
+                    bios_scroll_active_page_up(step / 16, BIOS_FG_WHITE || BIOS_BG_BLACK, 0, 0, WIDTH, HEIGHT);
+                    bios_set_cursor_position(0, HEIGHT);  // bottom right 
+                    from = end;                      // dump lower section memory window 
+                    to = from + step;
+                    begin += step;                   // move memory window
+                    end += step;
                     break;
-            }
-        }
-    }
-    return 0;
+            }  // not a valid key
+        } // valid key so dump missing section of memory window (from, to) 
+    } // loop until ESC pressed 
 }
 
 int main(int argc, char* argv[]) {
@@ -74,44 +85,3 @@ int main(int argc, char* argv[]) {
             return 1;
     }
 }
-
-/*
-char* rom = (char*)0xF000E000;
-int nchars = 60;
-dos_mem_dump_block(stdout, rom, rom + nchars);
-*/
-/*
-    int main(int argc, char* argv[]) {
-        char* begin   = (char*)strtoul(argv[1], NULL, 16);
-        char* end     = begin + atoi(argv[2]);
-        char* current = begin;
-        bios_key_t key;
-        bios_keybd_info_t flags;
-        int step;
-
-        if(end - begin <= VIEWER_STRIDE) {
-            dos_mem_dump_block(stdout, begin, end);
-            return 0;
-        }
-
-        while(1) {
-            bios_scroll_active_page_up(0, BIOS_FG_LIGHT_GREY | BIOS_BG_BLACK, 0, 0, 79, 24);
-            bios_set_cursor_position(0, 0);
-            dos_mem_dump_block(stdout, current, current + VIEWER_STRIDE);
-
-            bios_wait_for_keystroke_and_read(&key);
-            bios_get_keyboard_flags(&flags);
-            step = (flags & (BIOS_KEY_LEFT_SHIFT | BIOS_KEY_RIGHT_SHIFT)) ? 64 : 16;
-
-            switch(key.parts.scan) {
-                case SCAN_ESC: return 0;
-                case SCAN_DOWN:
-                    if(current + step < end - VIEWER_STRIDE) current += step;
-                    break;
-                case SCAN_UP:
-                    if(current - step >= begin) current -= step;
-                    break;
-            }
-        }
-    }
- */
