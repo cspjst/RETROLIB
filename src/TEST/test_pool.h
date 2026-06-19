@@ -6,29 +6,31 @@
 
 #include "../MEM/dos_mem_pool.h"
 
-//#include "../../doslib/src/DOS/dos_memory_constants.h"
-
 void test_init() {
     printf("Testing arena init & free...\n");
-    dos_memsize_t pcap =64;
+    dos_memsize_t cap =64;
 
-    char* pool = mem_pool_init(pcap);
+    char* pool = dos_mem_pool_init(cap);
     assert(pool != NULL);
 
-    assert(mem_pool_size(pool) == pcap);
+    assert(dos_mem_pool_size(pool) == cap);
 
-    mem_pool_free(pool);
-    assert(mem_pool_size(pool) == 0);
+    dos_mem_pool_free(pool);
+    assert(dos_mem_pool_size(pool) == 0);
 
-    pool = mem_pool_init(0);
+    pool = dos_mem_pool_init(0);
     assert(pool == NULL);
-    //assert(mem_arena_capacity(arena) == 0);
-    //assert(mem_arena_alloc(arena, 1) == NULL);
-    //assert(mem_free_arena(arena) == 0);
+    assert(dos_mem_pool_size(pool) == 0);
+    assert(dos_mem_pool_alloc(pool, 0) == NULL);
+    assert(dos_mem_pool_alloc(pool, 1) == NULL);
+    dos_mem_pool_free(pool);
 
-    //arena = mem_new_arena(DOS_MAX_ALLOCATE_BYTES);
-    //assert(arena == NULL);
-    //assert(mem_free_arena(arena) == 0);
+    pool = dos_mem_pool_init(100);//dos_mem_1MB);
+    assert(pool == NULL);
+    assert(dos_mem_pool_size(pool) == 0);
+    assert(dos_mem_pool_alloc(pool, 0) == NULL);
+    assert(dos_mem_pool_alloc(pool, 1) == NULL);
+    dos_mem_pool_free(pool);
 
     printf("PASS\n");
 }

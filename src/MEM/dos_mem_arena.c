@@ -44,7 +44,7 @@ mem_arena_t* mem_new_arena(dos_memsize_t paragraphs) {
 	dos_address_t base = {0};
 	dos_error_code_t e = dos_allocate_memory_blocks(
 	    paragraphs + ((sizeof(mem_arena_t) + DOS_PARAGRAPH_SIZE - 1) / DOS_PARAGRAPH_SIZE),
-		&base.segoff.segment
+		&base.parts.segment
 	);
 	if(e) { dos_perror(__FUNCTION__, e); return NULL; }
 	mem_arena_t* arena = (mem_arena_t*)base.ptr;
@@ -79,7 +79,7 @@ dos_memsize_t mem_free_arena(mem_arena_t* arena) {
     errno = EINVAL;
     if(!arena) { perror(__FUNCTION__); return 0; }
 	dos_memsize_t freed = mem_arena_capacity(arena);
-	dos_error_code_t e = dos_free_allocated_memory_blocks(arena->base.segoff.segment);
+	dos_error_code_t e = dos_free_allocated_memory_blocks(arena->base.parts.segment);
 	if(e) { dos_perror(__FUNCTION__, e); return 0; }
 	arena->base.ptr = arena->begin.ptr = arena->free.ptr = arena->end.ptr = 0;
 	errno = 0;
@@ -90,7 +90,7 @@ dos_mcb_t* mem_arena_mcb(mem_arena_t* arena) {
     errno = EINVAL;
     if(!arena) { perror(__FUNCTION__); return NULL; }
 	dos_address_t m = arena->base;
-	m.segoff.segment--;
+	m.parts.segment--;
 	errno = 0;
     return (dos_mcb_t*)m.ptr;
 }

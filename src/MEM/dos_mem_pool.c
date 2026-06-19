@@ -21,21 +21,19 @@
 #include "../../doslib/src/DOS/dos_memory_services.h"
 #include "../../doslib/src/DOS/dos_memory_constants.h"
 
-#include <stdio.h>
-
 #pragma pack(1)
 typedef struct private_mem_arena {
-    char* free;   // pointer to start of free memory, initially after this struct
-    char* top;    // end address limit of useable arena memory
-} mem_pool_t;
+    char* free;
+    char* top;
+} dos_mem_pool_t;
 #pragma pack()
 
-char* mem_pool_init(dos_memsize_t capacity) {
+char* dos_mem_pool_init(dos_memsize_t capacity) {
     if(!capacity) return NULL;
-    dos_memsize_t paragraphs = (sizeof(mem_pool_t) + capacity + DOS_PARAGRAPH_SIZE - 1) / DOS_PARAGRAPH_SIZE;
+    dos_memsize_t paragraphs = (sizeof(dos_mem_pool_t) + capacity + DOS_PARAGRAPH_SIZE - 1) / DOS_PARAGRAPH_SIZE;
     dos_address_t addr = {0};
-    if (dos_allocate_memory_blocks(paragraphs, &addr.segoff.segment) == 0) {
-        mem_pool_t* pool = (mem_pool_t*)addr.ptr;
+    if (paragraphs < 0xFFFF && dos_allocate_memory_blocks((unsigned short)paragraphs, &addr.parts.segment) == 0) {
+        dos_mem_pool_t* pool = (dos_mem_pool_t*)addr.ptr;
         pool->free = (char*)(pool + 1);
         pool->top = pool->free + capacity;
         return (char*)(pool + 1);
@@ -43,15 +41,22 @@ char* mem_pool_init(dos_memsize_t capacity) {
     return NULL;
 }
 
-dos_memsize_t mem_pool_size(char* pool) {
+dos_memsize_t dos_mem_pool_size(char* pool) {
     if(!pool) return 0;
-    mem_pool_t* p = ((mem_pool_t*)pool) - 1;
+    dos_mem_pool_t* p = ((dos_mem_pool_t*)pool) - 1;
     return p->top - p->free;
 }
 
-void mem_pool_free(char* pool) {
+char* dos_mem_pool_alloc(char* pool, dos_memsize_t size) {
+    if(!pool || !size || size > dos_mem_pool_size(pool)) return NULL;
+    dos_mem_pool_t* p = ((dos_mem_pool_t*)pool) - 1;
+    p->free += size;
+    return p->free - size;
+}
+
+void dos_mem_pool_free(char* pool) {
     dos_address_t addr = {0};
-    mem_pool_t* p = ((mem_pool_t*)pool) - 1;
+    dos_mem_pool_t* p = ((dos_mem_pool_t*)pool) - 1;
     addr.ptr = p;
-    if(dos_free_allocated_memory_blocks(addr.segoff.segment) == 0) p->free = p->top = NULL;
+    if(dos_free_allocated_memory_blocks(addr.parts.segment) == 0) p->free = p->top = NULL;
 }

@@ -19,10 +19,12 @@
 
 #include "../../doslib/src/DOS/dos_memory_types.h"
 
-char* mem_pool_init(dos_memsize_t capacity);
+char* dos_mem_pool_init(dos_memsize_t capacity);
 
-dos_memsize_t mem_pool_size(char* pool);
+dos_memsize_t dos_mem_pool_size(char* pool);
 
-void mem_pool_free(char* pool);
+char* dos_mem_pool_alloc(char* pool, dos_memsize_t size);
+
+void dos_mem_pool_free(char* pool);
 
 #endif
