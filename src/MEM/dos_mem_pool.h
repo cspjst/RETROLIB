@@ -19,6 +19,10 @@
 
 #include "../../doslib/src/DOS/dos_memory_types.h"
 
-void* mem_arena_init(dos_memsize_t paragraphs);
+char* mem_pool_init(dos_memsize_t capacity);
+
+dos_memsize_t mem_pool_size(char* pool);
+
+void mem_pool_free(char* pool);
 
 #endif

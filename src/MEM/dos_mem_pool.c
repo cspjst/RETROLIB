@@ -13,7 +13,7 @@
  * However, the actual amount of allocatable RAM is restricted 640K or less (+ possible upper memory area)
  * and will depend on installed RAM.
  */
-#include "dos_mem_arena.h"
+#include "dos_mem_pool.h"
 
 #include <stddef.h>
 
@@ -21,21 +21,37 @@
 #include "../../doslib/src/DOS/dos_memory_services.h"
 #include "../../doslib/src/DOS/dos_memory_constants.h"
 
-#define HEADER_SIZE         4   // 64 bytes header = 4 paragraphs
+#include <stdio.h>
 
 #pragma pack(1)
 typedef struct private_mem_arena {
-    void* free;   // pointer to start of free memory, initially after this struct
-    void* top;    // end address limit of useable arena memory
-} mem_arena_t;            // 64 bytes
+    char* free;   // pointer to start of free memory, initially after this struct
+    char* top;    // end address limit of useable arena memory
+} mem_pool_t;
 #pragma pack()
 
-void* mem_arena_init(dos_memsize_t bytes) {
-    mem_arena_t* mem = NULL;
+char* mem_pool_init(dos_memsize_t capacity) {
+    if(!capacity) return NULL;
+    dos_memsize_t paragraphs = (sizeof(mem_pool_t) + capacity + DOS_PARAGRAPH_SIZE - 1) / DOS_PARAGRAPH_SIZE;
     dos_address_t addr = {0};
-    if (dos_allocate_memory_blocks(HEADER_SIZE + ((bytes + DOS_PARAGRAPH_SIZE - 1) / DOS_PARAGRAPH_SIZE), &addr.segoff.segment) == 0) {
-        mem = (mem_arena_t*)addr.ptr;
-
+    if (dos_allocate_memory_blocks(paragraphs, &addr.segoff.segment) == 0) {
+        mem_pool_t* pool = (mem_pool_t*)addr.ptr;
+        pool->free = (char*)(pool + 1);
+        pool->top = pool->free + capacity;
+        return (char*)(pool + 1);
     }
+    return NULL;
+}
 
+dos_memsize_t mem_pool_size(char* pool) {
+    if(!pool) return 0;
+    mem_pool_t* p = ((mem_pool_t*)pool) - 1;
+    return p->top - p->free;
+}
+
+void mem_pool_free(char* pool) {
+    dos_address_t addr = {0};
+    mem_pool_t* p = ((mem_pool_t*)pool) - 1;
+    addr.ptr = p;
+    if(dos_free_allocated_memory_blocks(addr.segoff.segment) == 0) p->free = p->top = NULL;
 }

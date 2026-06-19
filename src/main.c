@@ -1,6 +1,6 @@
-#include "TEST/test_arena.h"
+#include "TEST/test_pool.h"
 
 int main() {
-    test_arena();
+    test_pool();
     return 0;
 }
