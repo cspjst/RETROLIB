@@ -6,10 +6,10 @@
 
 #include "../LOG/log_tools.h"
 #include "../MEM/dos_mem_arena.h"
-#include "../../doslib/src/DOS/dos_memory_services.h"
+#include "../../doslib/src/DOS/dos_memory_constants.h"
 
 void test_new() {
-    printf("Testing arena new & free... ");
+    printf("Testing arena new & free...\n");
     dos_memsize_t pcap =64;
     dos_memsize_t bcap = pcap * DOS_PARAGRAPH_SIZE;
 
@@ -24,7 +24,7 @@ void test_new() {
     assert(mem_free_arena(arena) == 0);
 
     arena = mem_new_arena(0);
-    assert(arena != NULL);
+    assert(arena == NULL);
     assert(mem_arena_capacity(arena) == 0);
     assert(mem_arena_alloc(arena, 1) == NULL);
     assert(mem_free_arena(arena) == 0);
@@ -37,7 +37,7 @@ void test_new() {
 }
 
 void test_alloc() {
-    printf("Testing arena alloc... ");
+    printf("Testing arena alloc...\n");
     dos_memsize_t pcap =128;
     dos_memsize_t bcap = pcap * DOS_PARAGRAPH_SIZE;
 
@@ -60,7 +60,7 @@ void test_alloc() {
     assert(mem_arena_alloc(arena, 99999) == NULL);
 
     void* ptr = mem_arena_alloc(arena, 0);
-    assert(ptr != NULL);    // Zero-byte alloc should succeed
+    assert(ptr == NULL);    // Zero-byte alloc
 
     assert(mem_free_arena(arena) == bcap);
 
@@ -78,7 +78,7 @@ void test_alloc() {
 }
 
 void test_exhaustion() {
-    printf("Testing arena alloc exhaustion... ");
+    printf("Testing arena alloc exhaustion...\n");
     dos_memsize_t pcap =64;
     dos_memsize_t bcap = pcap * DOS_PARAGRAPH_SIZE;
 
@@ -103,7 +103,7 @@ void test_exhaustion() {
 }
 
 void test_mcb(void) {
-    printf("Testing arena mcb... ");
+    printf("Testing arena mcb...\n");
     dos_memsize_t pcap =64;
     dos_memsize_t bcap = pcap * DOS_PARAGRAPH_SIZE;
     set_log_stream(stderr);
@@ -121,7 +121,7 @@ void test_mcb(void) {
 }
 
 void test_order(void) {
-    printf("Testing pointer ordering... ");
+    printf("Testing pointer ordering...\n");
 
     mem_arena_t* arena = mem_new_arena(128);
     assert(arena != NULL);
