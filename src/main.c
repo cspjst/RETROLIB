@@ -23,22 +23,35 @@
               "       cgashift *.cga\n"
 
 int do_shift(const char* cga_file) {
-    mem_arena_t* arena = mem_new_arena();
-    if(!arena) return 1;
+#ifndef NDEBUG
+    printf("%s %li bytes\n", cga_file, dos_get_file_size(cga_file));
+#endif
+    dos_error_code_t e = DOS_INSUFFICIENT_MEMORY;
+    mem_arena_t* arena = mem_new_arena(dos_get_file_size(cga_file) * 4);
+    if(!arena) goto cleanup;
     cga_bitmap_t* bmp = cga_bmp_load(cga_file, arena);
-    if(!bmp) return 1;
+    if(!bmp) goto cleanup;
     bmp->data[1] = (char*)mem_arena_alloc(arena, bmp->size);
-    if(!bmp->data[1]) return 1;
+    if(!bmp->data[1]) goto cleanup;
     cga_lo_scroll_right(bmp->data[0], bmp->data[1], bmp->width, bmp->height, 0, 0);
     bmp->data[2] = (char*)mem_arena_alloc(arena, bmp->size);
-    if(!bmp->data[2]) return 1;
+    if(!bmp->data[2]) goto cleanup;
     cga_lo_scroll_right(bmp->data[1], bmp->data[2], bmp->width, bmp->height, 0, 0);
     bmp->data[3] = (char*)mem_arena_alloc(arena, bmp->size);
-    if(!bmp->data[3]) return 1;
+    if(!bmp->data[3]) goto cleanup;
+    bmp->blocks = 4;
     cga_lo_scroll_right(bmp->data[2], bmp->data[3], bmp->width, bmp->height, 0, 0);
     cga_bmp_dump(stderr, bmp);
-    //if(cga_bmp_save(cga_file, bmp) == 0) return 1;
+    cga_bmp_save(cga_file, bmp);
+    mem_free_arena(arena);
+#ifndef NDEBUG
+    printf("%s %li bytes\n", cga_file, dos_get_file_size(cga_file));
+#endif
     return 0;
+cleanup:
+dos_perror(__FUNCTION__, e);
+    mem_free_arena(arena);
+    return 1;
 }
 
 int do_wildcard(char* argv[]) {
