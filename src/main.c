@@ -23,33 +23,27 @@
               "       cgashift *.cga\n"
 
 int do_shift(const char* cga_file) {
-#ifndef NDEBUG
-    printf("%s %li bytes\n", cga_file, dos_get_file_size(cga_file));
-#endif
-    dos_error_code_t e = DOS_INSUFFICIENT_MEMORY;
-    mem_arena_t* arena = mem_new_arena(dos_get_file_size(cga_file) * 4);
+    mem_arena_t* arena = mem_new_arena((dos_get_file_size(cga_file) / 16) * 4);
     if(!arena) goto cleanup;
     cga_bitmap_t* bmp = cga_bmp_load(cga_file, arena);
     if(!bmp) goto cleanup;
+    int i = (bmp->width / 4) - 1;                           // make a byte pointer to last byte in first row
+    char lbits = bmp->data[0][i] << 6;                      // shift the fourth pixel in last byte first row to be first pixel
     bmp->data[1] = (char*)mem_arena_alloc(arena, bmp->size);
     if(!bmp->data[1]) goto cleanup;
-    cga_lo_scroll_right(bmp->data[0], bmp->data[1], bmp->width, bmp->height, 0, 0);
+    cga_lo_scroll_right(bmp->data[0], bmp->data[1], bmp->width, bmp->height, 0, lbits); // scroll right by 1 pixel new first pixel is old last pixel
     bmp->data[2] = (char*)mem_arena_alloc(arena, bmp->size);
     if(!bmp->data[2]) goto cleanup;
-    cga_lo_scroll_right(bmp->data[1], bmp->data[2], bmp->width, bmp->height, 0, 0);
+    cga_lo_scroll_right(bmp->data[1], bmp->data[2], bmp->width, bmp->height, 0, lbits);
     bmp->data[3] = (char*)mem_arena_alloc(arena, bmp->size);
     if(!bmp->data[3]) goto cleanup;
     bmp->blocks = 4;
-    cga_lo_scroll_right(bmp->data[2], bmp->data[3], bmp->width, bmp->height, 0, 0);
+    cga_lo_scroll_right(bmp->data[2], bmp->data[3], bmp->width, bmp->height, 0, lbits);
     cga_bmp_dump(stderr, bmp);
     cga_bmp_save(cga_file, bmp);
     mem_free_arena(arena);
-#ifndef NDEBUG
-    printf("%s %li bytes\n", cga_file, dos_get_file_size(cga_file));
-#endif
     return 0;
 cleanup:
-dos_perror(__FUNCTION__, e);
     mem_free_arena(arena);
     return 1;
 }
