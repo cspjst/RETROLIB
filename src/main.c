@@ -23,8 +23,7 @@
               "       cgashift *.cga\n"
 
 int do_shift(const char* cga_file) {
-    dos_error_code_t e =
-    mem_arena_t* arena = mem_new_arena(4096);
+    mem_arena_t* arena = mem_new_arena();
     if(!arena) return 1;
     cga_bitmap_t* bmp = cga_bmp_load(cga_file, arena);
     if(!bmp) return 1;
