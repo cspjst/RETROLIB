@@ -1,6 +1,6 @@
 #include "cga_lo_scroll.h"
 
-void cga_lo_scroll_right(char* src, char* dst, cga_size_t width, cga_size_t height, cga_size_t stride) {
+void cga_lo_scroll_right(char* src, char* dst, cga_size_t width, cga_size_t height, cga_size_t stride, char lbits) {
     __asm {
         .8086
         push    ds
@@ -43,7 +43,7 @@ YROW:   sub     cx, 2               ; zero index word
 
         loop    XCOL                ; for all the bytes in the row
 
-NEXT:   mov     al, 0C0h            ; background colour
+NEXT:   mov     al, lbits           ; left most 2 bits
         or      es:[di], al
         mov     ax, bx              ; calculate offset to next row
         add     ax, stride          ; width + stride

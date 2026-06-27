@@ -13,13 +13,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-dos_memsize_t cga_convert_bmp_shifts_lo_res(cga_bitmap_t* bmp, mem_arena_t* arena) {
-    errno = EINVAL;
-    if(!bmp || !bmp->data[0] || !arena) { perror(__FUNCTION__); return 0; } // must be a bmp and bmp data to shift and an arena to put them in
-
-    return 0;
-}
-
 char cga_convert_rgb_to_bit_pair(cga_argb_t rgb) {
     switch(rgb.red) {
         case 0x00:

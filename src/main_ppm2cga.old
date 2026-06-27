@@ -41,7 +41,7 @@ int do_wildcard(char* argv[]) {
     dos_get_dta(&old_dta);
     dos_set_dta(&dta);
 
-    if(dos_find_first_file(argv[1], FIND_NORMAL, &dta)) {
+    if(dos_find_first_file(argv[1], FIND_NORMAL, &dta) != 0) {
         dos_perror(argv[1], DOS_FILE_NOT_FOUND);
         dos_set_dta(old_dta);
         return 1;
