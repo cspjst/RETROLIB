@@ -43,7 +43,9 @@ YROW:   sub     cx, 2               ; zero index word
 
         loop    XCOL                ; for all the bytes in the row
 
-NEXT:   mov     ax, bx              ; calculate offset to next row
+NEXT:   mov     al, 0C0h            ; background colour
+        or      es:[di], al
+        mov     ax, bx              ; calculate offset to next row
         add     ax, stride          ; width + stride
         add     si, ax              ; move src to start next src row
         add     di, ax              ; move dst to start next dst row

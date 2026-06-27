@@ -5,7 +5,7 @@
 #include "../cga_constants.h"
 #include "../cga_lookup_table_y.h"  // IWYU pragma: keep
 
-void cga_lo_blit_mov(cga_coord_t x, cga_coord_t y, cga_bitmap_t* bmp) {
+void cga_lo_blit(cga_coord_t x, cga_coord_t y, cga_bitmap_t* bmp) {
     cga_size_t noff, nseg;
     noff = nseg = 0;
     _asm {
