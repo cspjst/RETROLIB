@@ -151,3 +151,7 @@ END:    popf
         pop     ds
     }
 }
+
+void cga_lo_mask_blit(cga_coord_t x, cga_coord_t y, cga_bitmap_t* mask, cga_bitmap_t* bmp) {
+    // use BP:AX as holding registers for DS:SI for mask and bmp use xchg to swap between mask and bmp
+}
