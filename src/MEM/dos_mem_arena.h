@@ -17,7 +17,7 @@
 #ifndef MEM_ARENA_H
 #define MEM_ARENA_H
 
-#include "../../doslib/src/DOS/dos_memory_types.h"
+#include "../../DOSLIB/src/DOS/dos_memory_types.h"
 
 typedef struct private_mem_arena mem_arena_t;
 
