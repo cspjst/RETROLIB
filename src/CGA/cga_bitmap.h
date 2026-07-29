@@ -2,6 +2,7 @@
  * @author      Jeremy Simon Thornton
  * @copyright   2026 Jeremy Simon Thornton
  *
+ * Blit function(s) optimised bitmap type
  * Both CGA graphics modes (hi and lo res) use the same 16K VRAM framebuffer
  * and the VRAM layout that stores even and odd scanlines in two separate buffers.
  */
@@ -14,12 +15,17 @@
 #include <stddef.h>
 #include <stdio.h>
 
+// 1, 4 or 8 ptr(s) to (shifted) image data, 1, 4 or 8 ptr(s) to (shifted) masks, and a ptr to background copy
+#define BMP_PTRS    17
+// offsets into the bitmap struct:
 #define BMP_DEPTH   0
 #define BMP_WIDTH   2
 #define BMP_HEIGHT  4
 #define BMP_SIZE    6
 #define BMP_BLOCKS  8
 #define BMP_DATA    10
+#define BMP_MASKS   40
+#define BMP_COPY    80
 
 #pragma pack(1)
 typedef struct {
@@ -28,7 +34,7 @@ typedef struct {
     cga_coord_t height;         // 4    W   modes 4 and 6 = 0..199
     cga_size_t size;            // 6    W   data block size bytes max 64K
     cga_size_t blocks;          // 8    W   number of shift optimised data blocks 0, 3 lo res 7 hi res
-    char* data[10];             // 12   DW  pointer(s) 1, 4 or 8 data blocks for pre shifted images and mask and background
+    char* data[21];             // 10   DW  pointer(s) (1, 4 or 8) pre shifted images, (1, 4, or 8) preshifted masks, and a background copy
 } cga_bitmap_t;
 #pragma pack()
 

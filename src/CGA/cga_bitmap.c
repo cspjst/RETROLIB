@@ -16,7 +16,7 @@ cga_bitmap_t* cga_make_bmp(cga_bitmap_t* bmp, cga_colour_depth_t depth, cga_coor
     bmp->height = height;
     bmp->size = ((bmp->width * bmp->depth + 7) >> 3) * bmp->height;
     bmp->blocks = 0;
-    for(int i = 0; i < 8; ++i) bmp->data[i] = NULL;
+    for(int i = 0; i < BMP_PTRS; ++i) bmp->data[i] = NULL;
     return bmp;
 }
 
@@ -42,7 +42,7 @@ cga_bitmap_t* cga_bmp_load(const char* file_path, mem_arena_t* arena) {
         if(fread(bmp->data[i], 1, bmp->size, f) != bmp->size) goto fail;
     }
     // NULLify any unused data block pointers
-    for(int i = bmp->blocks; i < 8; ++i) bmp->data[i] = NULL;
+    for(int i = bmp->blocks; i < BMP_PTRS; ++i) bmp->data[i] = NULL;
     fclose(f);
     errno = 0;
     return bmp;
