@@ -28,7 +28,7 @@ typedef struct {
     cga_coord_t height;         // 4    W   modes 4 and 6 = 0..199
     cga_size_t size;            // 6    W   data block size bytes max 64K
     cga_size_t blocks;          // 8    W   number of shift optimised data blocks 0, 3 lo res 7 hi res
-    char* data[8];              // 10   DW  pointer(s) 1 data block solitary image, 4 or 8 data blocks for pre shifted images
+    char* data[10];             // 12   DW  pointer(s) 1, 4 or 8 data blocks for pre shifted images and mask and background
 } cga_bitmap_t;
 #pragma pack()
 
