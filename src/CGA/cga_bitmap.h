@@ -34,11 +34,11 @@ typedef struct {
     cga_coord_t height;         // 4    W   modes 4 and 6 = 0..199
     cga_size_t size;            // 6    W   data block size bytes max 64K
     cga_size_t blocks;          // 8    W   number of shift optimised data blocks 0, 3 lo res 7 hi res
-    char* data[21];             // 10   DW  pointer(s) (1, 4 or 8) pre shifted images, (1, 4, or 8) preshifted masks, and a background copy
+    char** data;                // 10   DW  user define size, pointer(s) (1, 4 or 8) pre shifted images, (1, 4, or 8) preshifted masks
 } cga_bitmap_t;
 #pragma pack()
 
-cga_bitmap_t* cga_make_bmp(cga_bitmap_t* bmp, cga_colour_depth_t depth, cga_coord_t width, cga_coord_t height);
+cga_bitmap_t* cga_make_bmp(cga_bitmap_t* bmp, cga_colour_depth_t depth, cga_coord_t width, cga_coord_t height, cga_size_t blocks);
 
 cga_bitmap_t* cga_bmp_load(const char* file_path, mem_arena_t* arena);
 
