@@ -3,7 +3,6 @@
 
 #include "../CGA/cga_bitmap.h"
 #include "../CGA/LO/cga_lo_blit.h"
-#include "../CGA/LO/cga_lo_scroll.h"
 
 #include "../ENV/env_video_mode.h"
 
