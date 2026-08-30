@@ -1,4 +1,4 @@
-#include "cga_lo_blit.h"
+#include "cga_lo_blitters.h"
 
 #include "../cga_constants.h"
 #include "../cga_lookup_table_y.h"  // IWYU pragma: keep

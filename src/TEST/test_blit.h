@@ -2,7 +2,7 @@
 #define TEST_BLIT_H
 
 #include "../CGA/cga_bitmap.h"
-#include "../CGA/LO/cga_lo_blit.h"
+#include "../CGA/LO/cga_lo_blitters.h"
 
 #include "../ENV/env_video_mode.h"
 
@@ -12,14 +12,6 @@
 void test_cga_lo_blit() {
     mem_arena_t* arena = mem_new_arena(4096);
     cga_bitmap_t* bmp = cga_bmp_load("../res/spade_a.cga", arena);
-    /*
-    bmp->data[1] = (char*)mem_arena_alloc(arena, bmp->size);
-    cga_lo_scroll_right(bmp->data[0], bmp->data[1], bmp->width, bmp->height, 0, 0x40);
-    bmp->data[2] = (char*)mem_arena_alloc(arena, bmp->size);
-    cga_lo_scroll_right(bmp->data[1], bmp->data[2], bmp->width, bmp->height, 0, 0x40);
-    bmp->data[3] = (char*)mem_arena_alloc(arena, bmp->size);
-    cga_lo_scroll_right(bmp->data[2], bmp->data[3], bmp->width, bmp->height, 0, 0x40);
-    */
     cga_bmp_dump(stderr, bmp);
 
     getchar();

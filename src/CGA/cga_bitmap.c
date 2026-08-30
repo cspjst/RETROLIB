@@ -45,7 +45,6 @@ cga_bitmap_t* cga_bmp_load(const char* file_path, mem_arena_t* arena) {
         bmp->data[i] = (char*)mem_arena_alloc(arena, bmp->size);
         if(!bmp->data[i]) goto fail;            // arena sets errno to ENOMEM
         if(fread(bmp->data[i], 1, bmp->size, f) != bmp->size) goto fail;
-         printf("bmp i %i\n", i);
     }
     fclose(f);
     errno = 0;
@@ -101,7 +100,7 @@ void cga_bmp_dump(FILE* f, cga_bitmap_t* bmp) {
     fprintf(f, "  size    = %u\n", bmp->size);
     fprintf(f, "  blocks  = %u\n", bmp->blocks);
     for(int i = 0; i < bmp->blocks; ++i) {
-        fprintf(f, "data[%i] %p ",i ,(void*)bmp->data[0]);
+        fprintf(f, "data[%i] %p ",i ,(void*)bmp->data[i]);
         if(bmp->data[i]) {
             for(int j = 0; j < 16; ++j)
                 fprintf(f, "%02X ", (unsigned char)bmp->data[i][j]);
