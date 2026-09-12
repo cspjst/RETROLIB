@@ -4,6 +4,8 @@
  * BAM14 quarter-sine lookup table data.
  */
 #include "fxp_trigonometry.h"
+#include "fxp_conversions.h"
+#include "fxp_operators.h"
 #include "fxp_types.h"
 
 #include "fxp_constants.h"
@@ -38,21 +40,17 @@ static const fxp16_t SIN_TABLE[361] = {
      -9,  -8,  -7,  -6,  -5,  -3,  -2,  -1,   0                                      // 352-360
 };
 
-fxp16_t fxp_sin(fxp16_t a) {
+fxp16_t fxp_sin(int16_t degrees) {
     __asm {
         .8086
-        mov     bx, FXP_360
-        cwd                             ; sign-extend x into dx:ax
-        idiv    bx                      ; dx = remainder (returned), ax = quotient (discarded)
-        test    dx, dx                  ; check if remainder is negative
-        jns     TRUNC                   ; negative?
-        add     dx, bx                  ; +360 to wrap into [0, 360)
-TRUNC:  shr     dx, 1                   ; truncate to int but less 1 shift for word pointer
-        shr     dx, 1
-        shr     dx, 1
-        shr     dx, 1
-        shr     dx, 1
-        mov     bx, dx
+        mov     bx, 360
+        cwd                     ; sign-extend degrees into dx:ax
+        idiv    bx              ; dx = remainder, -359..359
+        test    dx, dx
+        jns     J1
+        add     dx, 360         ; euclidean wrap into [0, 360)
+J1:     mov     bx, dx
+        shl     bx, 1           ; word offset into SIN_TABLE
         mov     ax, SIN_TABLE[bx]
     }
 }
@@ -90,21 +88,17 @@ static const fxp16_t COS_TABLE[361] = {
      63,  63,  64,  64,  64,  64,  64,  64,  64                                      // 352-360
 };
 
-fxp16_t fxp_cos(fxp16_t a) {
+fxp16_t fxp_cos(int16_t degrees) {
     __asm {
         .8086
-        mov     bx, FXP_360
-        cwd                             ; sign-extend x into dx:ax
-        idiv    bx                      ; dx = remainder (returned), ax = quotient (discarded)
-        test    dx, dx                  ; check if remainder is negative
-        jns     TRUNC                   ; negative?
-        add     dx, bx                  ; +360 to wrap into [0, 360)
-TRUNC:  shr     dx, 1                   ; truncate to int but less 1 shift for word pointer
-        shr     dx, 1
-        shr     dx, 1
-        shr     dx, 1
-        shr     dx, 1
-        mov     bx, dx
+        mov     bx, 360
+        cwd                     ; sign-extend degrees into dx:ax
+        idiv    bx              ; dx = remainder, -359..359
+        test    dx, dx
+        jns     J1
+        add     dx, 360         ; euclidean wrap into [0, 360)
+J1:     mov     bx, dx
+        shl     bx, 1           ; word offset into SIN_TABLE
         mov     ax, COS_TABLE[bx]
     }
 }

@@ -49,7 +49,7 @@ int16_t fxp_unfix_floor(fxp16_t x);
     modify [ax];
 
 // exit from the 10:6 fixed point number line fxp16_t->int16_t, nearest, ties toward +infinity
-extern int16_t fxp_unfix_round(fxp16_t v);
+int16_t fxp_unfix_round(fxp16_t x);
 // The #pragma aux directive in Watcom C/C++ is used to define inline assembly code
 // Here the performance advantage is gained by sacriicing 15 bytes for no call/return overhead
 #pragma aux fxp_unfix_round =   \

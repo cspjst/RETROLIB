@@ -33,18 +33,16 @@
  */
 #include "fxp_operators.h"
 #include "fxp_types.h"
-#include "fxp_limits.h"
 
+/**
+ * @note overflow is now undefined behaviour
+ */
 fxp16_t fxp_mul(fxp16_t lhs, fxp16_t rhs) {
+    // __watcall DX = lhs, AX = rhs
     __asm {
         .8086
         mov     bx, dx
         imul    bx                      ; DX:AX = lhs * rhs
-        cmp     dx, 31                  ; will the hi word overflow 10.6?
-        jg      INF                     ; yes clamp
-        cmp     dx, -32                 ; will the hi word undeflow 10.6?
-        jl      NINF                    ; yes clamp
-
         sar     dx, 1                   ; emulating SHRD (80386) on 8086/8088
         rcr     ax, 1                   ; unrolled CX 6 LOOP double-precision shift right
         sar     dx, 1                   ; uses 24 instead of 118 cycles
@@ -57,14 +55,6 @@ fxp16_t fxp_mul(fxp16_t lhs, fxp16_t rhs) {
         rcr     ax, 1
         sar     dx, 1
         rcr     ax, 1
-
-        jmp     END
-INF:    mov     ax, FXP_MAX             ; clamp result to 10.6 +infinity (+511.984)
-        jmp     END
-NINF:   mov     ax, FXP_MIN             ; clamp result to 10.6 - infinity(-512.000)
-
-END:
-
     }
 }
 
@@ -79,6 +69,7 @@ END:
 * No cleanup, no save, user is dumped straight back to the DOS prompt.
 */
 fxp16_t fxp_div(fxp16_t lhs, fxp16_t rhs) {
+    // __watcall DX = lhs, AX = rhs
     __asm {
 		.8086
 		mov		bx, dx
@@ -94,15 +85,31 @@ _SHLD:	sal		ax, 1			        ; shift left DX:AX as 32 bits
 }
 
 /**
- * computes the fixed point remainder of dividing x by y
+ * Computes the fixed point remainder of dividing x by y, truncated
+ * toward zero (T-division)
  */
-fxp16_t fxp_mod(fxp16_t x, fxp16_t y) {
+fxp16_t fxp_mod_truncate(fxp16_t a, fxp16_t b) {
     __asm {
         .8086
-        mov bx, dx
-        cwd                             ; sign-extend x into dx:ax
-        idiv    bx                      ; dx = remainder (returned), ax = quotient (discarded)
-        mov     ax, dx                  ; move remainder into ax return
+        mov     bx, dx          ; divisor into BX, freeing DX for CWD
+        cwd                     ; sign-extend AX into DX:AX
+        idiv    bx              ; DX = truncated remainder (sign matches AX, per IDIV's hardware contract)
+        mov     ax, dx          ; return remainder in ax
+    }
+}
+
+fxp16_t fxp_mod_euclidian(fxp16_t a, fxp16_t b) {
+    // __watcall AX = a, DX = b
+    __asm {
+        .8086
+        mov     bx, dx          ; divisor into BX, freeing DX for CWD
+        cwd                     ; sign-extend AX into DX:AX
+        idiv    bx              ; DX = truncated remainder (sign matches AX, per IDIV's hardware contract)
+        or      dx, dx          ; test remainder's sign
+        jns     END
+        add     dx, bx          ; negative - add y to wrap into [0, y)
+END:
+        mov     ax, dx          ; return remainder in AX
     }
 }
 

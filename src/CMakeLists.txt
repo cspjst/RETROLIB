@@ -79,6 +79,7 @@ file(GLOB SOURCES
     LOG/*.c
     LIB/*.c
     MEM/*.c
+    FXP/*.c
     MDA/*.c
     CGA/*.c
     CGA/HI/*.c

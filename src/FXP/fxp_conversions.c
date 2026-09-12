@@ -36,9 +36,9 @@ int16_t fxp_unfix_truncate(fxp16_t x) {
     __asm {
         .8086
         or      ax, ax
-        jns     L1                      ; signed?
+        jns     J1                      ; signed?
         add     ax, FXP_PART_FRAC_MASK
-L1:     sar     ax, 1
+J1:     sar     ax, 1
         sar     ax, 1
         sar     ax, 1
         sar     ax, 1
