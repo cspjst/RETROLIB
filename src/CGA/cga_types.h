@@ -9,16 +9,23 @@
 typedef unsigned short cga_size_t;
 typedef unsigned short cga_coord_t;
 typedef unsigned short cga_colour_depth_t;
-
 typedef unsigned char cga_colour_t;
+
+typedef union {
+    unsigned long point;        // packed: 0xXXXXYYYY
+    struct {
+        cga_coord_t y;
+        cga_coord_t x;
+    };
+} cga_point_t;
 
 typedef union {
     unsigned long argb;         // packed: 0x00RRGGBB
     struct {
-        unsigned char blue;     // little endian
-        unsigned char green;
-        unsigned char red;
-        unsigned char alpha;
+        cga_colour_t blue;     // little endian
+        cga_colour_t green;
+        cga_colour_t red;
+        cga_colour_t alpha;
     };
 } cga_argb_t;
 
