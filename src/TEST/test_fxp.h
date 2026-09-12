@@ -25,11 +25,17 @@ void test_fxp_plot() {
 	int cy = 100;
 	for (int j = 0; j < 25; ++j) {
 		for (int i = 1; i < 360; ++i) {
-			p.x = cx + fxp_unfix_floor(fxp_mul(r, fxp_cos(i)));
-			p.y = cy + fxp_unfix_floor(fxp_mul(r, fxp_sin(i)));
+			p.x = cx + fxp_unfix_round(fxp_mul(r, fxp_cos(i)));
+			p.y = cy + fxp_unfix_round(fxp_mul(r, fxp_sin(i)));
 			cga_lo_plot(p, CGA_LO_RES_LT_CYAN);
 		}
-		r = fxp_sub(r, 256);
+		r = fxp_sub(r, 128);
+		for (int i = 1; i < 360; ++i) {
+			p.x = cx + fxp_unfix_round(fxp_mul(r, fxp_cos(i)));
+			p.y = cy + fxp_unfix_round(fxp_mul(r, fxp_sin(i)));
+			cga_lo_plot(p, CGA_LO_RES_LT_MAGENTA);
+		}
+		r = fxp_sub(r, 128);
 	}
 
     getchar();
