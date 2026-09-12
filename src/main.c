@@ -1,8 +1,8 @@
 #include <stdio.h>
 
-#include "TEST/test_blit.h"
+#include "TEST/test_fxp.h"
 
 int main() {
-    test_blit();
+    test_fxp();
     return 0;
 }

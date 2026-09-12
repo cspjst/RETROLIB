@@ -9,10 +9,6 @@
 #include "../cga_colours.h"
 #include "../cga_types.h"
 
-void cga_plot(cga_point_t p, cga_lo_res_colour_t c);
-
-void __fastcall cga_lo_plot(cga_coord_t x, cga_coord_t y, cga_lo_res_colour_t colour);
-
-void __fastcall cga_lo_sync_plot(cga_coord_t x, cga_coord_t y, cga_lo_res_colour_t colour);
+void cga_lo_plot(cga_point_t p, cga_lo_res_colour_t c);
 
 #endif
