@@ -24,12 +24,16 @@ void test_fxp_plot() {
 	int cx = 160;
 	int cy = 100;
 	for (int j = 0; j < 25; ++j) {
+	    fxp16_t a = FXP_ONE;
 		for (int i = 1; i < 360; ++i) {
-			p.x = cx + fxp_unfix_round(fxp_mul(r, fxp_cos(i)));
-			p.y = cy + fxp_unfix_round(fxp_mul(r, fxp_sin(i)));
+			p.x = cx + fxp_unfix_round(fxp_mul(r, fxp_cos(fxp_unfix_round(a))));
+			p.y = cy + fxp_unfix_round(fxp_mul(r, fxp_sin(fxp_unfix_round(a))));
 			cga_lo_plot(p, CGA_LO_RES_LT_CYAN);
+			fxp_inc(&a);
 		}
 		r = fxp_sub(r, 128);
+
+		a = FXP_ONE;
 		for (int i = 1; i < 360; ++i) {
 			p.x = cx + fxp_unfix_round(fxp_mul(r, fxp_cos(i)));
 			p.y = cy + fxp_unfix_round(fxp_mul(r, fxp_sin(i)));
