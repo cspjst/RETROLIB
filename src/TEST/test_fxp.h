@@ -50,7 +50,4 @@ void test_fxp() {
     test_fxp_plot();
 }
 
-#include <assert.h>
-#include <stdio.h>
-
 #endif

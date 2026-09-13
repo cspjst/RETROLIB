@@ -80,6 +80,7 @@ file(GLOB SOURCES
     LIB/*.c
     MEM/*.c
     FXP/*.c
+    FXP/VEC/*.c
     MDA/*.c
     CGA/*.c
     CGA/HI/*.c
