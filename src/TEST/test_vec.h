@@ -26,7 +26,7 @@ void test_vec_math() {
     printv(v);
     v.u = FXP_VEC2D_ZERO;
     printv(v);
-    fxp_vec2D_fix_polar(&v, fxp_fix_float(10), 150);
+    fxp_vec2D_fix_polar(&v, fxp_fix_int(10), 150);
     printv(v); // should be (-8.66,5) but accuracy loss gives (-8.75,5)
 
 }
