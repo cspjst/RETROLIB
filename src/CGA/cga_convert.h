@@ -7,7 +7,6 @@
 #define CGA_CONVERT_H
 
 #include <stdint.h>
-
 #include "../MEM/dos_mem_arena.h"
 
 /**

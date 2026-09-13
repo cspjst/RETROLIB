@@ -12,7 +12,7 @@ typedef unsigned short cga_colour_depth_t;
 typedef unsigned char cga_colour_t;
 
 typedef union {
-    unsigned long point;        // packed: 0xXXXXYYYY
+    unsigned long p;        // packed: 0xXXXXYYYY
     struct {
         cga_coord_t x;
         cga_coord_t y;
