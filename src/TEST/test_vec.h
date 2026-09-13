@@ -15,8 +15,8 @@
 #include "../FXP/VEC/fxp_vec2d_types.h"
 #include "../FXP/VEC/fxp_vec2d_constants.h"
 #include "../FXP/VEC/fxp_vec2D_conversions.h"
+#include "../FXP/VEC/fxp_vec2D_io.h"
 
-#define printv(v) printf("(%.3f,%.3f)\n",fxp_unfix_float(v.i), fxp_unfix_float(v.j));
 
 void test_vec_math() {
     fxp_vector2D_t v = {0};
@@ -28,6 +28,7 @@ void test_vec_math() {
     printv(v);
     fxp_vec2D_fix_polar(&v, fxp_fix_float(10), 150);
     printv(v); // should be (-8.66,5) but accuracy loss gives (-8.75,5)
+
 }
 
 void test_vec_plot() {

@@ -4,11 +4,14 @@
 #include <stdint.h>
 #include "../fxp_types.h"
 
+/**
+ * A fixed point 10:6 Cartesian plane rectangular coordinate vector
+ */
 typedef union {
     uint32_t u;
     struct {
-        fxp16_t i;      // horizonatal x
-        fxp16_t j;      // vertical y
+        fxp16_t x;
+        fxp16_t y;
     };
 } fxp_vector2D_t;
 
