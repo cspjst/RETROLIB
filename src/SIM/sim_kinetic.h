@@ -14,6 +14,12 @@ typedef struct {
     fxp_vector2D_t acceleration;    
 } sim_kinetic_t;
 
-int sim_kinetic_update(sim_kinetic_t* k);
+typedef struct {
+    fxp_rectangle_t position_bounds;
+    fxp_range_t velocity_bounds;
+    fxp_range_t acceleration_bounds;
+} sim_kinetic_constraints_t;
+
+int sim_kinetic_update(sim_kinetic_t* k, const sim_kinetic_constraints_t* c, const sim_kinetic_constrainer* f);
 
 #endif 
