@@ -20,6 +20,8 @@ typedef struct {
     fxp_range_t acceleration_bounds;
 } sim_kinetic_constraints_t;
 
+typedef int sim_kinetic_constrainer(sim_kinetic_t* k, const sim_kinetic_constraints_t* c);
+
 int sim_kinetic_update(sim_kinetic_t* k, const sim_kinetic_constraints_t* c, const sim_kinetic_constrainer* f);
 
 #endif 
