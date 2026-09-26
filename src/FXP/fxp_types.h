@@ -22,4 +22,12 @@
 
 typedef int16_t fxp16_t;
 
+typedef union {
+    int32_t u;
+    struct {
+        fxp16_t a;
+        fxp16_t b;
+    };
+} fxp16_interval_t;
+
 #endif
