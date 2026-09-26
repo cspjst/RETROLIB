@@ -88,6 +88,7 @@ file(GLOB SOURCES
     EGA/*.c
     HGA/*.c
     VGA/*.c
+    SIM/*.c
     TEST/*.c
 )
 

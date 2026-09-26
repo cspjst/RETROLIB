@@ -138,7 +138,7 @@ fxp16_t fxp_sqrt(fxp16_t x) {
         .8086
         or      ax, ax                  ; test sign of x
         jns     SQRT                    ; non-negative -> continue normally
-        int     0                       ; negative -> deliberate panic (see fxp_sqrt's header comment)
+        int     0                       ; negative -> deliberate panic!
 
 SQRT:   xor     dx, dx                  ; zero-extend x into dx:ax (x is >=0, confirmed above)
 

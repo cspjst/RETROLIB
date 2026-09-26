@@ -11,4 +11,6 @@ typedef union {
     };
 } fxp16_point_t;
 
+fxp16_t* fxp_point_translate(fxp16_t dx, fxp16_t dy);
+
 #endif

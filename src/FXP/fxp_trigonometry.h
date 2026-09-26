@@ -13,17 +13,8 @@
 #ifndef FXP_TRIGONOMETRY_H
 #define FXP_TRIGONOMETRY_H
 
-#include "fxp_types.h"
-
-#define FXP_BAM8_ANGLE_BITS         8
-#define FXP_BAM8_CIRCLE             256   // steps/revolution
-#define FXP_BAM8_QUADRANT           64    // 0..90 degrees
-#define FXP_BAM8_QUADRANT_BITS      6
-#define FXP_BAM8_QUADRANT_MASK      0x3F
-
-
-fxp16_t fxp_sin(int16_t degrees);
-
-fxp16_t fxp_cos(int16_t degrees);
+#include "fxp_sin_lookup.h"
+#include "fxp_cos_lookup.h"
+#include "fxp_exp_lookup.h"
 
 #endif
