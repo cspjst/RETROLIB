@@ -33,6 +33,7 @@
  */
 #include "fxp_operators.h"
 #include "fxp_types.h"
+#include "fxp_int0_panic.h"
 
 /**
  * @note overflow is now undefined behaviour
@@ -138,6 +139,7 @@ fxp16_t fxp_sqrt(fxp16_t x) {
         .8086
         or      ax, ax                  ; test sign of x
         jns     SQRT                    ; non-negative -> continue normally
+        mov     cx, FXP_PANIC_SQRT
         int     0                       ; negative -> deliberate panic!
 
 SQRT:   xor     dx, dx                  ; zero-extend x into dx:ax (x is >=0, confirmed above)

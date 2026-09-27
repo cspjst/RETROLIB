@@ -15,4 +15,6 @@ void fxp_install_int0_handler();
 
 void fxp_uninstall_int0_handler();
 
+void fxp_panic_int0(int error);
+
 #endif

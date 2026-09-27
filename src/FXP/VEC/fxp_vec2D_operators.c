@@ -14,3 +14,10 @@ fxp_vector2D_t fxp_vec2D_scale(fxp_vector2D_t v, fxp16_t scalar) {
     r.y = fxp_mul(v.y, scalar);
     return r;
 }
+
+fxp_vector2D_t fxp_vec2D_scale_xy(fxp_vector2D_t v, fxp16_t sx, fxp16_t sy) {
+    fxp_vector2D_t r;
+    r.x = fxp_mul(v.x, sx);
+    r.y = fxp_mul(v.y, sy);
+    return r;
+}

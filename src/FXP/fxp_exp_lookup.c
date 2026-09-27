@@ -6,6 +6,7 @@
  * Calculated as fxp16_t raw = round_half_away_from_zero(exp(raw/64) * 64)
  */
 #include "fxp_exp_lookup.h"
+#include "fxp_int0_panic.h"
 
 const fxp16_t FXP_EXP_TABLE[FXP_EXP_ENTRIES] = {
     1,1,1,1,1,1,1,1,1,1,1,1,
@@ -73,6 +74,7 @@ const fxp16_t FXP_EXP_TABLE[FXP_EXP_ENTRIES] = {
 fxp16_t fxp_exp(fxp16_t x) {
     __asm {
         .8086
+
         cmp     ax, FXP_EXP_NEG_BOUND
         jl      PANIC
         cmp     ax, FXP_EXP_POS_BOUND
@@ -80,9 +82,11 @@ fxp16_t fxp_exp(fxp16_t x) {
         sub     ax, FXP_EXP_NEG_BOUND       ; logical index, 0..709
         mov     bx, ax
         shl     bx, 1                       ; word offset
+        mov     ax, FXP_EXP_TABLE[bx]
         jmp     DONE
 
-PANIC:  int     0                            ; input outside domain - panic caller error
+PANIC:  mov     cx, FXP_PANIC_EXP
+        int     0                            ; input outside domain - panic caller error
 
 DONE:
     }

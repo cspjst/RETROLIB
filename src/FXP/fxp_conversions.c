@@ -3,17 +3,26 @@
  * DOSFXP - Fast Fixed-Point Number Representation
  */
 #include "fxp_conversions.h"
+#include "fxp_int0_handler.h"
 #include "fxp_parts.h"
 #include "fxp_types.h"
 #include "fxp_constants.h"
 #include "fxp_limits.h"
+#include "fxp_int0_panic.h"
+#include "fxp_int0_panic.h"
+
 #include <stdio.h>
 
-
+fxp16_t fxp_fix_int(int i) {
+    if (i < FXP_MININT || i > FXP_MAXINT) fxp_panic_int0(FXP_PANIC_FIX);
+    return (fxp16_t)(i << FXP_FRACTIONAL_BITS);
+}
 
 fxp16_t fxp_fix_float(float f) {
-    float scaled = f * (float)FXP_ONE;
-    return (fxp16_t)(scaled >= 0.0f ? scaled + 0.5f : scaled - 0.5f);
+    float   scaled  = f * (float)FXP_ONE;
+    int32_t rounded = (int32_t)(scaled >= 0.0f ? scaled + 0.5f : scaled - 0.5f);
+    if (rounded < FXP_MIN || rounded > FXP_MAX) fxp_panic_int0(FXP_PANIC_FIX);
+    return (fxp16_t)rounded;
 }
 
 /**

@@ -12,7 +12,7 @@
 #include "fxp_constants.h"
 
 // entry to the 10:6 fixed point number line int->fxp16_t
-inline fxp16_t fxp_fix_int(int i) { return i << 6; }
+fxp16_t fxp_fix_int(int i);
 
 // entry to the 10:6 fixed point number line float->fxp16_t
 fxp16_t fxp_fix_float(float f);

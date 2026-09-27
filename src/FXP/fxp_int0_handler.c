@@ -9,9 +9,16 @@
 #include "../../doslib/src/DOS/dos_services_constants.h"
 #include "../../doslib/src/DOS/dos_error_codes.h"
 
-static void* old_int0_handler;
+#define FXP_PANIC_SLOT_SIZE   32
 
-static const char INT0_MESSAGE[] = "Your program caused an fxp_div overflow error...$";
+const char FXP_PANIC_MESSAGES[4][FXP_PANIC_SLOT_SIZE] = {
+    "DIV: divide or overflow fault  $",
+    "SQRT: negative domain          $",
+    "EXP: argument out of range     $",
+    "FIX: argument out of range     $",
+};
+
+static void* dos_int0_handler;
 
 // Declares a variable dos_int0 that can hold the address of an interrupt handler.
 static void (__interrupt __far* dos_int0)(void);
@@ -22,13 +29,17 @@ static void (__interrupt __far* dos_int0)(void);
  * and saves/restores the registers required by the interrupt calling convention.
  */
 void __interrupt __far fxp_int0_handler() {
-    dos_set_interrupt_vector(0, dos_int0);  // restore DOS INT0 handler
     __asm {
         .8086
-        lea     dx, INT0_MESSAGE
+        shl     cx, 1   ; 8086 limitations CX >> 5 for message offset
+        shl     cx, 1
+        shl     cx, 1
+        shl     cx, 1
+        shl     cx, 1
+        lea     dx, FXP_PANIC_MESSAGES
+        add     dx, cx                     ; DX = selected message
         mov     ah, DOS_PRINT_STRING
         int     DOS_SERVICE
-
         mov     al, DOS_INVALID_DATA
         mov     ah, DOS_TERMINATE_PROCESS_WITH_RETURN_CODE
         int     DOS_SERVICE
@@ -36,10 +47,18 @@ void __interrupt __far fxp_int0_handler() {
 }
 
 void fxp_install_int0_handler() {
-    dos_int0 = dos_get_interrupt_vector(0);
+    dos_int0_handler = dos_get_interrupt_vector(0);
     dos_set_interrupt_vector(0, (void __far*)fxp_int0_handler);
 }
 
 void fxp_uninstall_int0_handler() {
-    dos_set_interrupt_vector(0, dos_int0);
+    dos_set_interrupt_vector(0, dos_int0_handler);
+}
+
+void fxp_panic_int0(int error) {
+    __asm {
+        .8086
+        mov     cx, ax
+        int     0
+    }
 }
