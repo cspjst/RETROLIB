@@ -4,9 +4,6 @@
 #include <stdint.h>
 #include "../fxp_types.h"
 #include "../VEC/fxp_vec2d_types.h"
-#include "../../CGA/cga_types.h"
-
-cga_point_t fxp_vec2D_to_cga_point(fxp_vector2D_t v);
 
 fxp_vector2D_t fxp_vec2D_fix_float(float x, float y);
 

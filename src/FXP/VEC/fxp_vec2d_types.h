@@ -15,4 +15,8 @@ typedef union {
     };
 } fxp_vector2D_t;
 
+static const fxp_vector2D_t fxp_vec2D_null = {0};
+
+static const fxp_vector2D_t fxp_vec2D_unit = {0x40};
+
 #endif

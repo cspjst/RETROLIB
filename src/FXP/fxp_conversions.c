@@ -4,7 +4,6 @@
  */
 #include "fxp_conversions.h"
 #include "fxp_int0_handler.h"
-#include "fxp_parts.h"
 #include "fxp_types.h"
 #include "fxp_constants.h"
 #include "fxp_limits.h"

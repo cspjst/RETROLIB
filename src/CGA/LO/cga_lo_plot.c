@@ -24,7 +24,7 @@
 *   Total EU cycles                    : 62
 *   Bus transactions (fetch + data)    : 10
 */
-void cga_lo_plot(cga_point_t p, cga_lo_res_colour_t c) {
+void cga_lo_plot(uint32_t p, cga_lo_res_colour_t c) {
     // __watcall DX = y, AX = x, BL = c
     __asm {
         push    es

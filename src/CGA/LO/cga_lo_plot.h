@@ -7,8 +7,8 @@
 #define CGA_LO_PLOT_H
 
 #include "../cga_colours.h"
-#include "../cga_types.h"
+#include <stdint.h>
 
-void cga_lo_plot(cga_point_t p, cga_lo_res_colour_t c);
+void cga_lo_plot(uint32_t, cga_lo_res_colour_t c);
 
 #endif

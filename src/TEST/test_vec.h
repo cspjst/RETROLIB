@@ -49,13 +49,13 @@ void test_vec_plot() {
     printf("CGA 320x200 4 colour mode\n");
 
     fxp_vector2D_t v = fxp_vec2D_fix_polar(fxp_fix_int(100), 50);
-    cga_lo_plot(fxp_vec2D_to_cga_point(fxp_vec2D_unfix_round(v)), CGA_LO_RES_CYAN);
+    cga_lo_plot(fxp_vec2D_unfix_round(v).u, CGA_LO_RES_CYAN);
 
     v = fxp_vec2D_scale(v, 96);
-    cga_lo_plot(fxp_vec2D_to_cga_point(fxp_vec2D_unfix_round(v)), CGA_LO_RES_CYAN);
+    cga_lo_plot(fxp_vec2D_unfix_round(v).u, CGA_LO_RES_CYAN);
 
     v = fxp_vec2D_add(v, fxp_vec2D_fix_polar(fxp_fix_int(10), 25));
-    cga_lo_plot(fxp_vec2D_to_cga_point(fxp_vec2D_unfix_round(v)), CGA_LO_RES_MAGENTA);
+    cga_lo_plot(fxp_vec2D_unfix_round(v).u, CGA_LO_RES_MAGENTA);
 
     getchar();
     env_set_video_mode(m);
@@ -74,7 +74,7 @@ void test_vec_spiral() {
         fxp_vector2D_t v = fxp_vec2D_fix_polar(r, theta);
         cga_colour_t colour = ((i / 30) & 1) ? CGA_LO_RES_MAGENTA : CGA_LO_RES_CYAN;
 
-        cga_lo_plot(fxp_vec2D_to_cga_point(fxp_vec2D_unfix_round(fxp_vec2D_add(v, w))), colour);
+        cga_lo_plot(fxp_vec2D_unfix_round(v).u, colour);
     }
 
     getchar();
@@ -147,8 +147,10 @@ static void test_graph_carbon14() {
 
         cga_colour_t colour = CGA_LO_RES_CYAN;
 
-        cga_lo_plot(fxp_vec2D_to_cga_point(fxp_vec2D_unfix_round(
-            fxp_vec2D_add(fxp_vec2D_scale_xy(v, SCALE, -SCALE), w))), colour);
+        cga_lo_plot(fxp_vec2D_unfix_round(
+            fxp_vec2D_add(fxp_vec2D_scale_xy(v, SCALE, -SCALE), w)).u,
+            colour
+        );
     }
 
     getchar();
@@ -180,11 +182,10 @@ static void test_graph_ecoli() {
 
         cga_colour_t colour = CGA_LO_RES_MAGENTA;
 
-        cga_lo_plot(fxp_vec2D_to_cga_point(
-            fxp_vec2D_unfix_round(
-                fxp_vec2D_add(fxp_vec2D_scale_xy(v, SCALE, -SCALE), w)
-            )
-        ), colour);
+        cga_lo_plot(fxp_vec2D_unfix_round(
+            fxp_vec2D_add(fxp_vec2D_scale_xy(v, SCALE, -SCALE), w)).u,
+            colour
+        );
     }
 
     getchar();

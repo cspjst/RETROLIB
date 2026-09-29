@@ -24,6 +24,8 @@ typedef struct {
 
 typedef int sim_kinetic_constrainer(sim_kinetic_t* k, const sim_kinetic_constraints_t* c);
 
+sim_kinetic_t sim_kinetic_make(fxp_vector2D_t p, fxp_vector2D_t v, fxp_vector2D_t a);
+
 int sim_kinetic_update(sim_kinetic_t* k, const sim_kinetic_constraints_t* c, sim_kinetic_constrainer* f);
 
 #endif

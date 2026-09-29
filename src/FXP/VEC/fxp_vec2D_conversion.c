@@ -3,12 +3,6 @@
 #include "../fxp_trigonometry.h"
 #include "../fxp_conversions.h"
 
-cga_point_t fxp_vec2D_to_cga_point(fxp_vector2D_t v) {
-    cga_point_t p;
-    p.p = v.u;
-    return p;
-}
-
 fxp_vector2D_t fxp_vec2D_fix_float(float x, float y) {
     fxp_vector2D_t v;
     v.x = fxp_fix_float(x);
