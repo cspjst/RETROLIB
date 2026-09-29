@@ -12,9 +12,11 @@
 #include "fxp_constants.h"
 
 // entry to the 10:6 fixed point number line int->fxp16_t
+// @warning fxp panic if i is out of fxp16 number line range
 fxp16_t fxp_fix_int(int i);
 
 // entry to the 10:6 fixed point number line float->fxp16_t
+// @warning fxp panic if f is out of fxp16 number line range
 fxp16_t fxp_fix_float(float f);
 
 // entry to the 10:6 fixed point number line, clamped narrowing of an already-rescaled 32-bit intermediate
