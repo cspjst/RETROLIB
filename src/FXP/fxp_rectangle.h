@@ -13,4 +13,8 @@ typedef union {
     };
 } fxp_rectangle_t;
 
+fxp_rectangle_t fxp_rectangle_make(fxp16_t x, fxp16_t y, fxp16_t w, fxp16_t h);
+
+char* fxp_rectangle_str(fxp_rectangle_t r);
+
 #endif

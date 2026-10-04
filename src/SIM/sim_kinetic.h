@@ -18,14 +18,21 @@ typedef struct {
 
 typedef struct {
     fxp_rectangle_t position_bounds;
-    fxp16_interval_t velocity_bounds;
-    fxp16_interval_t acceleration_bounds;
+    fxp_interval_t velocity_bounds;
+    fxp_interval_t acceleration_bounds;
 } sim_kinetic_constraints_t;
 
 typedef int sim_kinetic_constrainer(sim_kinetic_t* k, const sim_kinetic_constraints_t* c);
 
-sim_kinetic_t sim_kinetic_make(fxp_vector2D_t p, fxp_vector2D_t v, fxp_vector2D_t a);
 
+sim_kinetic_t sim_kinetic_make(fxp_vector2D_t p, fxp_vector2D_t v, fxp_vector2D_t a);
+sim_kinetic_t* sim_kinetic_new(fxp_vector2D_t p, fxp_vector2D_t v, fxp_vector2D_t a);
 int sim_kinetic_update(sim_kinetic_t* k, const sim_kinetic_constraints_t* c, sim_kinetic_constrainer* f);
+char* sim_kinetic_str(sim_kinetic_t* k);
+
+
+sim_kinetic_constraints_t sim_kinetic_constraints_make(fxp_rectangle_t r, fxp_interval_t v, fxp_interval_t a);
+sim_kinetic_constraints_t* sim_kinetic_constraints_new(fxp_rectangle_t r, fxp_interval_t v, fxp_interval_t a);
+char* sim_kinetic_constraints_str(sim_kinetic_constraints_t* c);
 
 #endif

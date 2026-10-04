@@ -4,7 +4,7 @@
 #include <stdio.h>
 
 #include "../SIM/sim_kinetic.h"
-#include "../FXP/fxp_conversions.h"
+#include "../FXP/VEC/fxp_vec2D_conversions.h"
 #include "../FXP/VEC/fxp_vec2D_types.h"
 #include "../FXP/VEC/fxp_vec2D_conversions.h"
 

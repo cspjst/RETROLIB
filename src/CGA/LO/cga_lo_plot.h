@@ -9,6 +9,6 @@
 #include "../cga_colours.h"
 #include <stdint.h>
 
-void cga_lo_plot(uint32_t, cga_lo_res_colour_t c);
+void cga_lo_plot(uint32_t p, cga_lo_res_colour_t c);
 
 #endif

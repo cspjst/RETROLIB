@@ -21,25 +21,20 @@
 #include "../FXP/VEC/fxp_vec2d_constants.h"
 #include "../FXP/VEC/fxp_vec2D_conversions.h"
 #include "../FXP/VEC/fxp_vec2D_operators.h"
-#include "../FXP/VEC/fxp_vec2D_io.h"
-
 
 void test_vec_math() {
     fxp_vector2D_t v = {0};
     fxp_vector2D_t p = {0};
 
     v.u = FXP_VEC2D_UNIT_I;
-    printvf(v);
+    printf("%s\n", fxp_vec2D_str(v));
     v.u = FXP_VEC2D_UNIT_J;
-    printvf(v);
+    printf("%s\n", fxp_vec2D_str(v));
     v.u = FXP_VEC2D_ZERO;
-    printvf(v);
+    printf("%s\n", fxp_vec2D_str(v));
     v = fxp_vec2D_fix_polar(fxp_fix_int(10), 150);
-    printvi(v);
-    printvf(v); // should be (-8.66,5) but accuracy loss gives (-8.75,5)
-    p = v;
-    printvf(p);
-    printvi(fxp_vec2D_unfix_round(p));
+    printf("%s\n", fxp_vec2D_str(v)); // should be (-8.66,5) but accuracy loss gives (-8.75,5)
+    printf("%X\n", fxp_vec2D_unfix_round(v).u);
 
 }
 
@@ -199,8 +194,8 @@ void test_vec() {
     //test_vec_spiral();
     //test_exp_carbon14();
     //test_exp_ecoli();
-    //test_graph_carbon14();
-    test_graph_ecoli();
+    test_graph_carbon14();
+    //test_graph_ecoli();
 }
 
 #endif

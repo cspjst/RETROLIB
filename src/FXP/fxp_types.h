@@ -28,6 +28,6 @@ typedef union {
         fxp16_t a;
         fxp16_t b;
     };
-} fxp16_interval_t;
+} fxp_interval_t;
 
 #endif

@@ -28,7 +28,7 @@ void test_fxp_plot() {
 		for (int i = 1; i < 360; ++i) {
 			p.x = cx + fxp_unfix_round(fxp_mul(r, fxp_cos(fxp_unfix_round(a))));
 			p.y = cy + fxp_unfix_round(fxp_mul(r, fxp_sin(fxp_unfix_round(a))));
-			cga_lo_plot(p, CGA_LO_RES_LT_CYAN);
+			cga_lo_plot(p.u, CGA_LO_RES_LT_CYAN);
 			fxp_inc(&a);
 		}
 		r = fxp_sub(r, 128);
@@ -37,7 +37,7 @@ void test_fxp_plot() {
 		for (int i = 1; i < 360; ++i) {
 			p.x = cx + fxp_unfix_round(fxp_mul(r, fxp_cos(i)));
 			p.y = cy + fxp_unfix_round(fxp_mul(r, fxp_sin(i)));
-			cga_lo_plot(p, CGA_LO_RES_LT_MAGENTA);
+			cga_lo_plot(p.u, CGA_LO_RES_LT_MAGENTA);
 		}
 		r = fxp_sub(r, 128);
 	}

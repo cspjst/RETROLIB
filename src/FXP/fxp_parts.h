@@ -8,7 +8,7 @@
 
 #include "fxp_types.h"
 
-#define fxp_part_whole(v) ((fxp16_t)((v) & FXP_PART_WHOLE_MASK) >> 6)
+#define fxp_part_whole(v) ((fxp16_t)((v) & FXP_PART_WHOLE_MASK) >> FXP_FRACTIONAL_BITS)
 
 #define fxp_part_frac(v) ((fxp16_t)((v) & FXP_PART_FRAC_MASK))
 
