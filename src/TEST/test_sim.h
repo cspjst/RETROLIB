@@ -17,6 +17,8 @@ void test_sim() {
         fxp_vec2D_fix_float(1.0f, 0.5f),
         fxp_vec2D_null
     );
+
+    printf("%s\n", sim_kinetic_str(&k));
 }
 
 #endif
