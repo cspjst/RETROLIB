@@ -19,9 +19,9 @@ char* sim_constraints_str(sim_constraints_t* c) {
             (double)fxp_unfix_float(c->position_bounds.y),
             (double)fxp_unfix_float(c->position_bounds.w),
             (double)fxp_unfix_float(c->position_bounds.h),
-            (double)fxp_unfix_float(c->velocity_bounds.a),
-            (double)fxp_unfix_float(c->velocity_bounds.b),
-            (double)fxp_unfix_float(c->acceleration_bounds.a),
-            (double)fxp_unfix_float(c->acceleration_bounds.b));
+            (double)fxp_unfix_float(c->velocity_bounds.i),
+            (double)fxp_unfix_float(c->velocity_bounds.j),
+            (double)fxp_unfix_float(c->acceleration_bounds.parts[0]),
+            (double)fxp_unfix_float(c->acceleration_bounds.parts[1]));
     return buf;
 }

@@ -11,6 +11,8 @@ typedef union {
         fxp16_t w;
         fxp16_t h;
     };
+    fxp_pair_t pairs[2];
+    fxp16_t parts[4];
 } fxp_rectangle_t;
 
 fxp_rectangle_t fxp_rectangle_make(fxp16_t x, fxp16_t y, fxp16_t w, fxp16_t h);

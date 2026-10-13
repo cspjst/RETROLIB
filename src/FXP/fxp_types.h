@@ -25,9 +25,12 @@ typedef int16_t fxp16_t;
 typedef union {
     int32_t u;
     struct {
-        fxp16_t a;
-        fxp16_t b;
+        fxp16_t i;
+        fxp16_t j;
     };
-} fxp_interval_t;
+    fxp16_t parts[2];
+} fxp_pair_t;
+
+typedef fxp_pair_t fxp_interval_t;
 
 #endif

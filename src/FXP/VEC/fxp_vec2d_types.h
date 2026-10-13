@@ -13,6 +13,8 @@ typedef union {
         fxp16_t x;
         fxp16_t y;
     };
+    fxp_pair_t pair;
+    fxp16_t parts[2];
 } fxp_vector2D_t;
 
 static const fxp_vector2D_t fxp_vec2D_null = {0};
